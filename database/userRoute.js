@@ -14,8 +14,6 @@ const passwordhashed = async (text) => {
 };
 
 userRouter.post("/reset-mail", sendMail);
-=======
-// userRouter.post("/reset-mail", sendMail);
 
 userRouter.get("/all-users", async (req, res, next) => {
   const userData = await UserModel.find({});
@@ -30,8 +28,25 @@ userRouter.get("/all-users", async (req, res, next) => {
   }
 });
 
-userRouter.get("/user/:email/:password", async (req, res, next) => {
-  const userData = await UserModel.find({ email: req.params.email });
+userRouter.post("/user-login", async (req, res, next) => {
+  try {
+    const userData = await UserModel.find({ email: req.body.email });
+    if (bcrypt.compare(userData[0].password, req.body.password)) {
+      console.log("User data : ", userData);
+      res.status(200).send({
+        data: userData,
+        message: "Success",
+        success: true,
+      });
+    } else {
+      res.status(500).send(new Error("Incorrect password!"));
+    }
+  } catch {
+    res.status(500).send({
+      message: "User not exist!",
+      success: "false",
+    });
+  }
   // console.log(userData);
   // console.log(userData[0].password);
   // console.log(await passwordhashed(req.params.password));
@@ -41,16 +56,6 @@ userRouter.get("/user/:email/:password", async (req, res, next) => {
   //   "Compare : ",
   //  bcrypt.compare(userData[0].password, req.params.password)
   // );
-  if (bcrypt.compare(userData[0].password, req.params.password)) {
-    console.log("User data : ", userData);
-    res.status(200).send({
-      data: userData,
-      message: "Success",
-      success: true,
-    });
-  } else {
-    res.status(500).send(new Error("Incorrect password!"));
-  }
 });
 
 userRouter.post("/user-signUp", async (req, res, next) => {
