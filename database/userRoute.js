@@ -13,6 +13,8 @@ const passwordhashed = async (text) => {
   return await bcrypt.hash(text, 12);
 };
 
+userRouter.post("/reset-mail", sendMail);
+=======
 // userRouter.post("/reset-mail", sendMail);
 
 userRouter.get("/all-users", async (req, res, next) => {
