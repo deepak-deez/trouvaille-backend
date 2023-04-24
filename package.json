@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/itobuz-steps/trouvaille-backend#readme",
   "dependencies": {
+    "@web-std/file": "^3.0.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^7.0.4"
