@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const schema = new mongoose.Schema({
+  userType: {
+    type: String,
+    require: true,
+  },
   email: {
     type: String,
     trim: true,
@@ -17,6 +21,10 @@ const schema = new mongoose.Schema({
   password: {
     type: String,
     trim: true,
+    require: true,
+  },
+  isActive: {
+    type: Boolean,
     require: true,
   },
 });
