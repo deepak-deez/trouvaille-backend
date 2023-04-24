@@ -117,7 +117,7 @@ export const FrontendUserLogout = async (req, res, next) => {
     const user = await findUser(req.body.email);
     const result = await UserModel.findOneAndUpdate(
       {
-        _id: user._id,
+        _id: user[0]._id,
       },
       {
         $set: {
@@ -151,13 +151,15 @@ export const sendResetMail = async (req, res, next) => {
     const user = await findUser(req.body.email);
     if (user === null) res.send(Response(null, 500, "User not found", false));
 
-    const secret = process.env.JWT_SECRET + user.password;
+    const secret = process.env.JWT_SECRET + user[0].password;
     const payload = {
       email: req.body.email,
-      id: user._id,
+      id: user[0]._id,
     };
-    const token = jwt.sign(payload, secret, { expireIn: "15m" });
-    const link = `http://localhost:7080/reset-password/${user._id}/${token}`;
+    const token = jwt.sign(payload, secret, { expiresIn: "15m" });
+    console.log("token : ", token);
+    const link = `http://localhost:7080/reset-password/${user[0]._id}/${token}`;
+    console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
     else
@@ -175,13 +177,19 @@ export const resetPasswordValidation = async (req, res, next) => {
     const user = await UserModel.find({ _id: id });
     if (user === null)
       return res.send(Response(null, 500, "User not found!", false));
+
     const secret = process.env.JWT_SECRET + user.password;
     try {
-      jwt.verify(token, secret);
+      await jwt.verify(token, secret, (err, decode) => {
+        console.log("Decode: ", decode);
+      });
       return res.send(
-        { email: user.email },
-        200,
-        "User varified form the reset password"
+        Response(
+          { email: user[0].email },
+          200,
+          "User varified form the reset password",
+          true
+        )
       );
     } catch (err) {
       return res.send(null, 500, "Not authenticate to reset password!", false);
@@ -199,15 +207,21 @@ export const setPassword = async (req, res, next) => {
     const user = await findUser(req.body.email);
     if (user === null) res.send(Response(null, 500, "User not found", false));
 
-    const secret = process.env.JWT_SECRET + user.password;
-    const result = await UserModel.findOneAndUpdate(
-      { _id: payload.id },
-      { $set: { password: await bcrypt.hash(req.body.newPassword, 12) } }
-    );
-    if (result)
-      return res.send(Response(null, 200, "Password reset successfully"));
-    else
+    const secret = process.env.JWT_SECRET + user[0].password;
+    try {
+      const payload = jwt.verify(req.body.token, secret);
+      console.log(payload);
+      const result = await UserModel.findOneAndUpdate(
+        { _id: payload.id },
+        { $set: { password: await bcrypt.hash(req.body.newPassword, 12) } }
+      );
+      if (result)
+        return res.send(Response(null, 200, "Password reset successfully"));
+      else
+        return res.send(Response(null, 500, "Reset password failed!", false));
+    } catch (err) {
       return res.send(Response(null, 500, "Token validation failed!", false));
+    }
   } catch (err) {
     next(err);
   }

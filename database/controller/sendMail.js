@@ -18,7 +18,7 @@ const sendMail = async (emailId, link) => {
     })
     .sendMail(
       {
-        from: `"Spoon-project" <${process.env.SenderMail2}>`,
+        from: `"Trouvaille" <${process.env.SenderMail2}>`,
         to: `${emailId}`,
         subject: "Reset password",
         text: `Click reset password link below!`,

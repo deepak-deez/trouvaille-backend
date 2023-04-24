@@ -165,6 +165,6 @@ app.post("/user-register", userRegister);
 app.post("/user-login", FrontendUserLogin);
 app.post("/user-logout", FrontendUserLogout);
 app.get("/all-users", FrontendUserData);
-app.post("/reset-password", sendResetMail);
+app.post("/send-reset-mail", sendResetMail);
 app.get("/reset-password/:id/:token", resetPasswordValidation);
-app.post("/set-password/", setPassword);
+app.post("/set-password", setPassword);
