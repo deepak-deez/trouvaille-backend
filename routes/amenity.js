@@ -1,13 +1,19 @@
-import { amenity } from "../model.js";
+import { amenity } from "../schema/model.js";
 import { dataConnection } from "../connection.js";
 
+const checking = ( message, statusCode, success) => {
+  // data: data;
+  message: message;
+  status: statusCode;
+  success: success
+}
 //creating Amenity
 export const createAmenity = async (req, res) => {
   const data = new amenity(req.body);
   console.log(data);
   try {
     await data.save();
-    res.send(data);
+    res.send(checking("amenity added", 200, "true"));
   } catch (error) {
     res.status(500).send({
       data: null,

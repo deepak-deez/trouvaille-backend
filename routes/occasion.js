@@ -1,4 +1,4 @@
-import { occasion } from "../model.js";
+import { occasion } from "../schema/model.js";
 import { dataConnection } from "../connection.js";
 
 //creating Occasion
