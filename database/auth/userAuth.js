@@ -18,6 +18,15 @@ const Response = (data, statusCode, message, success) => {
     success: success,
   };
 };
+const registerData = async (userType, email, phone, password, status) => {
+  return {
+    userType: userType,
+    email: email,
+    phone: phone,
+    password: await passwordhashed(password),
+    isActive: status,
+  };
+};
 
 const findUser = async (email) => {
   return await UserModel.find({ email: email });
@@ -53,19 +62,19 @@ export const userRegister = async (req, res, next) => {
         Response(null, 500, "Phone number already exist!", false)
       );
 
-    const newUser = await UserModel({
-      userType: "Frontend-user",
-      email: req.body.email,
-      phone: req.body.phone,
-      password: await passwordhashed(req.body.password),
-      isActive: false,
-    });
-    console.log(newUser);
+    const newUser = await UserModel(
+      await registerData(
+        "Frontend-user",
+        req.body.email,
+        req.body.phone,
+        req.body.password,
+        false
+      )
+    );
     const result = await newUser.save();
-    console.log(result);
     if (result?._id)
-      res.send(newUser, 200, "Account create successfully!", true);
-    else res.send(null, 500, "Failed to create account!", false);
+      res.send(Response(newUser, 200, "Account create successfully!", true));
+    else res.send(Response(null, 500, "Failed to create account!", false));
   } catch (err) {
     next(err);
   }
