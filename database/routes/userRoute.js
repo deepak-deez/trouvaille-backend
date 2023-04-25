@@ -1,20 +1,12 @@
 import express from "express";
 
 export const app = express();
-import {
-  userRegister,
-  FrontendUserLogin,
-  FrontendUserLogout,
-  FrontendUserData,
-  sendResetMail,
-  resetPasswordValidation,
-  setPassword,
-} from "../auth/userAuth.js";
+import * as auth from "../auth/userAuth.js";
 
-app.post("/user-register", userRegister);
-app.post("/user-login", FrontendUserLogin);
-app.post("/user-logout", FrontendUserLogout);
-app.get("/all-users", FrontendUserData);
-app.post("/send-reset-mail", sendResetMail);
-app.get("/reset-password/:id/:token", resetPasswordValidation);
-app.post("/set-password", setPassword);
+app.post("/user-register", auth.userRegister);
+app.post("/login/:user", auth.FrontendUserLogin);
+app.post("/user-logout", auth.FrontendUserLogout);
+app.get("/database/:user", auth.FrontendUserData);
+app.post("/send-reset-mail/:user", auth.sendResetMail);
+app.get("/reset-password/:user/:id/:token", auth.resetPasswordValidation);
+app.post("/set-password", auth.setPassword);
