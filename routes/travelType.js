@@ -1,11 +1,8 @@
-import app from "../server.js";
 import { travelType } from "../model.js";
 import { dataConnection } from "../connection.js";
 
-dataConnection();
-
 //creating Travel type
-app.post("/createTravelType", async (req, res) => {
+export const createTravelType = async (req, res) => {
   const data = new travelType(req.body);
   console.log(data);
   try {
@@ -18,10 +15,10 @@ app.post("/createTravelType", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
-//getting Travel Type
-app.get("/getTravelType", async (req, res) => {
+//getting Travel type
+export const getTravelType = async (req, res) => {
   const data = await travelType.find({});
   try {
     res.send(data);
@@ -32,10 +29,10 @@ app.get("/getTravelType", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //modifying Travel Type
-app.put("/modifyTravelType/:id", async (req, res) => {
+export const modifyTravelType = async (req, res) => {
   try {
     await travelType.findByIdAndUpdate(req.params.id, req.body);
     await travelType.save();
@@ -47,10 +44,10 @@ app.put("/modifyTravelType/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //deleting Travel Type
-app.delete("/deleteTravelType/:id", async (req, res) => {
+export const deleteTravelType = async (req, res) => {
   try {
     const data = await travelType.findByIdAndDelete(req.params.id);
 
@@ -63,4 +60,5 @@ app.delete("/deleteTravelType/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};
+

@@ -1,11 +1,8 @@
-import app from "../server.js";
 import { amenity } from "../model.js";
 import { dataConnection } from "../connection.js";
 
-dataConnection();
-
-//creating amenity
-app.post("/createAmenity", async (req, res) => {
+//creating Amenity
+export const createAmenity = async (req, res) => {
   const data = new amenity(req.body);
   console.log(data);
   try {
@@ -18,10 +15,10 @@ app.post("/createAmenity", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //getting Amenity
-app.get("/getAmenity", async (req, res) => {
+export const getAmenity = async (req, res) => {
   const data = await amenity.find({});
   try {
     res.send(data);
@@ -32,10 +29,10 @@ app.get("/getAmenity", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //modifying Amenity
-app.put("/modifyAmenity/:id", async (req, res) => {
+export const modifyAmenity = async (req, res) => {
   try {
     await amenity.findByIdAndUpdate(req.params.id, req.body);
     await amenity.save();
@@ -47,10 +44,10 @@ app.put("/modifyAmenity/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
-//deleting ameni†y
-app.delete("/deleteAmenity/:id", async (req, res) => {
+//deleting Amenity
+export const deleteAmenity = async (req, res) => {
   try {
     const data = await amenity.findByIdAndDelete(req.params.id);
 
@@ -63,4 +60,4 @@ app.delete("/deleteAmenity/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};

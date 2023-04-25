@@ -1,11 +1,8 @@
-import app from "../server.js";
 import { occasion } from "../model.js";
 import { dataConnection } from "../connection.js";
 
-dataConnection();
-
 //creating Occasion
-app.post("/createOccasion", async (req, res) => {
+export const createOccasion = async (req, res) => {
   const data = new occasion(req.body);
   console.log(data);
   try {
@@ -18,10 +15,10 @@ app.post("/createOccasion", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //getting Occasion
-app.get("/getOccasion", async (req, res) => {
+export const getOccasion = async (req, res) => {
   const data = await occasion.find({});
   try {
     res.send(data);
@@ -32,10 +29,10 @@ app.get("/getOccasion", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //modifying Occasion
-app.put("/modifyOccasion/:id", async (req, res) => {
+export const modifyOccasion = async (req, res) => {
   try {
     await occasion.findByIdAndUpdate(req.params.id, req.body);
     await occasion.save();
@@ -47,10 +44,10 @@ app.put("/modifyOccasion/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};
 
 //deleting Occasion
-app.delete("/deleteOccasion/:id", async (req, res) => {
+export const deleteOccasion = async (req, res) => {
   try {
     const data = await occasion.findByIdAndDelete(req.params.id);
 
@@ -63,4 +60,4 @@ app.delete("/deleteOccasion/:id", async (req, res) => {
       success: false,
     });
   }
-});
+};
