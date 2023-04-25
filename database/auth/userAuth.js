@@ -51,16 +51,20 @@ export const userRegister = async (req, res, next) => {
     if (!req.body.email.match(emailFormat))
       return res.send(Response(null, 500, "Not a valid email!", false));
 
-    if (!req.body.phone.match(phoneNoFormat))
-      return res.send(Response(null, 500, "Not a valid phone number!", false));
-
     if ((await UserModel.findOne({ email: req.body.email })) !== null)
       return res.send(Response(null, 500, "Email already exist!", false));
 
-    if ((await UserModel.findOne({ phone: req.body.phone })) !== null)
-      return res.send(
-        Response(null, 500, "Phone number already exist!", false)
-      );
+    if (req.body.phone !== undefined) {
+      if (!req.body.phone.match(phoneNoFormat))
+        return res.send(
+          Response(null, 500, "Not a valid phone number!", false)
+        );
+
+      if ((await UserModel.findOne({ phone: req.body.phone })) !== null)
+        return res.send(
+          Response(null, 500, "Phone number already exist!", false)
+        );
+    }
 
     const newUser = await UserModel(
       await registerData(
@@ -86,9 +90,14 @@ export const FrontendUserLogin = async (req, res, next) => {
       return res.send(Response(null, 500, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    console.log(user);
-    console.log(req.body.password, user[0].password);
-    if (user === null) res.send(Response(null, 500, "User not found", false));
+
+    if (user === null)
+      return res.send(
+        Response(null, 500, `${req.params.user} not found!`, false)
+      );
+
+    if (req.params.user !== user[0].userType)
+      return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
     else {
       const isMatched = await bcrypt.compare(
         req.body.password,
@@ -132,7 +141,7 @@ export const FrontendUserLogout = async (req, res, next) => {
       { new: true }
     );
     if (result)
-      return res.send(Response(null, 200, "User logout successfully!", true));
+      return res.send(Response(null, 200, "Logged out successfully!", true));
     else return res.send(Response(null, 500, "Failed to logout!", false));
   } catch (err) {
     next(err);
@@ -140,9 +149,12 @@ export const FrontendUserLogout = async (req, res, next) => {
 };
 
 export const FrontendUserData = async (req, res, next) => {
+  console.log(req.params.user);
   try {
-    const user = await UserModel.find({ userType: "Frontend-user" });
-    return res.send(Response(user, 200, "All front end user here...", true));
+    const user = await UserModel.find({ userType: req.params.user });
+    return res.send(
+      Response(user, 200, `All ${req.params.user}s are here...`, true)
+    );
   } catch (err) {
     next(err);
   }
@@ -154,7 +166,13 @@ export const sendResetMail = async (req, res, next) => {
       return res.send(Response(null, 500, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    if (user === null) res.send(Response(null, 500, "User not found", false));
+    if (user === null)
+      return res.send(
+        Response(null, 500, `${req.params.user} not found!`, false)
+      );
+
+    if (req.params.user !== user[0].userType)
+      return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
 
     const secret = process.env.JWT_SECRET + user[0].password;
     const payload = {
@@ -163,7 +181,7 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:7080/reset-password/${user[0]._id}/${token}`;
+    const link = `http://localhost:7080/reset-password/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
@@ -181,7 +199,12 @@ export const resetPasswordValidation = async (req, res, next) => {
   try {
     const user = await UserModel.find({ _id: id });
     if (user === null)
-      return res.send(Response(null, 500, "User not found!", false));
+      return res.send(
+        Response(null, 500, `${req.params.user} not found!`, false)
+      );
+
+    if (req.params.user !== user[0].userType)
+      return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
 
     const secret = process.env.JWT_SECRET + user.password;
     try {
@@ -192,7 +215,7 @@ export const resetPasswordValidation = async (req, res, next) => {
         Response(
           { email: user[0].email },
           200,
-          "User varified form the reset password",
+          `${req.params.user} varified for the reset password`,
           true
         )
       );
