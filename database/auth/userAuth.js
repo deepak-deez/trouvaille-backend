@@ -1,11 +1,7 @@
-import { UserModel } from "../userSignup/signUpModel.js";
-import { Router } from "express";
-import express from "express";
-import cors from "cors";
+import { UserModel } from "../models/signUpModel.js";
 import bcrypt from "bcrypt";
 import sendMail from "../controller/sendMail.js";
 import jwt from "jsonwebtoken";
-// import { userData } from "../../trash/test.js";
 import env from "dotenv";
 
 env.config();

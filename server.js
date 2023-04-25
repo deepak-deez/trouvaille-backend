@@ -1,6 +1,6 @@
 import express from "express";
 import db from "./database/connection.js";
-import * as userRouter from "./database/userRoute.js";
+import * as userRouter from "./database/routes/userRoute.js";
 import cors from "cors";
 import env from "dotenv";
 
