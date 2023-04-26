@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import sendMail from "../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
+import { Response, registerData, findUser } from "../modules/supportModule.js";
 
 env.config();
 
@@ -10,31 +11,31 @@ env.config();
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
-const Response = (data, statusCode, message, success) => {
-  return {
-    data: data,
-    message: message,
-    status: statusCode,
-    success: success,
-  };
-};
-const registerData = async (userType, email, phone, password, status) => {
-  return {
-    userType: userType,
-    email: email,
-    phone: phone,
-    password: await passwordhashed(password),
-    isActive: status,
-  };
-};
+// const Response = (data, statusCode, message, success) => {
+//   return {
+//     data: data,
+//     message: message,
+//     status: statusCode,
+//     success: success,
+//   };
+// };
+// const registerData = async (userType, email, phone, password, status) => {
+//   return {
+//     userType: userType,
+//     email: email,
+//     phone: phone,
+//     password: await passwordhashed(password),
+//     isActive: status,
+//   };
+// };
 
-const findUser = async (email) => {
-  return await UserModel.find({ email: email });
-};
+// const findUser = async (email) => {
+//   return await UserModel.find({ email: email });
+// };
 
-const passwordhashed = async (text) => {
-  return await bcrypt.hash(text, 12);
-};
+// const passwordhashed = async (text) => {
+//   return await bcrypt.hash(text, 12);
+// };
 
 // const emailValidation = (email) => {
 //     if (!email.match(emailFormat))
