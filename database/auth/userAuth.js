@@ -68,7 +68,7 @@ export const userRegister = async (req, res, next) => {
 
     const newUser = await UserModel(
       await registerData(
-        "Frontend-user",
+        req.params.user,
         req.body.email,
         req.body.phone,
         req.body.password,
