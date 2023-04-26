@@ -14,7 +14,4 @@ const schema = new mongoose.Schema({
   },
 });
 
-export const tripCategory = mongoose.model("category", schema);
-export const amenity = mongoose.model("amenity", schema);
-export const occasion = mongoose.model("occasion", schema);
-export const travelType = mongoose.model("travelType", schema);
+export const tripDetails = mongoose.model("tripDetails", schema)

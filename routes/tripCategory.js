@@ -1,37 +1,41 @@
-import app from "../server.js";
-import { tripCategory } from "../schema/model.js";
-import { dataConnection } from "../connection.js";
+import { tripDetails } from "../schema/model.js";
 
-//creating Travel type
+//creating Travel Category
 export const createTripData = async (req, res) => {
-  const data = new tripCategory(req.body);
-  console.log(data);
   try {
-    await data.save({
-      purpose:"Catagory",
+    const tripData = await tripDetails({
+      purpose: "Category",
       image: req.body.image,
       title: req.body.title,
-      description: req.body.description
+      description: req.body.description,
     });
-    res.send(data);
+    console.log(tripData);
+    const result = await tripData.save();
+    res.send({
+      data: null,
+      message: 'new category added',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.messge,
+      message: error.message,
       success: false,
     });
   }
 };
 
-//getting Travel type
+//getting Travel Category
 export const getTripData = async (req, res) => {
-  const data = await tripCategory.find({});
+  const data = await tripDetails.find({
+    purpose: "Category"
+  });
   try {
     res.send(data);
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.messge,
+      message: error.message,
       success: false,
     });
   }
@@ -40,9 +44,13 @@ export const getTripData = async (req, res) => {
 //modifying Travel Type
 export const modifyTripData = async (req, res) => {
   try {
-    await tripCategory.findByIdAndUpdate(req.params.id, req.body);
-    await tripCategory.save();
-    res.send(data);
+    const modifiedTripData = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
+    const modifiedResult = await modifiedTripData.save();
+    res.send({
+      data: null,
+      message: 'category updated',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
@@ -55,16 +63,19 @@ export const modifyTripData = async (req, res) => {
 //deleting Travel Type
 export const deleteTrip = async (req, res) => {
   try {
-    const data = await tripCategory.findByIdAndDelete(req.params.id);
+    const toBeDeletedTrip = await tripDetails.findByIdAndDelete(req.params.id);
 
-    if (!data) res.status(404).send("No item found");
-    res.status(200).send();
+    if (!toBeDeletedTrip) res.status(404).send("No item found");
+    res.status(200).send({
+      data: null,
+      message: 'category deleted',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error,
+      message: error.message,
       success: false,
     });
   }
 };
-

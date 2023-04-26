@@ -23,7 +23,7 @@ import {
   createTripData,
   getTripData,
   modifyTripData,
-  deleteTrip,
+  deleteTrip
 } from "./tripCategory.js";
 
 import {
@@ -31,7 +31,7 @@ import {
   getTripPackage,
   updatePackage,
   deletePackage,
-} from "./trip_module/package.js";
+} from "./tripModule/package.js";
 
 import express, { request } from "express";
 import cors from "cors";

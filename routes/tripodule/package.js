@@ -1,4 +1,4 @@
-import { tripPackage } from "../../schema/tripModuleModel.js";
+import { tripPackage } from "../../schema/tripPackageModel.js";
 import { dataConnection } from "../../connection.js";
 
 //creating trip packages

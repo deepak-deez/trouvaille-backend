@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 const tripPackageSchema = new mongoose.Schema({
+  purpose: {
+    type: String,
+  },
   title: {
     type: String,
   },
@@ -7,13 +10,13 @@ const tripPackageSchema = new mongoose.Schema({
     type: String,
   },
   duration: {
-    type: Date,
-    startDate: {
-      type: String,
-    },
-    endDate: {
-      type: String,
-    },
+    type: String,
+  },
+  startDate: {
+    type: String,
+  },
+  endDate: {
+    type: String,
   },
   category: {
     type: String,

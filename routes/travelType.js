@@ -1,17 +1,26 @@
-import { travelType } from "../schema/model.js";
-import { dataConnection } from "../connection.js";
+import { tripDetails } from "../schema/model.js";
 
 //creating Travel type
 export const createTravelType = async (req, res) => {
-  const data = new travelType(req.body);
-  console.log(data);
   try {
-    await data.save();
-    res.send(data);
+    const tripType = await tripDetails({
+      purpose: "TravelType",
+      image: req.body.image,
+      title: req.body.title,
+      description: req.body.description,
+    });
+    console.log(tripType);
+    const result = await tripType.save();
+    console.log(result);
+    res.send({
+      data: null,
+      message: 'New Travel type added',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.messge,
+      message: error.message,
       success: false,
     });
   }
@@ -19,7 +28,9 @@ export const createTravelType = async (req, res) => {
 
 //getting Travel type
 export const getTravelType = async (req, res) => {
-  const data = await travelType.find({});
+  const data = await tripDetails.find({
+    purpose: "TravelType"
+  });
   try {
     res.send(data);
   } catch (error) {
@@ -34,9 +45,13 @@ export const getTravelType = async (req, res) => {
 //modifying Travel Type
 export const modifyTravelType = async (req, res) => {
   try {
-    await travelType.findByIdAndUpdate(req.params.id, req.body);
-    await travelType.save();
-    res.send(data);
+    const modifiedTravelType = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
+    const modifiedResult = await modifiedTravelType.save();
+    res.send({
+      data: null,
+      message: 'travel type modified',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
@@ -49,10 +64,14 @@ export const modifyTravelType = async (req, res) => {
 //deleting Travel Type
 export const deleteTravelType = async (req, res) => {
   try {
-    const data = await travelType.findByIdAndDelete(req.params.id);
+    const toBeDeletedType = await tripDetails.findByIdAndDelete(req.params.id);
 
-    if (!data) res.status(404).send("No item found");
-    res.status(200).send();
+    if (!toBeDeletedType) res.status(404).send("No item found");
+    res.status(200).send({
+      data: null,
+      message: 'Travel type deleted',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,

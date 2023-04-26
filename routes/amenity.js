@@ -1,19 +1,20 @@
-import { amenity } from "../schema/model.js";
-import { dataConnection } from "../connection.js";
+import { tripDetails } from "../schema/model.js";
 
-const checking = ( message, statusCode, success) => {
-  // data: data;
-  message: message;
-  status: statusCode;
-  success: success
-}
 //creating Amenity
 export const createAmenity = async (req, res) => {
-  const data = new amenity(req.body);
-  console.log(data);
   try {
-    await data.save();
-    res.send(checking("amenity added", 200, "true"));
+    const amenity = await tripDetails({
+      purpose: "Amenity",
+      image: req.body.image,
+      title: req.body.title,
+      description: req.body.description,
+    });
+    const amenityResult = await amenity.save();
+    res.send({
+      data: null,
+      message: "new amenity added",
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
@@ -25,7 +26,9 @@ export const createAmenity = async (req, res) => {
 
 //getting Amenity
 export const getAmenity = async (req, res) => {
-  const data = await amenity.find({});
+  const data = await tripDetails.find({
+    purpose: "Amenity",
+  });
   try {
     res.send(data);
   } catch (error) {
@@ -40,9 +43,16 @@ export const getAmenity = async (req, res) => {
 //modifying Amenity
 export const modifyAmenity = async (req, res) => {
   try {
-    await amenity.findByIdAndUpdate(req.params.id, req.body);
-    await amenity.save();
-    res.send(data);
+    const modifiedAmenity = await tripDetails.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    const modifiedResult = await modifiedAmenity.save();
+    res.send({
+      data: null,
+      message: "amenity modified",
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
@@ -55,10 +65,16 @@ export const modifyAmenity = async (req, res) => {
 //deleting Amenity
 export const deleteAmenity = async (req, res) => {
   try {
-    const data = await amenity.findByIdAndDelete(req.params.id);
+    const toBeDeletedAmenity = await tripDetails.findByIdAndDelete(
+      req.params.id
+    );
 
-    if (!data) res.status(404).send("No item found");
-    res.status(200).send();
+    if (!toBeDeletedAmenity) res.status(404).send("No item found");
+    res.status(200).send({
+      data: null,
+      message: "amenity deleted",
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,

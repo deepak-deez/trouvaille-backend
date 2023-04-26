@@ -1,17 +1,24 @@
-import { occasion } from "../schema/model.js";
-import { dataConnection } from "../connection.js";
+import { tripDetails } from "../schema/model.js";
 
 //creating Occasion
 export const createOccasion = async (req, res) => {
-  const data = new occasion(req.body);
-  console.log(data);
   try {
-    await data.save();
-    res.send(data);
+    const occasion = await tripDetails({
+      purpose: "Occasion",
+      image: req.body.image,
+      title: req.body.title,
+      description: req.body.description,
+    });
+    const result = await occasion.save();
+    res.send({
+      data: null,
+      message: 'new occasion added',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.messge,
+      message: error.message,
       success: false,
     });
   }
@@ -19,7 +26,9 @@ export const createOccasion = async (req, res) => {
 
 //getting Occasion
 export const getOccasion = async (req, res) => {
-  const data = await occasion.find({});
+  const data = await tripDetails.find({
+    purpose: "Occasion"
+  });
   try {
     res.send(data);
   } catch (error) {
@@ -34,9 +43,13 @@ export const getOccasion = async (req, res) => {
 //modifying Occasion
 export const modifyOccasion = async (req, res) => {
   try {
-    await occasion.findByIdAndUpdate(req.params.id, req.body);
-    await occasion.save();
-    res.send(data);
+    const modifiedOccasion = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
+    const modifiedResult = await modifiedOccasion.save();
+    res.send({
+      data: null,
+      message: 'occasion modified',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
@@ -49,14 +62,18 @@ export const modifyOccasion = async (req, res) => {
 //deleting Occasion
 export const deleteOccasion = async (req, res) => {
   try {
-    const data = await occasion.findByIdAndDelete(req.params.id);
+    const toBeDeletedOccasion = await tripDetails.findByIdAndDelete(req.params.id);
 
-    if (!data) res.status(404).send("No item found");
-    res.status(200).send();
+    if (!toBeDeletedOccasion) res.status(404).send("No item found");
+    res.status(200).send({
+      data: null,
+      message: 'occasion deleted',
+      success: true,
+    });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error,
+      message: error.message,
       success: false,
     });
   }
