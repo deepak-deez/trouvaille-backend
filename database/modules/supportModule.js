@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { UserModel } from "../models/signUpModel.js";
 
 export const Response = (data, statusCode, message, success) => {
   return {
