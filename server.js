@@ -1,6 +1,7 @@
 import express from "express";
 import db from "./database/connection.js";
 import * as userRouter from "./database/routes/userRoute.js";
+import * as adminRouter from "./trash/backendUserRoute.js";
 import cors from "cors";
 import env from "dotenv";
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(userRouter.app);
+app.use(adminRouter.app);
 
 app.use((req, res, next) => {
   next(new Error("Page not found"));

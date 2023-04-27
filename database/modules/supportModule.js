@@ -10,15 +10,22 @@ export const Response = (data, statusCode, message, success) => {
   };
 };
 
+export const passwordhashed = async (text) => {
+  return await bcrypt.hash(text, 12);
+};
+
 export const registerData = async (
   userType,
+  name,
   email,
   phone,
   password,
   status
 ) => {
+  console.log(userType, name, email, phone, password, status);
   return {
     userType: userType,
+    name: name,
     email: email,
     phone: phone,
     password: await passwordhashed(password),
@@ -28,8 +35,4 @@ export const registerData = async (
 
 export const findUser = async (email) => {
   return await UserModel.find({ email: email });
-};
-
-export const passwordhashed = async (text) => {
-  return await bcrypt.hash(text, 12);
 };

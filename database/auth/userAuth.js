@@ -3,7 +3,12 @@ import bcrypt from "bcrypt";
 import sendMail from "../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
-import { Response, registerData, findUser } from "../modules/supportModule.js";
+import {
+  Response,
+  registerData,
+  findUser,
+  passwordhashed,
+} from "../modules/supportModule.js";
 
 env.config();
 
@@ -11,43 +16,8 @@ env.config();
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
-// const Response = (data, statusCode, message, success) => {
-//   return {
-//     data: data,
-//     message: message,
-//     status: statusCode,
-//     success: success,
-//   };
-// };
-// const registerData = async (userType, email, phone, password, status) => {
-//   return {
-//     userType: userType,
-//     email: email,
-//     phone: phone,
-//     password: await passwordhashed(password),
-//     isActive: status,
-//   };
-// };
-
-// const findUser = async (email) => {
-//   return await UserModel.find({ email: email });
-// };
-
-// const passwordhashed = async (text) => {
-//   return await bcrypt.hash(text, 12);
-// };
-
-// const emailValidation = (email) => {
-//     if (!email.match(emailFormat))
-//       return Response(null, 500, "Not a valid email!", false);
-//   };
-
-// const phoneNoValidation = (phone) => {
-// if (!phone.match(phoneNoFormat))
-//     return Response(null, 500, "Not a valid phone number!", false);
-// };
-
 export const userRegister = async (req, res, next) => {
+  console.log(req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.send(Response(null, 500, "Not a valid email!", false));
@@ -70,12 +40,14 @@ export const userRegister = async (req, res, next) => {
     const newUser = await UserModel(
       await registerData(
         req.params.user,
+        "",
         req.body.email,
         req.body.phone,
         req.body.password,
         false
       )
     );
+    console.log(newUser);
     const result = await newUser.save();
     if (result?._id)
       res.send(Response(newUser, 200, "Account create successfully!", true));
@@ -242,7 +214,7 @@ export const setPassword = async (req, res, next) => {
       console.log(payload);
       const result = await UserModel.findOneAndUpdate(
         { _id: payload.id },
-        { $set: { password: await bcrypt.hash(req.body.newPassword, 12) } }
+        { $set: { password: await passwordhashed(req.body.newPassword) } }
       );
       if (result)
         return res.send(Response(null, 200, "Password reset successfully"));

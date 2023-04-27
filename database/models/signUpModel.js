@@ -6,6 +6,14 @@ const schema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  userName: {
+    type: String,
+    trim: true,
+  },
+  address: {
+    type: String,
+    trim: true,
+  },
   email: {
     type: String,
     trim: true,
