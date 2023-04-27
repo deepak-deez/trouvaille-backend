@@ -11,7 +11,7 @@ export const createOccasion = async (req, res) => {
     });
     const result = await occasion.save();
     res.send({
-      data: null,
+      data: result,
       message: 'new occasion added',
       success: true,
     });
@@ -44,9 +44,14 @@ export const getOccasion = async (req, res) => {
 export const modifyOccasion = async (req, res) => {
   try {
     const modifiedOccasion = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
-    const modifiedResult = await modifiedOccasion.save();
+    let modifiedResult = await modifiedOccasion.save();
     res.send({
-      data: null,
+      data: {
+        purpose: "Occasion",
+        image: req.body.image,
+        title: req.body.title,
+        description: req.body.description,
+      },
       message: 'occasion modified',
       success: true,
     });
@@ -66,7 +71,7 @@ export const deleteOccasion = async (req, res) => {
 
     if (!toBeDeletedOccasion) res.status(404).send("No item found");
     res.status(200).send({
-      data: null,
+      data: toBeDeletedOccasion,
       message: 'occasion deleted',
       success: true,
     });

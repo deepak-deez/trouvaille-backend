@@ -3,6 +3,8 @@ import cors from "cors";
 import { dataConnection } from "./connection.js";
 import * as appRouter from "./routes/route.js";
 import { port } from "./config.js";
+import multer from "multer";
+import { tripPackage } from "./schema/tripPackageModel.js";
 
 dataConnection();
 

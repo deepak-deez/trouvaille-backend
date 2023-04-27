@@ -12,7 +12,7 @@ export const createTripData = async (req, res) => {
     console.log(tripData);
     const result = await tripData.save();
     res.send({
-      data: null,
+      data: result,
       message: 'new category added',
       success: true,
     });
@@ -47,7 +47,12 @@ export const modifyTripData = async (req, res) => {
     const modifiedTripData = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
     const modifiedResult = await modifiedTripData.save();
     res.send({
-      data: null,
+      data: {
+        purpose: "Category",
+        image: req.body.image,
+        title: req.body.title,
+        description: req.body.description,
+      },
       message: 'category updated',
       success: true,
     });
@@ -67,7 +72,7 @@ export const deleteTrip = async (req, res) => {
 
     if (!toBeDeletedTrip) res.status(404).send("No item found");
     res.status(200).send({
-      data: null,
+      data: toBeDeletedTrip,
       message: 'category deleted',
       success: true,
     });

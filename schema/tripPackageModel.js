@@ -5,12 +5,16 @@ const tripPackageSchema = new mongoose.Schema({
   },
   title: {
     type: String,
+    trim: true,
+    // required: true,
   },
   image: {
-    type: String,
+    data: Buffer,
+    contentType: String,
   },
   duration: {
-    type: String,
+    type: Date,
+    required: true
   },
   startDate: {
     type: String,

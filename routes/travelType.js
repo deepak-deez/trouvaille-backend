@@ -13,7 +13,7 @@ export const createTravelType = async (req, res) => {
     const result = await tripType.save();
     console.log(result);
     res.send({
-      data: null,
+      data: result,
       message: 'New Travel type added',
       success: true,
     });
@@ -48,7 +48,12 @@ export const modifyTravelType = async (req, res) => {
     const modifiedTravelType = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
     const modifiedResult = await modifiedTravelType.save();
     res.send({
-      data: null,
+      data: {
+        purpose: "TravelType",
+        image: req.body.image,
+        title: req.body.title,
+        description: req.body.description,
+      },
       message: 'travel type modified',
       success: true,
     });
@@ -68,7 +73,7 @@ export const deleteTravelType = async (req, res) => {
 
     if (!toBeDeletedType) res.status(404).send("No item found");
     res.status(200).send({
-      data: null,
+      data: toBeDeletedType,
       message: 'Travel type deleted',
       success: true,
     });

@@ -11,7 +11,7 @@ export const createAmenity = async (req, res) => {
     });
     const amenityResult = await amenity.save();
     res.send({
-      data: null,
+      data: amenityResult,
       message: "new amenity added",
       success: true,
     });
@@ -44,12 +44,17 @@ export const getAmenity = async (req, res) => {
 export const modifyAmenity = async (req, res) => {
   try {
     const modifiedAmenity = await tripDetails.findByIdAndUpdate(
-      req.params.id,
-      req.body
+      req.params.id, req.body
     );
     const modifiedResult = await modifiedAmenity.save();
+    console.log(modifiedResult);
     res.send({
-      data: null,
+      data: {
+        purpose: "Amenity",
+        image: req.body.image,
+        title: req.body.title,
+        description: req.body.description,
+      },
       message: "amenity modified",
       success: true,
     });
@@ -71,7 +76,7 @@ export const deleteAmenity = async (req, res) => {
 
     if (!toBeDeletedAmenity) res.status(404).send("No item found");
     res.status(200).send({
-      data: null,
+      data: toBeDeletedAmenity,
       message: "amenity deleted",
       success: true,
     });
