@@ -1,11 +1,30 @@
 import { tripDetails } from "../schema/model.js";
+import multer from "multer";
+import fs from "fs";
+
+export const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+export const travelTypeIcon = multer({ storage: storage });
 
 //creating Travel type
 export const createTravelType = async (req, res) => {
+  let imageString = fs.readFileSync("images/" + req.file.originalname);
+  let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(encodeImage, "base64");
   try {
     const tripType = await tripDetails({
       purpose: "TravelType",
-      image: req.body.image,
+      icon: {
+        data: bufferImage,
+        contentType: "image/png+jpg+jpeg",
+      },
       title: req.body.title,
       description: req.body.description,
     });
@@ -50,7 +69,7 @@ export const modifyTravelType = async (req, res) => {
     res.send({
       data: {
         purpose: "TravelType",
-        image: req.body.image,
+        icon: req.body.icon,
         title: req.body.title,
         description: req.body.description,
       },

@@ -1,11 +1,30 @@
 import { tripDetails } from "../schema/model.js";
+import multer from "multer";
+import fs from "fs";
+
+export const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+export const amenityIcon = multer({ storage: storage });
 
 //creating Amenity
 export const createAmenity = async (req, res) => {
+  let imageString = fs.readFileSync("images/" + req.file.originalname);
+  let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(encodeImage, "base64");
   try {
     const amenity = await tripDetails({
       purpose: "Amenity",
-      image: req.body.image,
+      icon: {
+        data: bufferImage,
+        contentType: "image/png+jpg+jpeg",
+      },
       title: req.body.title,
       description: req.body.description,
     });
@@ -44,14 +63,15 @@ export const getAmenity = async (req, res) => {
 export const modifyAmenity = async (req, res) => {
   try {
     const modifiedAmenity = await tripDetails.findByIdAndUpdate(
-      req.params.id, req.body
+      req.params.id,
+      req.body
     );
     const modifiedResult = await modifiedAmenity.save();
     console.log(modifiedResult);
     res.send({
       data: {
         purpose: "Amenity",
-        image: req.body.image,
+        icon: req.body.icon,
         title: req.body.title,
         description: req.body.description,
       },

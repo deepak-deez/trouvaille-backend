@@ -35,16 +35,24 @@ import {
 
 import express, { request } from "express";
 import cors from "cors";
-import { image } from "./tripModule/package.js"
+import { amenityIcon } from "./amenity.js";
+import { occasionIcon } from "./occasion.js";
+import { travelTypeIcon } from "./travelType.js";
+import { categoryIcon } from "./tripCategory.js";
+import { image } from "./tripModule/package.js";
 
 export const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.post("/createTripData", createTripData);
-app.post("/createAmenity", createAmenity);
-app.post("/createOccasion", createOccasion);
-app.post("/createTravelType", createTravelType);
+app.post("/createTripData", categoryIcon.single("testImage"), createTripData);
+app.post("/createAmenity", amenityIcon.single("testImage"), createAmenity);
+app.post("/createOccasion", occasionIcon.single("testImage"), createOccasion);
+app.post(
+  "/createTravelType",
+  travelTypeIcon.single("testImage"),
+  createTravelType
+);
 app.post("/createTripPackage", image.single("testImage"), createTripPackage);
 app.get("/getTripData", getTripData);
 app.get("/getAmenity", getAmenity);

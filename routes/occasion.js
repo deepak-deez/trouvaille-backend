@@ -1,11 +1,30 @@
 import { tripDetails } from "../schema/model.js";
+import multer from "multer";
+import fs from "fs";
+
+export const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+export const occasionIcon = multer({ storage: storage });
 
 //creating Occasion
 export const createOccasion = async (req, res) => {
+  let imageString = fs.readFileSync("images/" + req.file.originalname);
+  let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(encodeImage, "base64");
   try {
     const occasion = await tripDetails({
       purpose: "Occasion",
-      image: req.body.image,
+      icon: {
+        data: bufferImage,
+        contentType: "image/png+jpg+jpeg",
+      },
       title: req.body.title,
       description: req.body.description,
     });
@@ -48,7 +67,7 @@ export const modifyOccasion = async (req, res) => {
     res.send({
       data: {
         purpose: "Occasion",
-        image: req.body.image,
+        icon: req.body.icon,
         title: req.body.title,
         description: req.body.description,
       },

@@ -3,8 +3,9 @@ const schema = new mongoose.Schema({
   purpose: {
     type: String,
   },
-  image: {
-    type: String,
+  icon: {
+    data: Buffer,
+    contentType: String,
   },
   title: {
     type: String,

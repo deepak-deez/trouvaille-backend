@@ -7,7 +7,7 @@ export const storage = multer.diskStorage({
     cb(null, "images");
   },
   filename: (req, file, cb) => {
-    cb(null, "testImage");
+    cb(null, file.originalname);
   },
 });
 
@@ -15,13 +15,16 @@ export const image = multer({ storage: storage });
 
 //creating trip packages
 export const createTripPackage = async (req, res) => {
+  let imageString = fs.readFileSync("images/" + req.file.originalname);
+  let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(encodeImage, "base64");
   try {
-    console.log(req.body);
     const packages = await tripPackage({
       purpose: "Package",
       title: req.body.title,
       image: {
-        data: fs.readFileSync("images/" + "testImage", "utf8"),
+        // data: fs.readFileSync("images/" + "testImage", "utf8"),
+        data: bufferImage,
         contentType: "image/png+jpg+jpeg",
       },
       duration: req.body.duration,
