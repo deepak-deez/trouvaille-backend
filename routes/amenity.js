@@ -1,63 +1,52 @@
 import { tripDetails } from "../schema/model.js";
 import multer from "multer";
+import { Response } from "../modules/supportModule.js";
 import fs from "fs";
 
-export const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
+// export const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "images");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.originalname);
+//   },
+// });
 
-export const amenityIcon = multer({ storage: storage });
+// export const amenityIcon = multer({ storage: storage });
 
-//creating Amenity
-export const createAmenity = async (req, res) => {
-  let imageString = fs.readFileSync("images/" + req.file.originalname);
-  let encodeImage = imageString.toString("base64");
-  let bufferImage = Buffer.from(encodeImage, "base64");
-  try {
-    const amenity = await tripDetails({
-      purpose: "Amenity",
-      icon: {
-        data: bufferImage,
-        contentType: "image/png+jpg+jpeg",
-      },
-      title: req.body.title,
-      description: req.body.description,
-    });
-    const amenityResult = await amenity.save();
-    res.send({
-      data: amenityResult,
-      message: "new amenity added",
-      success: true,
-    });
-  } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.messge,
-      success: false,
-    });
-  }
-};
+// //creating Amenity
+// export const createAmenity = async (req, res, next) => {
+//   let imageString = fs.readFileSync("images/" + req.file.originalname);
+//   let encodeImage = imageString.toString("base64");
+//   let bufferImage = Buffer.from(encodeImage, "base64");
+//   try {
+//     const amenity = await tripDetails({
+//       purpose: "Amenity",
+//       icon: {
+//         data: bufferImage,
+//         contentType: "image/png+jpg+jpeg",
+//       },
+//       title: req.body.title,
+//       description: req.body.description,
+//     });
+//     const amenityResult = await amenity.save();
+//     res.send(Response(amenityResult, 200, "New amenity added.", true));
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
-//getting Amenity
-export const getAmenity = async (req, res) => {
-  const data = await tripDetails.find({
-    purpose: "Amenity",
-  });
-  try {
-    res.send(data);
-  } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.messge,
-      success: false,
-    });
-  }
-};
+// //getting Amenity
+// export const getAmenity = async (req, res, next) => {
+//   try {
+//     const data = await tripDetails.find({ purpose: req.params.trip });
+//     if (data.length !== 0)
+//       res.send(Response(data, 200, "All amemities are here...", true));
+//     else res.send(Response(null, 500, "Amenity not found!", true));
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 //modifying Amenity
 export const modifyAmenity = async (req, res) => {
