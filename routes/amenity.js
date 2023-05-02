@@ -1,4 +1,4 @@
-import { tripDetails } from "../schema/model.js";
+import { tripDetails } from "../schema/FeatureModel.js";
 import multer from "multer";
 import { Response } from "../modules/supportModule.js";
 import fs from "fs";
@@ -49,32 +49,32 @@ import fs from "fs";
 // };
 
 //modifying Amenity
-export const modifyAmenity = async (req, res) => {
-  try {
-    const modifiedAmenity = await tripDetails.findByIdAndUpdate(
-      req.params.id,
-      req.body
-    );
-    const modifiedResult = await modifiedAmenity.save();
-    console.log(modifiedResult);
-    res.send({
-      data: {
-        purpose: "Amenity",
-        icon: req.body.icon,
-        title: req.body.title,
-        description: req.body.description,
-      },
-      message: "amenity modified",
-      success: true,
-    });
-  } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.message,
-      success: false,
-    });
-  }
-};
+// export const modifyAmenity = async (req, res) => {
+//   try {
+//     const modifiedAmenity = await tripDetails.findByIdAndUpdate(
+//       req.params.id,
+//       req.body
+//     );
+//     const modifiedResult = await modifiedAmenity.save();
+//     console.log(modifiedResult);
+//     res.send({
+//       data: {
+//         purpose: "Amenity",
+//         icon: req.body.icon,
+//         title: req.body.title,
+//         description: req.body.description,
+//       },
+//       message: "amenity modified",
+//       success: true,
+//     });
+//   } catch (error) {
+//     res.status(500).send({
+//       data: null,
+//       message: error.message,
+//       success: false,
+//     });
+//   }
+// };
 
 //deleting Amenity
 export const deleteAmenity = async (req, res) => {

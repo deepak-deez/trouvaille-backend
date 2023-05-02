@@ -7,8 +7,10 @@ const app = express();
 app.post(
   "/create/:feature",
   tripStorageEngine.single("featureImages"),
-  utility.createAmenity
+  utility.createFeature
 );
-app.get("/get/:feature", utility.getAmenity);
+app.get("/get/:feature", utility.showAll);
+app.post("/update/:feature/:id", utility.updateFeature);
+app.delete("/delete/:feature/:id", utility.deleteFeature);
 
 export default app;

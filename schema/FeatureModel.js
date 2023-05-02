@@ -19,4 +19,4 @@ const schema = new mongoose.Schema({
   },
 });
 
-export const tripDetails = mongoose.model("tripDetails", schema);
+export const featureModel = mongoose.model("tripDetails", schema);
