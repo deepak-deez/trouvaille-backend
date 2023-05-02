@@ -32,7 +32,7 @@ export const createFeature = async (req, res, next) => {
     console.log(result);
     const saveData = await result.save();
     if (saveData?._id)
-      res.send(Response(result, 200, "New amenity added.", true));
+      res.send(Response(result, 200, `New ${req.params.feature} added.`, true));
     else
       res.send(Response(null, 500, `${req.params.feature} not added!`, false));
   } catch (error) {
@@ -45,8 +45,11 @@ export const showAll = async (req, res, next) => {
   try {
     const result = await featureModel.find({ purpose: req.params.feature });
     if (result.length !== 0)
-      res.send(Response(result, 200, "All amemities are here...", true));
-    else res.send(Response(null, 500, "Amenity not found!", true));
+      res.send(
+        Response(result, 200, `All ${req.params.feature} are here...`, true)
+      );
+    else
+      res.send(Response(null, 500, `${req.params.feature} not found!`, true));
   } catch (error) {
     next(error);
   }
@@ -56,7 +59,7 @@ export const showAll = async (req, res, next) => {
 export const updateFeature = async (req, res, next) => {
   try {
     const result = await featureModel.findOneAndUpdate(
-      { _id: req.params.id },
+      { _id: req.params.id, purpose: req.params.feature },
       {
         $set: {
           title: req.body.title,
@@ -77,7 +80,10 @@ export const updateFeature = async (req, res, next) => {
 export const deleteFeature = async (req, res, next) => {
   try {
     const { feature, id } = req.params;
-    const data = await featureModel.findOne({ _id: id });
+    const data = await featureModel.findOne({
+      _id: id,
+      purpose: req.params.feature,
+    });
     if (data === null)
       return res.send(Response(null, 500, `${req.params.feature} not found!`));
 
