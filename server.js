@@ -2,7 +2,7 @@ import db from "./database/connection.js";
 import express from "express";
 import cors from "cors";
 import env from "dotenv";
-import tripRoute from "./routes/tripRoutes.js";
+import tripRoute from "./routes/featureRoute.js";
 
 env.config();
 const app = express();

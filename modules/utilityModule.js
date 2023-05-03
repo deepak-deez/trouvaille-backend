@@ -1,4 +1,4 @@
-import { featureModel } from "../schema/FeatureModel.js";
+import { featureModel } from "../models/FeatureModel.js";
 import { Response } from "../modules/supportModule.js";
 // import * as fs from "fs/promises";
 import { readFileSync } from "fs";
@@ -13,7 +13,8 @@ import { readFileSync } from "fs";
 //create
 export const createFeature = async (req, res, next) => {
   console.log("create function called!");
-  const filePath = "./database/images/" + req.file.originalname;
+  const filePath =
+    `./database/images/${req.params.feature}/` + req.file.originalname;
   let imageString = readFileSync(filePath);
   console.log(imageString);
   let encodeImage = imageString.toString("base64");
