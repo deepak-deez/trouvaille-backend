@@ -23,7 +23,6 @@ export const createTripPackage = async (req, res) => {
       purpose: "Package",
       title: req.body.title,
       image: {
-        // data: fs.readFileSync("images/" + "testImage", "utf8"),
         data: bufferImage,
         contentType: "image/png+jpg+jpeg",
       },
