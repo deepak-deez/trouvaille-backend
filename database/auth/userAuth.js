@@ -38,18 +38,12 @@ export const userRegister = async (req, res, next) => {
     }
 
     const newUser = await UserModel(
-      await registerData(
-        req.params.user,
-        "",
-        req.body.email,
-        req.body.phone,
-        false
-      )
+      await registerData(req.params.user, req.body.email, req.body.phone, false)
     );
     console.log(newUser);
     const result = await newUser.save();
     if (result?._id)
-      res.send(Response(newUser, 200, "Account create successfully!", true));
+      res.send(Response(newUser, 200, "Account created successfully!", true));
     else res.send(Response(null, 500, "Failed to create account!", false));
   } catch (err) {
     next(err);
@@ -63,13 +57,13 @@ export const userLogin = async (req, res, next) => {
 
     const user = await findUser(req.body.email);
 
-    if (user === null)
+    if (user.length === 0)
       return res.send(
         Response(null, 500, `${req.params.user} not found!`, false)
       );
 
     if (req.params.user !== user[0].userType)
-      return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
+      return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
     else {
       const isMatched = await bcrypt.compare(
         req.body.password,
@@ -87,8 +81,19 @@ export const userLogin = async (req, res, next) => {
           },
           { new: true }
         );
+        const payload = { userDetails: result };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+          expiresIn: "7d",
+        });
         console.log(result, "result");
-        return res.send(Response(result, 200, "Login Sucessfull!", true));
+        return res.send(
+          Response(
+            { userDetails: result, token: token },
+            200,
+            "Login Sucessfull!",
+            true
+          )
+        );
       } else {
         return res.send(Response(null, 500, "Wrong password!", false));
       }
@@ -138,7 +143,7 @@ export const sendResetMail = async (req, res, next) => {
       return res.send(Response(null, 500, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    if (user === null)
+    if (user.length === 0)
       return res.send(
         Response(null, 500, `${req.params.user} not found!`, false)
       );
@@ -170,13 +175,13 @@ export const resetPasswordValidation = async (req, res, next) => {
   const { id, token } = req.params;
   try {
     const user = await UserModel.find({ _id: id });
-    if (user === null)
+    if (user.length === 0)
       return res.send(
         Response(null, 500, `${req.params.user} not found!`, false)
       );
 
     if (req.params.user !== user[0].userType)
-      return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
+      return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
 
     const secret = process.env.JWT_SECRET + user.password;
     try {
@@ -187,7 +192,7 @@ export const resetPasswordValidation = async (req, res, next) => {
         Response(
           { email: user[0].email },
           200,
-          `${req.params.user} varified for the reset password`,
+          `${req.params.user} varified for the reset password.`,
           true
         )
       );
@@ -205,7 +210,8 @@ export const setPassword = async (req, res, next) => {
       return res.send(Response(null, 500, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    if (user === null) res.send(Response(null, 500, "User not found", false));
+    if (user.length === 0)
+      return res.send(Response(null, 500, "User not found!", false));
 
     const secret = process.env.JWT_SECRET + user[0].password;
     try {
@@ -216,7 +222,7 @@ export const setPassword = async (req, res, next) => {
         { $set: { password: await passwordhashed(req.body.newPassword) } }
       );
       if (result)
-        return res.send(Response(null, 200, "Password reset successfully"));
+        return res.send(Response(null, 200, "Password reset successfully."));
       else
         return res.send(Response(null, 500, "Reset password failed!", false));
     } catch (err) {
