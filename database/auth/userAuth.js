@@ -38,7 +38,14 @@ export const userRegister = async (req, res, next) => {
     }
 
     const newUser = await UserModel(
-      await registerData(req.params.user, req.body.email, req.body.phone, false)
+      await registerData(
+        req.params.user,
+        "",
+        req.body.email,
+        req.body.phone,
+        req.body.password,
+        false
+      )
     );
     console.log(newUser);
     const result = await newUser.save();
