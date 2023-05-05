@@ -1,4 +1,4 @@
-import { featureModel } from "../models/FeatureModel.js";
+import { featureModel } from "../models/featureModel.js";
 import { Response } from "../modules/supportModule.js";
 // import * as fs from "fs/promises";
 import { readFileSync } from "fs";
