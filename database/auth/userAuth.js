@@ -1,6 +1,6 @@
-import { UserModel } from "../models/signUpModel.js";
+import { UserModel } from "../../models/signUpModel.js";
 import bcrypt from "bcrypt";
-import sendMail from "../controller/sendMail.js";
+import sendMail from "../../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
 import {
@@ -8,7 +8,7 @@ import {
   registerData,
   findUser,
   passwordhashed,
-} from "../modules/supportModule.js";
+} from "../../modules/supportModule.js";
 
 env.config();
 
@@ -43,7 +43,6 @@ export const userRegister = async (req, res, next) => {
         "",
         req.body.email,
         req.body.phone,
-        req.body.password,
         false
       )
     );

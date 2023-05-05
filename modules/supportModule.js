@@ -18,8 +18,8 @@ export const registerData = async (
   userType,
   name,
   email,
-  phone,
-  password,
+  phone = "",
+  password = "",
   status
 ) => {
   console.log(userType, name, email, phone, password, status);

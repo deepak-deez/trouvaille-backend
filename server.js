@@ -1,7 +1,7 @@
 import express from "express";
 import db from "./database/connection.js";
-import * as userRouter from "./database/routes/userRoute.js";
-import * as adminRouter from "./database/routes/backendUserRoute.js";
+import * as userRouter from "./routes/userRoute.js";
+import * as adminRouter from "./routes/backendUserRoute.js";
 import cors from "cors";
 import env from "dotenv";
 

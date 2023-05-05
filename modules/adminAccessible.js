@@ -47,7 +47,8 @@ export const addNewUser = async (req, res, next) => {
       };
 
       const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-      const link = `http://localhost:7080/reset-password/${req.params.user}/${backendUser._id}/${token}`;
+      const link = `http://localhost:${process.env.PORT}/reset-password/${req.params.user}/${backendUser._id}/${token}`;
+      console.log(link);
 
       if (await sendMail(req.body.email, link))
         return res.send(Response(null, 500, "Failed to send mail!", false));
@@ -117,33 +118,33 @@ export const changePassword = async (req, res, next) => {
   try {
     const admin = await findUser(req.body.email);
     // console.log(admin);
-    console.log(req.body.oldPassword, admin[0].password);
-    const isMatched = await bcrypt.compare(
-      req.body.oldPassword,
-      admin[0].password
-    );
+    // console.log(req.body.oldPassword, admin[0].password);
+    // const isMatched = await bcrypt.compare(
+    //   req.body.oldPassword,
+    //   admin[0].password
+    // );
 
-    console.log(isMatched);
-    if (isMatched) {
-      const result = await UserModel.findOneAndUpdate(
-        {
-          _id: admin[0]._id,
+    // console.log(isMatched);
+    // if (isMatched) {
+    const result = await UserModel.findOneAndUpdate(
+      {
+        _id: admin[0]._id,
+      },
+      {
+        $set: {
+          password: await passwordhashed(req.body.newPassword),
         },
-        {
-          $set: {
-            password: await passwordhashed(req.body.newPassword),
-          },
-        },
-        { new: true }
+      },
+      { new: true }
+    );
+    if (result) {
+      return res.send(
+        Response(Response(result, 200, "Password reset succesfully.", true))
       );
-      if (result) {
-        return res.send(
-          Response(Response(result, 200, "Password reset succesfully.", true))
-        );
-      }
-    } else {
-      return res.send(Response(null, 500, "Password doesn't match!", false));
     }
+    // } else {
+    //   return res.send(Response(null, 500, "Password doesn't match!", false));
+    // }
   } catch (error) {
     next(error);
   }
