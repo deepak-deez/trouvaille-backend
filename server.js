@@ -1,17 +1,31 @@
-import express, { request } from "express";
+import db from "./database/connection.js";
+import express from "express";
 import cors from "cors";
-import { dataConnection } from "./connection.js";
-import * as appRouter from "./routes/route.js";
-import { port } from "./config.js";
-import multer from "multer";
-import { tripPackage } from "./schema/tripPackageModel.js";
+import env from "dotenv";
+import tripRoute from "./routes/featureRoute.js";
 
-dataConnection();
-
+env.config();
 const app = express();
+
 app.use(express.json());
 app.use(cors());
-app.use(appRouter.app);
+app.use(tripRoute);
 
-app.listen(`${port}`);
-export default app;
+app.use((req, res, next) => {
+  next(new Error("Page not found"));
+});
+
+app.use((error, req, res, next) => {
+  if (error) {
+    console.log("error");
+    res.status(404).send({
+      data: null,
+      message: error.message,
+      success: false,
+    });
+  }
+});
+
+app.listen(process.env.PORT, () => {
+  console.log("Server created");
+});

@@ -10,12 +10,13 @@ const schema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
   },
   description: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
   },
 });
 
-export const tripDetails = mongoose.model("tripDetails", schema)
+export const featureModel = mongoose.model("tripDetails", schema);

@@ -1,71 +1,26 @@
-import {
-  createOccasion,
-  getOccasion,
-  modifyOccasion,
-  deleteOccasion,
-} from "./occasion.js";
+import express from "express";
+import * as utility from "../modules/utilityModule.js";
+import { tripStorageEngine } from "../modules/multerStorageEngine.js";
+import * as tripModule from "../modules/tripPackageModule.js";
 
-import {
-  createTravelType,
-  getTravelType,
-  modifyTravelType,
-  deleteTravelType,
-} from "./travelType.js";
+const app = express();
 
-import {
-  createAmenity,
-  getAmenity,
-  modifyAmenity,
-  deleteAmenity,
-} from "../modules/utilityModule.js";
-
-import {
-  createTripData,
-  getTripData,
-  modifyTripData,
-  deleteTrip,
-} from "./tripCategory.js";
-
-import {
-  createTripPackage,
-  getTripPackage,
-  updatePackage,
-  deletePackage,
-} from "../modules/tripPackageModule.js";
-
-import express, { request } from "express";
-import cors from "cors";
-import { amenityIcon } from "../modules/utilityModule.js";
-import { occasionIcon } from "./occasion.js";
-import { travelTypeIcon } from "./travelType.js";
-import { categoryIcon } from "./tripCategory.js";
-import { image } from "../modules/tripPackageModule.js";
-
-export const app = express();
-app.use(express.json());
-app.use(cors());
-
-app.post("/createTripData", categoryIcon.single("testImage"), createTripData);
-app.post("/createAmenity", amenityIcon.single("testImage"), createAmenity);
-app.post("/createOccasion", occasionIcon.single("testImage"), createOccasion);
 app.post(
-  "/createTravelType",
-  travelTypeIcon.single("testImage"),
-  createTravelType
+  "/create/:feature",
+  tripStorageEngine.single("featureImages"),
+  utility.createFeature
 );
-app.post("/createTripPackage", image.single("testImage"), createTripPackage);
-app.get("/getTripData", getTripData);
-app.get("/getAmenity", getAmenity);
-app.get("/getOccasion", getOccasion);
-app.get("/getTravelType", getTravelType);
-app.get("/getTripPackage", getTripPackage);
-app.put("/modifyTripData/:id", modifyTripData);
-app.put("/modifyAmenity/:id", modifyAmenity);
-app.put("/modifyOccasion/:id", modifyOccasion);
-app.put("/modifyTravelType/:id", modifyTravelType);
-app.put("/modifyPackage/:id", updatePackage);
-app.delete("/deleteTrip/:id", deleteTrip);
-app.delete("/deleteAmenity/:id", deleteAmenity);
-app.delete("/deleteOccasion/:id", deleteOccasion);
-app.delete("/deleteTravelType/:id", deleteTravelType);
-app.delete("/deletePackage/:id", deletePackage);
+app.get("/get/:feature", utility.showAll);
+app.post("/update/:feature/:id", utility.updateFeature);
+app.delete("/delete/:feature/:id", utility.deleteFeature);
+
+app.post(
+  "/create-module/:trip",
+  tripStorageEngine.single("packageImage"),
+  tripModule.createTripPackage
+);
+app.get("/get-module/:trip", tripModule.getTripPackage);
+app.post("/update-module/:trip/:id", tripModule.updatePackage);
+app.delete("/delete-module/:trip/:id", tripModule.deletePackage);
+
+export default app;

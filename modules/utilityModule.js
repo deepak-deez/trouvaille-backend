@@ -1,26 +1,28 @@
-import { tripDetails } from "../models/featureModel.js";
-import multer from "multer";
-import fs from "fs";
+import { featureModel } from "../models/tripfeatureModel.js";
+import { Response } from "../modules/supportModule.js";
+// import * as fs from "fs/promises";
+import { readFileSync } from "fs";
 
-export const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
+// export const readImageFile = async (image) => {
+//   console.log("Path:", image);
+//   const data = await fs.readFile(image, "utf-8");
+//   console.log("data : ", data);
+//   return data;
+// };
 
-export const amenityIcon = multer({ storage: storage });
-
-//creating Amenity
-export const createAmenity = async (req, res) => {
-  let imageString = fs.readFileSync("images/" + req.file.originalname);
+//create
+export const createFeature = async (req, res, next) => {
+  console.log("create function called!");
+  const filePath =
+    `./database/images/${req.params.feature}/` + req.file.originalname;
+  let imageString = readFileSync(filePath);
+  console.log(imageString);
   let encodeImage = imageString.toString("base64");
   let bufferImage = Buffer.from(encodeImage, "base64");
+  //   console.log("Buffer :", bufferImage);
   try {
-    const amenity = await tripDetails({
-      purpose: "Amenity",
+    const result = await featureModel({
+      purpose: req.params.feature,
       icon: {
         data: bufferImage,
         contentType: "image/png+jpg+jpeg",
@@ -28,83 +30,73 @@ export const createAmenity = async (req, res) => {
       title: req.body.title,
       description: req.body.description,
     });
-    const amenityResult = await amenity.save();
-    res.send({
-      data: amenityResult,
-      message: "new amenity added",
-      success: true,
-    });
+    console.log(result);
+    const saveData = await result.save();
+    if (saveData?._id)
+      res.send(Response(result, 200, `New ${req.params.feature} added.`, true));
+    else
+      res.send(Response(null, 500, `${req.params.feature} not added!`, false));
   } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.messge,
-      success: false,
-    });
+    next(error);
   }
 };
 
-//getting Amenity
-export const getAmenity = async (req, res) => {
-  const data = await tripDetails.find({
-    purpose: "Amenity",
-  });
+//get
+export const showAll = async (req, res, next) => {
   try {
-    res.send(data);
+    const result = await featureModel.find({ purpose: req.params.feature });
+    if (result.length !== 0)
+      res.send(
+        Response(result, 200, `All ${req.params.feature} are here...`, true)
+      );
+    else
+      res.send(Response(null, 500, `${req.params.feature} not found!`, true));
   } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.messge,
-      success: false,
-    });
+    next(error);
   }
 };
 
-//modifying Amenity
-export const modifyAmenity = async (req, res) => {
+// update
+export const updateFeature = async (req, res, next) => {
   try {
-    const modifiedAmenity = await tripDetails.findByIdAndUpdate(
-      req.params.id,
-      req.body
-    );
-    const modifiedResult = await modifiedAmenity.save();
-    console.log(modifiedResult);
-    res.send({
-      data: {
-        purpose: "Amenity",
-        icon: req.body.icon,
-        title: req.body.title,
-        description: req.body.description,
+    const result = await featureModel.findOneAndUpdate(
+      { _id: req.params.id, purpose: req.params.feature },
+      {
+        $set: {
+          title: req.body.title,
+          description: req.body.description,
+        },
       },
-      message: "amenity modified",
-      success: true,
-    });
-  } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error.message,
-      success: false,
-    });
+      { new: true }
+    );
+    res.send(
+      Response(result, 200, `${req.params.feature} data is updated`, true)
+    );
+  } catch (err) {
+    next(err);
   }
 };
 
-//deleting Amenity
-export const deleteAmenity = async (req, res) => {
+// delete
+export const deleteFeature = async (req, res, next) => {
   try {
-    const toBeDeletedAmenity = await tripDetails.findByIdAndDelete(
-      req.params.id
-    );
+    const { feature, id } = req.params;
+    const data = await featureModel.findOne({
+      _id: id,
+      purpose: req.params.feature,
+    });
+    if (data === null)
+      return res.send(Response(null, 500, `${req.params.feature} not found!`));
 
-    if (!toBeDeletedAmenity) res.status(404).send("No item found");
-    res.status(200).send({
-      data: toBeDeletedAmenity,
-      message: "amenity deleted",
-      success: true,
+    const result = await featureModel.findOneAndDelete({
+      _id: id,
     });
+    if (result) {
+      return res.send(
+        Response(null, 200, `${feature} deleted successfully.`, true)
+      );
+    }
   } catch (error) {
-    res.status(500).send({
-      data: null,
-      message: error,
-      success: false,
-    });
+    next(error);
   }
 };

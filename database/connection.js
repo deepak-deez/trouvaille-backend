@@ -1,19 +1,20 @@
 import mongoose from "mongoose";
-import { username, password, clustername } from "../config.js";
+import env from "dotenv";
 
-export const dataConnection = () => {
-  mongoose.connect(
-    `mongodb+srv://${username}:${password}@${clustername}.mongodb.net/test`,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("Connected...");
-  })
-  .catch(() => {
-    console.log("error...");
-  })
-};
+env.config();
 
+mongoose.connect(process.env.TripDatabase, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.on("error", (err) => {
+  console.log(err);
+});
+db.on("connected", () => {
+  console.log("Database connected...");
+});
+
+export default db;

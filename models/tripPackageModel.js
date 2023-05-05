@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
 const tripPackageSchema = new mongoose.Schema({
-  purpose: {
-    type: String,
-  },
   title: {
     type: String,
     trim: true,
@@ -13,66 +10,88 @@ const tripPackageSchema = new mongoose.Schema({
     contentType: String,
   },
   duration: {
-    type: Date,
-    required: true
-  },
-  startDate: {
     type: String,
+    required: true,
   },
-  endDate: {
-    type: String,
-  },
-  category: {
-    type: String,
-  },
+  activities: [
+    {
+      date: {
+        type: String,
+      },
+      details: {
+        type: String,
+      },
+    },
+  ],
+  tripCategory: [
+    {
+      category: { type: String },
+    },
+  ],
   placeNumber: {
     type: Number,
+    require: true,
   },
   maximumGuests: {
     type: Number,
+    require: true,
   },
-  tripHighlights: {
-    title: {
-      type: String,
-    },
-    name: {
-      type: String,
-    },
-    description: {
-      type: String,
-    },
-    icon: {
-      type: String,
-    },
+  highlightTitle: {
+    type: String,
+    trim: true,
   },
+  tripHighlights: [
+    {
+      name: {
+        type: String,
+        trim: true,
+      },
+      description: { type: String },
+      icon: {
+        data: Buffer,
+        contentType: String,
+      },
+    },
+  ],
+
   price: {
     type: Number,
+    require: true,
   },
   discountedPrice: {
     type: Number,
+    require: true,
   },
-  occasions: {
-    type: String,
-  },
+  occasions: [
+    {
+      name: { type: String },
+    },
+  ],
   travelType: {
     type: String,
+    require: true,
   },
-  amenities: {
-    type: String,
-  },
+  amenities: [
+    {
+      name: { type: String },
+    },
+  ],
   briefDescription: {
     type: String,
   },
-  faq: {
-    question: {
-      type: String,
+  faq: [
+    {
+      question: {
+        type: String,
+      },
+      answer: {
+        type: String,
+      },
     },
-    answer: {
-      type: String,
-    },
-  },
+  ],
   status: {
     type: String,
+    require: true,
   },
 });
 
