@@ -25,7 +25,7 @@ export const registerData = async (
   console.log(userType, name, email, phone, password, status);
   return {
     userType: userType,
-    name: name,
+    userName: name,
     email: email,
     phone: phone,
     password: await passwordhashed(password),

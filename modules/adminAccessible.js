@@ -12,7 +12,6 @@ import {
 } from "../modules/supportModule.js";
 
 env.config();
-
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
@@ -33,11 +32,12 @@ export const addNewUser = async (req, res, next) => {
         req.body.name,
         req.body.email,
         "",
-        req.body.password,
+        "",
         false
       )
     );
     const backendUser = await newUser.save();
+    console.log(backendUser);
 
     if (backendUser) {
       const secret = process.env.JWT_SECRET + req.body.password;
@@ -169,7 +169,8 @@ export const deleteUser = async (req, res, next) => {
   try {
     const { user, id } = req.params;
     const admin = await UserModel.findOne({ _id: id });
-    console.log(admin.userType);
+    if (admin === null)
+      return res.send(Response(null, 500, `${req.params.user} not found!`));
     if (admin.userType === "Admin") {
       return res.send(Response(null, 500, "Cannot delete an admin.", false));
     }
