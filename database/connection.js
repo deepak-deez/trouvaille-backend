@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { username, password, clustername } from "./config.js";
+import { username, password, clustername } from "../config.js";
 // import env from "dotenv";
 // env.config();
 

@@ -17,7 +17,7 @@ import {
   getAmenity,
   modifyAmenity,
   deleteAmenity,
-} from "./amenity.js";
+} from "../modules/utilityModule.js";
 
 import {
   createTripData,
@@ -31,15 +31,15 @@ import {
   getTripPackage,
   updatePackage,
   deletePackage,
-} from "./tripModule/package.js";
+} from "../modules/tripPackageModule.js";
 
 import express, { request } from "express";
 import cors from "cors";
-import { amenityIcon } from "./amenity.js";
+import { amenityIcon } from "../modules/utilityModule.js";
 import { occasionIcon } from "./occasion.js";
 import { travelTypeIcon } from "./travelType.js";
 import { categoryIcon } from "./tripCategory.js";
-import { image } from "./tripModule/package.js";
+import { image } from "../modules/tripPackageModule.js";
 
 export const app = express();
 app.use(express.json());

@@ -1,4 +1,4 @@
-import { tripDetails } from "../schema/model.js";
+import { tripDetails } from "../models/featureModel.js";
 import multer from "multer";
 import fs from "fs";
 
@@ -11,16 +11,16 @@ export const storage = multer.diskStorage({
   },
 });
 
-export const occasionIcon = multer({ storage: storage });
+export const amenityIcon = multer({ storage: storage });
 
-//creating Occasion
-export const createOccasion = async (req, res) => {
+//creating Amenity
+export const createAmenity = async (req, res) => {
   let imageString = fs.readFileSync("images/" + req.file.originalname);
   let encodeImage = imageString.toString("base64");
   let bufferImage = Buffer.from(encodeImage, "base64");
   try {
-    const occasion = await tripDetails({
-      purpose: "Occasion",
+    const amenity = await tripDetails({
+      purpose: "Amenity",
       icon: {
         data: bufferImage,
         contentType: "image/png+jpg+jpeg",
@@ -28,25 +28,25 @@ export const createOccasion = async (req, res) => {
       title: req.body.title,
       description: req.body.description,
     });
-    const result = await occasion.save();
+    const amenityResult = await amenity.save();
     res.send({
-      data: result,
-      message: 'new occasion added',
+      data: amenityResult,
+      message: "new amenity added",
       success: true,
     });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.message,
+      message: error.messge,
       success: false,
     });
   }
 };
 
-//getting Occasion
-export const getOccasion = async (req, res) => {
+//getting Amenity
+export const getAmenity = async (req, res) => {
   const data = await tripDetails.find({
-    purpose: "Occasion"
+    purpose: "Amenity",
   });
   try {
     res.send(data);
@@ -59,19 +59,23 @@ export const getOccasion = async (req, res) => {
   }
 };
 
-//modifying Occasion
-export const modifyOccasion = async (req, res) => {
+//modifying Amenity
+export const modifyAmenity = async (req, res) => {
   try {
-    const modifiedOccasion = await tripDetails.findByIdAndUpdate(req.params.id, req.body);
-    let modifiedResult = await modifiedOccasion.save();
+    const modifiedAmenity = await tripDetails.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    const modifiedResult = await modifiedAmenity.save();
+    console.log(modifiedResult);
     res.send({
       data: {
-        purpose: "Occasion",
+        purpose: "Amenity",
         icon: req.body.icon,
         title: req.body.title,
         description: req.body.description,
       },
-      message: 'occasion modified',
+      message: "amenity modified",
       success: true,
     });
   } catch (error) {
@@ -83,21 +87,23 @@ export const modifyOccasion = async (req, res) => {
   }
 };
 
-//deleting Occasion
-export const deleteOccasion = async (req, res) => {
+//deleting Amenity
+export const deleteAmenity = async (req, res) => {
   try {
-    const toBeDeletedOccasion = await tripDetails.findByIdAndDelete(req.params.id);
+    const toBeDeletedAmenity = await tripDetails.findByIdAndDelete(
+      req.params.id
+    );
 
-    if (!toBeDeletedOccasion) res.status(404).send("No item found");
+    if (!toBeDeletedAmenity) res.status(404).send("No item found");
     res.status(200).send({
-      data: toBeDeletedOccasion,
-      message: 'occasion deleted',
+      data: toBeDeletedAmenity,
+      message: "amenity deleted",
       success: true,
     });
   } catch (error) {
     res.status(500).send({
       data: null,
-      message: error.message,
+      message: error,
       success: false,
     });
   }

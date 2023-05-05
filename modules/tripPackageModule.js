@@ -1,4 +1,4 @@
-import { tripPackage } from "../../schema/tripPackageModel.js";
+import { tripPackage } from "../models/tripPackageModel.js";
 import multer from "multer";
 import fs from "fs";
 
