@@ -56,7 +56,7 @@ export const userRegister = async (req, res, next) => {
   }
 };
 
-export const FrontendUserLogin = async (req, res, next) => {
+export const userLogin = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
       return res.send(Response(null, 500, "Not a valid email!", false));
@@ -98,7 +98,7 @@ export const FrontendUserLogin = async (req, res, next) => {
   }
 };
 
-export const FrontendUserLogout = async (req, res, next) => {
+export const userLogout = async (req, res, next) => {
   try {
     const user = await findUser(req.body.email);
     const result = await UserModel.findOneAndUpdate(
@@ -120,7 +120,7 @@ export const FrontendUserLogout = async (req, res, next) => {
   }
 };
 
-export const FrontendUserData = async (req, res, next) => {
+export const userData = async (req, res, next) => {
   console.log(req.params.user);
   try {
     const user = await UserModel.find({ userType: req.params.user });
