@@ -165,7 +165,7 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:7080/reset-password/${req.params.user}/${user[0]._id}/${token}`;
+    const link = `http://localhost:${process.env.PORT}/reset-password/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
