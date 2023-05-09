@@ -18,12 +18,12 @@ const phoneNoFormat = /^\d{10}$/;
 export const addNewUser = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat)) {
-      return res.send(Response(null, "Invalid email address!", 530, false));
+      return res.send(Response(null, 530, "Invalid email address!", false));
     }
     const existingUser = await findUser(req.body.email);
 
     if (existingUser.length !== 0) {
-      return res.send(Response(null, "User already registered!", 500, false));
+      return res.send(Response(null, 500, "User already registered!", false));
     }
 
     const newUser = new UserModel(
@@ -67,7 +67,7 @@ export const addNewUser = async (req, res, next) => {
 export const updateDetails = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat)) {
-      return res.send(Response(null, "Invalid email address!", 530, false));
+      return res.send(Response(null, 530, "Invalid email address!", false));
     }
     if (!req.body.phone.match(phoneNoFormat))
       return res.send(Response(null, 500, "Not a valid phone number!", false));
