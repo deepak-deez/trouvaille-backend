@@ -71,15 +71,13 @@ export const updateDetails = async (req, res, next) => {
     }
     if (!req.body.phone.match(phoneNoFormat))
       return res.send(Response(null, 500, "Not a valid phone number!", false));
-    // if (req.body.address.trim() === "" || req.body.address.trim() === null) {
-    //   return res.send(Response(null, 500, "Not a valid address!", false));
-    // }
-    const admin = await findUser(req.body.email);
 
-    if (admin === null || admin[0].userType !== "Admin")
-      return res.send(
-        Response(null, 500, `${req.params.user} not found!`, false)
-      );
+    const admin = await UserModel.find({ _id: req.body.id });
+
+    // if (admin === null || admin[0].userType !== "Admin")
+    //   return res.send(
+    //     Response(null, 500, `${req.params.user} not found!`, false)
+    //   );
 
     const result = await UserModel.findOneAndUpdate(
       {
@@ -87,6 +85,7 @@ export const updateDetails = async (req, res, next) => {
       },
       {
         $set: {
+          userName: req.body.name,
           email: req.body.email,
           phone: req.body.phone,
           //   address: req.body.address,
