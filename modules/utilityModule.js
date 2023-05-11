@@ -18,7 +18,7 @@ export const createFeature = async (req, res, next) => {
   // let imageString = readFileSync(filePath);
   // console.log("imageString :", imageString);
   // let encodeImage = imageString.toString("base64");
-  let bufferImage = Buffer.from(req.body.icon.splice("22"), "base64");
+  let bufferImage = Buffer.from(req.body.icon.slice(22), "base64");
   //   console.log("Buffer :", bufferImage);
   try {
     const result = await featureModel({
