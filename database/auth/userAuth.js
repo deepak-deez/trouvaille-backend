@@ -69,7 +69,11 @@ export const userLogin = async (req, res, next) => {
         Response(null, 500, `${req.params.user} not found!`, false)
       );
 
-    if (req.params.user !== user[0].userType)
+    // if (req.params.user !== user[0].userType)
+    if (
+      req.params.user !== user[0].userType &&
+      req.params.user === "Frontend-user"
+    )
       return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
     else {
       const isMatched = await bcrypt.compare(
