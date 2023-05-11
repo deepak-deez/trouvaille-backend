@@ -13,12 +13,12 @@ import { readFileSync } from "fs";
 //create
 export const createFeature = async (req, res, next) => {
   console.log("create function called!");
-  const filePath =
-    `./database/images/${req.params.feature}/` + req.file.originalname;
-  let imageString = readFileSync(filePath);
-  console.log(imageString);
-  let encodeImage = imageString.toString("base64");
-  let bufferImage = Buffer.from(encodeImage, "base64");
+  // const filePath =
+  //   `./database/images/${req.params.feature}/` + req.file.originalname;
+  // let imageString = readFileSync(filePath);
+  // console.log("imageString :", imageString);
+  // let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(req.body.icon.splice("22"), "base64");
   //   console.log("Buffer :", bufferImage);
   try {
     const result = await featureModel({
@@ -30,7 +30,7 @@ export const createFeature = async (req, res, next) => {
       title: req.body.title,
       description: req.body.description,
     });
-    console.log(result);
+    console.log("result : ", result);
     const saveData = await result.save();
     if (saveData?._id)
       res.send(Response(result, 200, `New ${req.params.feature} added.`, true));
