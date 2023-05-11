@@ -171,7 +171,7 @@ export const sendResetMail = async (req, res, next) => {
       return res.send(Response(null, 500, "Failed to send mail!", false));
     else
       return res.send(
-        Response(null, 200, `Email send to ${req.body.email}`, true)
+        Response(link, 200, `Email send to ${req.body.email}`, true)
       );
   } catch (err) {
     next(err);
