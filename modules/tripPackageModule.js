@@ -18,12 +18,12 @@ import { nextTick } from "process";
 //creating trip packages
 export const createTripPackage = async (req, res, next) => {
   console.log(req.body);
-  const filePath =
-    `./database/images/${req.params.trip}/` + req.file.originalname;
-  let imageString = readFileSync(filePath);
-  console.log(imageString);
-  let encodeImage = imageString.toString("base64");
-  let bufferImage = Buffer.from(encodeImage, "base64");
+  // const filePath =
+  //   `./database/images/${req.params.trip}/` + req.file.originalname;
+  // let imageString = readFileSync(filePath);
+  // console.log(imageString);
+  // let encodeImage = imageString.toString("base64");
+  let bufferImage = Buffer.from(req.body.image.slice(22), "base64");
 
   try {
     const packages = await tripPackage(

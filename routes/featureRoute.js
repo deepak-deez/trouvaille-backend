@@ -15,11 +15,12 @@ app.get("/get/:feature", utility.showAll);
 app.post("/update/:feature/:id", utility.updateFeature);
 app.delete("/delete/:feature/:id", utility.deleteFeature);
 
-app.post(
-  "/create-module/:trip",
-  tripStorageEngine.single("packageImage"),
-  tripModule.createTripPackage
-);
+// app.post(
+//   "/create-module/:trip",
+//   tripStorageEngine.single("packageImage"),
+//   tripModule.createTripPackage
+// );
+app.post("/create-module/:trip", tripModule.createTripPackage);
 app.get("/get-module/:trip", tripModule.getTripPackages);
 app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post("/update-module/:trip/:id", tripModule.updatePackage);
