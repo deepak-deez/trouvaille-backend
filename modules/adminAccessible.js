@@ -149,20 +149,20 @@ export const changePassword = async (req, res, next) => {
   }
 };
 
-export const validatePassword = async (req, res, next) => {
-  try {
-    const admin = await findUser(req.body.email);
-    const isMatched = await bcrypt.compare(
-      req.body.password,
-      admin[0].password
-    );
-    if (isMatched) {
-      return res.send(Response(null, 200, "Valid admin.", true));
-    }
-  } catch (error) {
-    next(error);
-  }
-};
+// export const validatePassword = async (req, res, next) => {
+//   try {
+//     const admin = await findUser(req.body.email);
+//     const isMatched = await bcrypt.compare(
+//       req.body.password,
+//       admin[0].password
+//     );
+//     if (isMatched) {
+//       return res.send(Response(null, 200, "Valid admin.", true));
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const deleteUser = async (req, res, next) => {
   try {

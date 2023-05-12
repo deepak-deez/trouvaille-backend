@@ -216,8 +216,8 @@ export const tokenValidation = async (req, res, next) => {
 
 export const setPassword = async (req, res, next) => {
   try {
-    if (!req.body.email.match(emailFormat))
-      return res.send(Response(null, 500, "Not a valid email!", false));
+    // if (!req.body.email.match(emailFormat))
+    //   return res.send(Response(null, 500, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
     if (user.length === 0)
@@ -225,11 +225,12 @@ export const setPassword = async (req, res, next) => {
 
     const secret = process.env.JWT_SECRET + user[0].password;
     try {
-      const payload = jwt.verify(req.body.token, secret);
-      console.log(payload);
+      const payload = await jwt.verify(req.body.token, secret);
+      console.log("Payload: ", payload);
       const result = await UserModel.findOneAndUpdate(
         { _id: payload.id },
-        { $set: { password: await passwordhashed(req.body.newPassword) } }
+        { $set: { password: await passwordhashed(req.body.newPassword) } },
+        { new: true }
       );
       if (result)
         return res.send(Response(null, 200, "Password reset successfully."));

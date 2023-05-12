@@ -9,4 +9,4 @@ app.post("/user-logout", auth.userLogout);
 app.get("/database/:user", auth.userData);
 app.post("/send-reset-mail/:user", auth.sendResetMail);
 app.get("/token-validation/:user/:id/:token", auth.tokenValidation);
-app.post("/set-password", auth.setPassword);
+app.post("/set-password/:user", auth.setPassword);
