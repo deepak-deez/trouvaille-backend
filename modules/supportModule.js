@@ -65,6 +65,23 @@ export const tripPackageObject = (profileimage, trip) => {
   };
 };
 
+export const bookingData = (image, book) => {
+  return {
+    title: book.title,
+    name: book.name,
+    phone: book.name,
+    email: book.name,
+    otherPassenger: book.otherPassenger,
+    address: book.address,
+    image: {
+      data: image,
+      contentType: "image/png+jpg+jpeg",
+    },
+    bookingStatus: book.bookingStatus,
+    deleteReason: book.deleteReason,
+  };
+};
+
 export const userDetails = (image, data) => {
   return {
     image: {
