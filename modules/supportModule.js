@@ -62,3 +62,20 @@ export const tripPackageObject = (image, trip) => {
     status: trip.status,
   };
 };
+
+export const bookingData = (image, book) => {
+  return {
+    title: book.title,
+    name: book.name,
+    phone: book.name,
+    email: book.name,
+    otherPassenger: book.otherPassenger,
+    address: book.address,
+    image: {
+      data: image,
+      contentType: "image/png+jpg+jpeg",
+    },
+    bookingStatus: book.bookingStatus,
+    deleteReason: book.deleteReason,
+  };
+};
