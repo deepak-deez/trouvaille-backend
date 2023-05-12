@@ -69,7 +69,11 @@ export const userLogin = async (req, res, next) => {
         Response(null, 500, `${req.params.user} not found!`, false)
       );
 
-    if (req.params.user !== user[0].userType)
+    // if (req.params.user !== user[0].userType)
+    if (
+      req.params.user !== user[0].userType &&
+      req.params.user === "Frontend-user"
+    )
       return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
     else {
       const isMatched = await bcrypt.compare(
@@ -165,20 +169,20 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:${process.env.PORT}/reset-password/${req.params.user}/${user[0]._id}/${token}`;
+    const link = `http://localhost:${process.env.PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
     else
       return res.send(
-        Response(null, 200, `Email send to ${req.body.email}`, true)
+        Response(link, 200, `Email send to ${req.body.email}`, true)
       );
   } catch (err) {
     next(err);
   }
 };
 
-export const resetPasswordValidation = async (req, res, next) => {
+export const tokenValidation = async (req, res, next) => {
   const { id, token } = req.params;
   try {
     const user = await UserModel.find({ _id: id });
@@ -190,22 +194,21 @@ export const resetPasswordValidation = async (req, res, next) => {
     if (req.params.user !== user[0].userType)
       return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
 
-    const secret = process.env.JWT_SECRET + user.password;
-    try {
-      await jwt.verify(token, secret, (err, decode) => {
-        console.log("Decode: ", decode);
-      });
-      return res.send(
-        Response(
-          { email: user[0].email },
-          200,
-          `${req.params.user} varified for the reset password.`,
-          true
-        )
-      );
-    } catch (err) {
-      return res.send(null, 500, "Not authenticate to reset password!", false);
-    }
+    const secret = process.env.JWT_SECRET + user[0].password;
+    await jwt.verify(token, secret, (err, decode) => {
+      if (err) {
+        return res.send(Response(null, 500, "Not authenticate!", false));
+      } else {
+        return res.send(
+          Response(
+            { email: user[0].email },
+            200,
+            `${req.params.user} verified.`,
+            true
+          )
+        );
+      }
+    });
   } catch (err) {
     next(err);
   }
