@@ -20,7 +20,8 @@ app.post(
   tripStorageEngine.single("packageImage"),
   tripModule.createTripPackage
 );
-app.get("/get-module/:trip", tripModule.getTripPackage);
+app.get("/get-module/:trip", tripModule.getTripPackages);
+app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post("/update-module/:trip/:id", tripModule.updatePackage);
 app.delete("/delete-module/:trip/:id", tripModule.deletePackage);
 

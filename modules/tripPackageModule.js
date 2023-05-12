@@ -38,14 +38,26 @@ export const createTripPackage = async (req, res, next) => {
 };
 
 //getting trip packages
-export const getTripPackage = async (req, res) => {
-  console.log("get trip package called");
+export const getTripPackages = async (req, res) => {
   try {
     const result = await tripPackage.find({});
-    console.log(result);
     if (result.length !== 0)
       res.send(
         Response(result, 200, `All ${req.params.trip} are here...`, true)
+      );
+    else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// getting a particular trip package details
+export const getTripDetails = async (req, res) => {
+  try {
+    const result = await tripPackage.find({ _id: req.params.id });
+    if (result.length !== 0)
+      res.send(
+        Response(result, 200, `Details of ${req.params.trip} are here...`, true)
       );
     else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
   } catch (error) {
