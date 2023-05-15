@@ -4,8 +4,14 @@ const schema = new mongoose.Schema({
     type: String,
   },
   icon: {
-    data: Buffer,
-    contentType: String,
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
   },
   title: {
     type: String,
