@@ -1,6 +1,5 @@
 import express from "express";
 import * as utility from "../modules/utilityModule.js";
-import { tripStorageEngine } from "../modules/multerStorageEngine.js";
 import * as tripModule from "../modules/tripPackageModule.js";
 
 const app = express();

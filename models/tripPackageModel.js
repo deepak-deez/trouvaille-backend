@@ -6,8 +6,14 @@ const tripPackageSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    data: Buffer,
-    contentType: String,
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
   },
   duration: {
     type: String,
@@ -23,11 +29,7 @@ const tripPackageSchema = new mongoose.Schema({
       },
     },
   ],
-  tripCategory: [
-    {
-      category: { type: String },
-    },
-  ],
+  tripCategory: [{ type: String }],
   placeNumber: {
     type: Number,
     require: true,
@@ -36,20 +38,24 @@ const tripPackageSchema = new mongoose.Schema({
     type: Number,
     require: true,
   },
-  highlightTitle: {
-    type: String,
-    trim: true,
-  },
   tripHighlights: [
     {
+      title: {
+        type: String,
+        trim: true,
+      },
       name: {
         type: String,
         trim: true,
       },
       description: { type: String },
       icon: {
-        data: Buffer,
-        contentType: String,
+        public_id: {
+          type: String,
+        },
+        url: {
+          type: String,
+        },
       },
     },
   ],
@@ -62,20 +68,12 @@ const tripPackageSchema = new mongoose.Schema({
     type: Number,
     require: true,
   },
-  occasions: [
-    {
-      name: { type: String },
-    },
-  ],
+  occasions: [{ type: String }],
   travelType: {
     type: String,
     require: true,
   },
-  amenities: [
-    {
-      name: { type: String },
-    },
-  ],
+  amenities: [{ type: String }],
   briefDescription: {
     type: String,
   },

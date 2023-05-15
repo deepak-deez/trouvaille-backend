@@ -37,20 +37,35 @@ export const Response = (data, statusCode, message, success) => {
   };
 };
 
-export const tripPackageObject = (image, trip) => {
-  console.log(trip);
+export const tripPackageObject = (profileimage, trip) => {
+  // console.log(
+  //   trip.title,
+  //   trip.duration,
+  //   trip.activities,
+  //   trip.tripCategory,
+  //   trip.placeNumber,
+  //   trip.maximumGuests,
+  //   trip.tripHighlights,
+  //   trip.price,
+  //   trip.discountedPrice,
+  //   trip.occasions,
+  //   trip.travelType,
+  //   trip.amenities,
+  //   trip.briefDescription,
+  //   trip.faq,
+  //   trip.status
+  // );
   return {
     title: trip.title,
     image: {
-      data: image,
-      contentType: "image/png+jpg+jpeg",
+      public_id: profileimage.public_id,
+      url: profileimage.secure_url,
     },
     duration: trip.duration,
     activities: trip.activities,
     tripCategory: trip.tripCategory,
     placeNumber: trip.placeNumber,
     maximumGuests: trip.maximumGuests,
-    highlightTitle: trip.highlightTitle,
     tripHighlights: trip.tripHighlights,
     price: trip.price,
     discountedPrice: trip.discountedPrice,

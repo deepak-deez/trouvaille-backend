@@ -3,6 +3,7 @@ import { tripPackage } from "../models/tripPackageModel.js";
 import { readFileSync } from "fs";
 import { Response, tripPackageObject } from "./supportModule.js";
 import { nextTick } from "process";
+import cloudinary from "./cloudinary.js";
 
 // export const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -16,22 +17,33 @@ import { nextTick } from "process";
 // export const image = multer({ storage: storage });
 
 //creating trip packages
+
 export const createTripPackage = async (req, res, next) => {
-  console.log(req.body);
-  // const filePath =
-  //   `./database/images/${req.params.trip}/` + req.file.originalname;
-  // let imageString = readFileSync(filePath);
-  // console.log(imageString);
-  // let encodeImage = imageString.toString("base64");
-
   try {
-    let bufferImage = Buffer.from(req.body.image.slice(22), "base64");
-    const packages = await tripPackage(
-      tripPackageObject(bufferImage, req.body)
-    );
-    const result = await packages.save();
+    const { tripHighlights } = req.body;
+    const profileimage = await cloudinary.uploader.upload(req.body.image, {
+      folder: `${req.params.trip}`,
+    });
 
-    res.send(Response(result, 200, `New ${req.params.trip} added.`, true));
+    const result = await tripPackage.create(
+      tripPackageObject(profileimage, req.body)
+    );
+    const data = tripHighlights.map(async (element) => {
+      const iconImage = await cloudinary.uploader.upload(element.icon, {
+        folder: `${req.params.trip}`,
+      });
+      element.icon = {
+        public_id: iconImage.public_id,
+        url: iconImage.secure_url,
+      };
+      return element;
+    });
+
+    Promise.all(data).then((results) => {
+      result.tripHighlights = results;
+      console.log(result, "data");
+      res.send(Response(result, 200, `New ${req.params.feature} added.`, true));
+    });
   } catch (error) {
     next(error);
   }
@@ -100,8 +112,19 @@ export const deletePackage = async (req, res) => {
   try {
     const { trip, id } = req.params;
     const data = await tripPackage.findOne({ _id: id });
+
     if (data === null)
       return res.send(Response(null, 500, `${req.params.trip} not found!`));
+
+    let imgId = data.image.public_id;
+    if (imgId) {
+      await cloudinary.uploader.destroy(imgId);
+    }
+
+    data.tripHighlights.forEach(async (element) => {
+      console.log(element);
+      await cloudinary.uploader.destroy(element.icon.public_id);
+    });
 
     const result = await tripPackage.findOneAndDelete({ _id: id });
     if (result) {
