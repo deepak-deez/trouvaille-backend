@@ -216,10 +216,7 @@ export const tokenValidation = async (req, res, next) => {
 
 export const setPassword = async (req, res, next) => {
   try {
-    // if (!req.body.email.match(emailFormat))
-    //   return res.send(Response(null, 500, "Not a valid email!", false));
-
-    const user = await findUser(req.body.email);
+    const user = await UserModel.find({ _id: req.body.id });
     if (user.length === 0)
       return res.send(Response(null, 500, "User not found!", false));
 
@@ -233,7 +230,9 @@ export const setPassword = async (req, res, next) => {
         { new: true }
       );
       if (result)
-        return res.send(Response(null, 200, "Password reset successfully."));
+        return res.send(
+          Response(null, 200, "Password reset successfully.", true)
+        );
       else
         return res.send(Response(null, 500, "Reset password failed!", false));
     } catch (err) {
