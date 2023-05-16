@@ -169,7 +169,7 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:${process.env.PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
+    const link = `http://localhost:${process.env.ResetMailPort}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
