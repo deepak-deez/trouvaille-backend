@@ -38,23 +38,6 @@ export const Response = (data, statusCode, message, success) => {
 };
 
 export const tripPackageObject = (profileimage, trip) => {
-  // console.log(
-  //   trip.title,
-  //   trip.duration,
-  //   trip.activities,
-  //   trip.tripCategory,
-  //   trip.placeNumber,
-  //   trip.maximumGuests,
-  //   trip.tripHighlights,
-  //   trip.price,
-  //   trip.discountedPrice,
-  //   trip.occasions,
-  //   trip.travelType,
-  //   trip.amenities,
-  //   trip.briefDescription,
-  //   trip.faq,
-  //   trip.status
-  // );
   return {
     title: trip.title,
     image: {
