@@ -1,5 +1,6 @@
 import { featureModel } from "../models/tripfeatureModel.js";
 import { Response } from "../modules/supportModule.js";
+import cloudinary from "./cloudinary.js";
 // import * as fs from "fs/promises";
 import { readFileSync } from "fs";
 
@@ -13,23 +14,19 @@ import { readFileSync } from "fs";
 //create
 export const createFeature = async (req, res, next) => {
   console.log("create function called!");
-  // const filePath =
-  //   `./database/images/${req.params.feature}/` + req.file.originalname;
-  // let imageString = readFileSync(filePath);
-  // console.log("imageString :", imageString);
-  // let encodeImage = imageString.toString("base64");
-
-  //   console.log("Buffer :", bufferImage);
+  const { image, title, description } = req.body;
   try {
-    let bufferImage = Buffer.from(req.body.icon.slice(22), "base64");
-    const result = await featureModel({
+    const data = await cloudinary.uploader.upload(image, {
+      folder: `${req.params.feature}`,
+    });
+    const result = await featureModel.create({
       purpose: req.params.feature,
       icon: {
-        data: bufferImage,
-        contentType: "image/png+jpg+jpeg",
+        public_id: data.public_id,
+        url: data.secure_url,
       },
-      title: req.body.title,
-      description: req.body.description,
+      title: title,
+      description: description,
     });
     console.log("result : ", result);
     const saveData = await result.save();
@@ -47,11 +44,12 @@ export const showAll = async (req, res, next) => {
   try {
     const result = await featureModel.find({ purpose: req.params.feature });
     if (result.length !== 0)
-      res.send(
+      return res.send(
         Response(result, 200, `All ${req.params.feature} are here...`, true)
       );
-    else
-      res.send(Response(null, 500, `${req.params.feature} not found!`, true));
+    return res.send(
+      Response(null, 500, `${req.params.feature} not found!`, true)
+    );
   } catch (error) {
     next(error);
   }
@@ -60,14 +58,30 @@ export const showAll = async (req, res, next) => {
 // update
 export const updateFeature = async (req, res, next) => {
   try {
+    const { image, title, description } = req.body;
+    const currentData = await featureModel.findOne({ _id: req.params.id });
+    const data = {
+      title: title,
+      description: description,
+    };
+    if (image !== "") {
+      const ImgId = currentData.icon.public_id;
+      if (ImgId) {
+        await cloudinary.uploader.destroy(ImgId);
+      }
+
+      const newImage = await cloudinary.uploader.upload(image, {
+        folder: `${req.params.feature}`,
+      });
+
+      data.image = {
+        public_id: newImage.public_id,
+        url: newImage.secure_url,
+      };
+    }
     const result = await featureModel.findOneAndUpdate(
       { _id: req.params.id, purpose: req.params.feature },
-      {
-        $set: {
-          title: req.body.title,
-          description: req.body.description,
-        },
-      },
+      data,
       { new: true }
     );
     res.send(
@@ -85,10 +99,15 @@ export const deleteFeature = async (req, res, next) => {
     const { feature, id } = req.params;
     const data = await featureModel.findOne({
       _id: id,
-      purpose: req.params.feature,
+      purpose: feature,
     });
     if (data === null)
       return res.send(Response(null, 500, `${req.params.feature} not found!`));
+
+    const imgId = data.icon.public_id;
+    if (imgId) {
+      await cloudinary.uploader.destroy(imgId);
+    }
 
     const result = await featureModel.findOneAndDelete({
       _id: id,

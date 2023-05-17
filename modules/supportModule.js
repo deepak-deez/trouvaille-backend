@@ -11,7 +11,9 @@ export const registerData = async (
   email,
   phone = "",
   password = "",
-  status
+  status,
+  userDetails,
+  joiningYear
 ) => {
   console.log(userType, name, email, phone, password, status);
   return {
@@ -21,6 +23,8 @@ export const registerData = async (
     phone: phone,
     password: await passwordhashed(password),
     isActive: status,
+    userDetails: userDetails,
+    joiningYear: joiningYear,
   };
 };
 
@@ -37,20 +41,18 @@ export const Response = (data, statusCode, message, success) => {
   };
 };
 
-export const tripPackageObject = (image, trip) => {
-  console.log(trip);
+export const tripPackageObject = (profileimage, trip) => {
   return {
     title: trip.title,
     image: {
-      data: image,
-      contentType: "image/png+jpg+jpeg",
+      public_id: profileimage.public_id,
+      url: profileimage.secure_url,
     },
     duration: trip.duration,
     activities: trip.activities,
     tripCategory: trip.tripCategory,
     placeNumber: trip.placeNumber,
     maximumGuests: trip.maximumGuests,
-    highlightTitle: trip.highlightTitle,
     tripHighlights: trip.tripHighlights,
     price: trip.price,
     discountedPrice: trip.discountedPrice,
@@ -60,5 +62,19 @@ export const tripPackageObject = (image, trip) => {
     briefDescription: trip.briefDescription,
     faq: trip.faq,
     status: trip.status,
+  };
+};
+
+export const userDetails = (image, data) => {
+  return {
+    image: {
+      public_id: image.public_id,
+      url: image.url,
+    },
+    name: data.name,
+    place: data.place,
+    DOB: data.DOB,
+    gender: data.gender,
+    maritalStatus: data.maritalStatus,
   };
 };

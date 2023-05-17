@@ -3,7 +3,7 @@ import env from "dotenv";
 
 env.config();
 
-mongoose.connect(process.env.TripDatabase, {
+mongoose.connect(process.env.UserConnectionUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

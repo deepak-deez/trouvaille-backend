@@ -3,11 +3,13 @@ import bcrypt from "bcrypt";
 import sendMail from "../../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
+import cloudinary from "../../modules/cloudinary.js";
 import {
   Response,
   registerData,
   findUser,
   passwordhashed,
+  userDetails,
 } from "../../modules/supportModule.js";
 
 env.config();
@@ -17,7 +19,6 @@ const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
 export const userRegister = async (req, res, next) => {
-  console.log(req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.send(Response(null, 500, "Not a valid email!", false));
@@ -44,7 +45,9 @@ export const userRegister = async (req, res, next) => {
         req.body.email,
         req.body.phone,
         req.body.password,
-        false
+        false,
+        "",
+        new Date().getFullYear()
       )
     );
     console.log(newUser);
@@ -52,6 +55,36 @@ export const userRegister = async (req, res, next) => {
     if (result?._id)
       res.send(Response(newUser, 200, "Account created successfully!", true));
     else res.send(Response(null, 500, "Failed to create account!", false));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateUserDetails = async (req, res, next) => {
+  try {
+    const details = req.body;
+    let image = "";
+    if (details.image !== "") {
+      image = await cloudinary.uploader.upload(details.image, {
+        folder: `${req.params.user}`,
+      });
+    }
+    const data = userDetails(image, details);
+    const newDetails = await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { userDetails: data } },
+      { new: true }
+    );
+    if (newDetails?._id) {
+      return res.send(
+        Response(
+          { data: newDetails },
+          200,
+          `${req.params.user} details updated successfully.`,
+          true
+        )
+      );
+    }
   } catch (err) {
     next(err);
   }
@@ -148,6 +181,21 @@ export const userData = async (req, res, next) => {
   }
 };
 
+export const userDataById = async (req, res, next) => {
+  console.log(req.params.user);
+  try {
+    const user = await UserModel.find({
+      _id: req.params.id,
+      userType: req.params.user,
+    });
+    return res.send(
+      Response(user, 200, `${req.params.user}s all details are here...`, true)
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const sendResetMail = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
@@ -169,7 +217,7 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:${process.env.PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
+    const link = `http://localhost:${process.env.ResetMailPort}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(req.body.email, link))
       return res.send(Response(null, 500, "Failed to send mail!", false));
@@ -216,10 +264,7 @@ export const tokenValidation = async (req, res, next) => {
 
 export const setPassword = async (req, res, next) => {
   try {
-    // if (!req.body.email.match(emailFormat))
-    //   return res.send(Response(null, 500, "Not a valid email!", false));
-
-    const user = await findUser(req.body.email);
+    const user = await UserModel.find({ _id: req.body.id });
     if (user.length === 0)
       return res.send(Response(null, 500, "User not found!", false));
 
@@ -233,7 +278,9 @@ export const setPassword = async (req, res, next) => {
         { new: true }
       );
       if (result)
-        return res.send(Response(null, 200, "Password reset successfully."));
+        return res.send(
+          Response(null, 200, "Password reset successfully.", true)
+        );
       else
         return res.send(Response(null, 500, "Reset password failed!", false));
     } catch (err) {
