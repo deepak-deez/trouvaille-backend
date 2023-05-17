@@ -34,6 +34,22 @@ const schema = new mongoose.Schema({
     type: Boolean,
     require: true,
   },
+  userDetails: {
+    image: {
+      public_id: {
+        type: String,
+      },
+      url: {
+        type: String,
+      },
+    },
+    name: { type: String, trim: true },
+    place: { type: String, trim: true },
+    DOB: { type: String, trim: true },
+    gender: { type: String, trim: true },
+    maritalStatus: { type: String, trim: true },
+  },
+  joiningYear: { type: Number, trim: true, require: true },
 });
 
 // schema.pre("save", async (next) => {
