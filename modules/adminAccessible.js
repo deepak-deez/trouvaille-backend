@@ -102,7 +102,7 @@ export const updateDetails = async (req, res, next) => {
         Response(
           { adminDetails: result, token: token },
           200,
-          `${req.params.user}details updated successfully`,
+          `${req.params.user} details updated successfully.`,
           true
         )
       );

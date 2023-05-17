@@ -11,7 +11,9 @@ export const registerData = async (
   email,
   phone = "",
   password = "",
-  status
+  status,
+  userDetails,
+  joiningYear
 ) => {
   console.log(userType, name, email, phone, password, status);
   return {
@@ -21,6 +23,8 @@ export const registerData = async (
     phone: phone,
     password: await passwordhashed(password),
     isActive: status,
+    userDetails: userDetails,
+    joiningYear: joiningYear,
   };
 };
 
@@ -58,6 +62,20 @@ export const tripPackageObject = (profileimage, trip) => {
     briefDescription: trip.briefDescription,
     faq: trip.faq,
     status: trip.status,
+  };
+};
+
+export const userDetails = (image, data) => {
+  return {
+    image: {
+      public_id: image.public_id,
+      url: image.url,
+    },
+    name: data.name,
+    place: data.place,
+    DOB: data.DOB,
+    gender: data.gender,
+    maritalStatus: data.maritalStatus,
   };
 };
 

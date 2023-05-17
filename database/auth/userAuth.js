@@ -3,11 +3,13 @@ import bcrypt from "bcrypt";
 import sendMail from "../../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
+import cloudinary from "../../modules/cloudinary.js";
 import {
   Response,
   registerData,
   findUser,
   passwordhashed,
+  userDetails,
 } from "../../modules/supportModule.js";
 
 env.config();
@@ -17,7 +19,6 @@ const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
 export const userRegister = async (req, res, next) => {
-  console.log(req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.send(Response(null, 500, "Not a valid email!", false));
@@ -44,7 +45,9 @@ export const userRegister = async (req, res, next) => {
         req.body.email,
         req.body.phone,
         req.body.password,
-        false
+        false,
+        "",
+        new Date().getFullYear()
       )
     );
     console.log(newUser);
@@ -52,6 +55,36 @@ export const userRegister = async (req, res, next) => {
     if (result?._id)
       res.send(Response(newUser, 200, "Account created successfully!", true));
     else res.send(Response(null, 500, "Failed to create account!", false));
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateUserDetails = async (req, res, next) => {
+  try {
+    const details = req.body;
+    let image = "";
+    if (details.image !== "") {
+      image = await cloudinary.uploader.upload(details.image, {
+        folder: `${req.params.user}`,
+      });
+    }
+    const data = userDetails(image, details);
+    const newDetails = await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { userDetails: data } },
+      { new: true }
+    );
+    if (newDetails?._id) {
+      return res.send(
+        Response(
+          { data: newDetails },
+          200,
+          `${req.params.user} details updated successfully.`,
+          true
+        )
+      );
+    }
   } catch (err) {
     next(err);
   }
