@@ -181,6 +181,21 @@ export const userData = async (req, res, next) => {
   }
 };
 
+export const userDataById = async (req, res, next) => {
+  console.log(req.params.user);
+  try {
+    const user = await UserModel.find({
+      _id: req.params.id,
+      userType: req.params.user,
+    });
+    return res.send(
+      Response(user, 200, `${req.params.user}s all details are here...`, true)
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const sendResetMail = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
