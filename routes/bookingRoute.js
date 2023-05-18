@@ -7,5 +7,7 @@ app.post("/trip-booking", book.createBooking);
 app.get("/all-booking", book.allBooking);
 app.get("/user-all-booking/:userId", book.getAllBookingByUser);
 app.get("/booking-details/:id", book.getBookingDetails);
+app.get("/token-verification/:id/:token", book.deleteBooking);
+app.delete("/delete-booking/:user/:id", book.deleteBooking);
 
 export default app;
