@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema({
+  tripId: { type: String, require: true },
+  userId: { type: String, require: true },
   title: { type: String, require: true },
   name: { type: String, require: true },
   phone: { type: String, trim: true, unique: true, require: true },
@@ -14,7 +16,14 @@ const schema = new mongoose.Schema({
     },
   ],
   address: { type: String, trim: true },
-  image: { data: Buffer, contentType: String },
+  image: {
+    public_id: {
+      type: String,
+    },
+    url: {
+      type: String,
+    },
+  },
   bookingStatus: { type: String, trim: true },
   deleteReason: { type: String, trim: true },
 });

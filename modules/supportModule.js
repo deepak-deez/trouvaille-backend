@@ -67,15 +67,17 @@ export const tripPackageObject = (profileimage, trip) => {
 
 export const bookingData = (image, book) => {
   return {
+    tripId: book.tripId,
+    userId: book.userId,
     title: book.title,
     name: book.name,
-    phone: book.name,
-    email: book.name,
+    phone: book.phone,
+    email: book.email,
     otherPassenger: book.otherPassenger,
     address: book.address,
     image: {
-      data: image,
-      contentType: "image/png+jpg+jpeg",
+      public_id: image.public_id,
+      url: image.secure_url,
     },
     bookingStatus: book.bookingStatus,
     deleteReason: book.deleteReason,
@@ -96,19 +98,19 @@ export const userDetails = (image, data) => {
   };
 };
 
-export const bookingData = (image, book) => {
-  return {
-    title: book.title,
-    name: book.name,
-    phone: book.name,
-    email: book.name,
-    otherPassenger: book.otherPassenger,
-    address: book.address,
-    image: {
-      data: image,
-      contentType: "image/png+jpg+jpeg",
-    },
-    bookingStatus: book.bookingStatus,
-    deleteReason: book.deleteReason,
-  };
-};
+// export const bookingData = (image, book) => {
+//   return {
+//     title: book.title,
+//     name: book.name,
+//     phone: book.name,
+//     email: book.name,
+//     otherPassenger: book.otherPassenger,
+//     address: book.address,
+//     image: {
+//       data: image,
+//       contentType: "image/png+jpg+jpeg",
+//     },
+//     bookingStatus: book.bookingStatus,
+//     deleteReason: book.deleteReason,
+//   };
+// };

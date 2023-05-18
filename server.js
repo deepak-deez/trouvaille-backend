@@ -5,6 +5,7 @@ import env from "dotenv";
 import tripRoute from "./routes/featureRoute.js";
 import * as userRouter from "./routes/userRoute.js";
 import * as adminRouter from "./routes/backendUserRoute.js";
+import bookingRouter from "./routes/bookingRoute.js";
 
 env.config();
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(tripRoute);
 app.use(userRouter.app);
 app.use(adminRouter.app);
+app.use(bookingRouter);
 
 app.use((req, res, next) => {
   next(new Error("Page not found"));
