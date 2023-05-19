@@ -81,6 +81,8 @@ export const bookingData = (image, book) => {
     },
     bookingStatus: book.bookingStatus,
     deleteReason: book.deleteReason,
+    cancellationStatus: false,
+    link: "",
   };
 };
 

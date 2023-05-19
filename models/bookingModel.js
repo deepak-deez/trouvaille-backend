@@ -26,6 +26,8 @@ const schema = new mongoose.Schema({
   },
   bookingStatus: { type: String, trim: true },
   deleteReason: { type: String, trim: true },
+  cancellationStatus: { type: String, trim: true },
+  link: { type: String },
 });
 
 export const BookingModel = mongoose.model("Booking", schema);
