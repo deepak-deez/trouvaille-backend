@@ -79,8 +79,8 @@ export const bookingData = (image, book) => {
       public_id: image.public_id,
       url: image.secure_url,
     },
-    bookingStatus: book.bookingStatus,
-    deleteReason: book.deleteReason,
+    bookingStatus: "pending",
+    deleteReason: "",
     cancellationStatus: false,
     link: "",
   };

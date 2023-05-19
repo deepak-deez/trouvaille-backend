@@ -150,6 +150,8 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
+          bookingStatus: req.body.bookingStatus,
+          link: req.body.link,
         },
       },
       { new: true }
