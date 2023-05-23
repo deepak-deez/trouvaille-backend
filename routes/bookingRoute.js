@@ -10,6 +10,6 @@ app.get("/booking-details/:id", book.getBookingDetails);
 app.get("/token-verification/:id/:token", book.tokenVarification);
 app.get("/get-cancel-booking-request", book.getCancellationRequest);
 app.delete("/delete-booking/:user/:id", book.UserActionOnDelete);
-app.post("/restore-booking/:id", book.restoreBooking);
+app.post("/update-booking/:id", book.restoreBooking);
 
 export default app;
