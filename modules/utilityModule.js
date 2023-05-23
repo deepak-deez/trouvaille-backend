@@ -1,3 +1,4 @@
+import { log } from "console";
 import { featureModel } from "../models/tripfeatureModel.js";
 import { Response } from "../modules/supportModule.js";
 import cloudinary from "./cloudinary.js";
@@ -42,6 +43,7 @@ export const createFeature = async (req, res, next) => {
 export const showAll = async (req, res, next) => {
   try {
     const result = await featureModel.find({ purpose: req.params.feature });
+    // console.log(result);
     if (result.length !== 0)
       return res.send(
         Response(result, 200, `All ${req.params.feature} are here...`, true)
@@ -49,6 +51,29 @@ export const showAll = async (req, res, next) => {
     return res.send(
       Response(null, 500, `${req.params.feature} not found!`, true)
     );
+  } catch (error) {
+    next(error);
+  }
+};
+
+//filter
+export const filterTripList = async (req, res, next) => {
+  const tripNames = req.body;
+  let filteredArray = [];
+  try {
+    for (let index = 0; index < tripNames.length; index++) {
+      const filterCondition = {
+        purpose: req.params.feature,
+        title: tripNames[index],
+      };
+      const result = await featureModel.findOne(filterCondition);
+      if (result !== null) filteredArray.push(result);
+    }
+    if (filteredArray.length)
+      return res.send(
+        Response(filteredArray, 200, `Filtered data of ${tripNames}`, true)
+      );
+    return res.send(Response(null, 500, `Not found!`, true));
   } catch (error) {
     next(error);
   }

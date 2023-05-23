@@ -11,6 +11,7 @@ const app = express();
 // );
 app.post("/create-feature/:feature", utility.createFeature);
 app.get("/get-feature/:feature", utility.showAll);
+app.get("/get-filtered-feature/:feature", utility.filterTripList);
 app.post("/update-feature/:feature/:id", utility.updateFeature);
 app.delete("/delete-feature/:feature/:id", utility.deleteFeature);
 
