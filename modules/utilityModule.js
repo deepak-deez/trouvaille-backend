@@ -13,7 +13,6 @@ import { readFileSync } from "fs";
 
 //create
 export const createFeature = async (req, res, next) => {
-  console.log("create function called!");
   const { image, title, description } = req.body;
   try {
     const data = await cloudinary.uploader.upload(image, {
