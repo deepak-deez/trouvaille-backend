@@ -58,7 +58,7 @@ export const getBookingDetails = async (req, res, next) => {
 
 export const getCancellationRequest = async (req, res, next) => {
   try {
-    const result = await BookingModel.findOne({ cancellationStatus: true });
+    const result = await BookingModel.find({ cancellationStatus: true });
     getResultResponse(res, result);
   } catch (error) {
     next(error);
@@ -116,7 +116,7 @@ export const UserActionOnDelete = async (req, res, next) => {
       const secret = process.env.JWT_SECRET + trip.phone;
 
       const payload = {
-        email: req.body.email,
+        email: trip.email,
         id: trip._id,
       };
       const token = jwt.sign(payload, secret, { expiresIn: "7d" });
@@ -126,7 +126,8 @@ export const UserActionOnDelete = async (req, res, next) => {
         Response(
           { link: link, token: token, details: trip },
           200,
-          "Delete request has been send successfully!"
+          "Delete request has been send successfully!",
+          true
         )
       );
     } else {
@@ -150,7 +151,6 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
-          bookingStatus: req.body.bookingStatus,
           link: req.body.link,
           read: req.body.read,
         },
