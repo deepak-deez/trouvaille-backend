@@ -270,8 +270,14 @@ export const setPassword = async (req, res, next) => {
 
     const secret = process.env.JWT_SECRET + user[0].password;
     try {
-      const payload = await jwt.verify(req.body.token, secret);
+      let payload = { id: "" };
+      if (!req.body?.logInStatus) {
+        payload = await jwt.verify(req.body.token, secret);
+      } else {
+        payload.id = req.body.id;
+      }
       console.log("Payload: ", payload);
+
       const result = await UserModel.findOneAndUpdate(
         { _id: payload.id },
         { $set: { password: await passwordhashed(req.body.newPassword) } },

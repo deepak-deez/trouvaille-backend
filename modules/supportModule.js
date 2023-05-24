@@ -83,6 +83,7 @@ export const bookingData = (image, book) => {
     deleteReason: "",
     cancellationStatus: false,
     link: "",
+    read: false,
   };
 };
 

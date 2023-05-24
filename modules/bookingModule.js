@@ -152,6 +152,7 @@ export const restoreBooking = async (req, res, next) => {
           deleteReason: req.body.deleteReason,
           bookingStatus: req.body.bookingStatus,
           link: req.body.link,
+          read: req.body.read,
         },
       },
       { new: true }
