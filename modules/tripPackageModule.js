@@ -44,9 +44,14 @@ export const createTripPackage = async (req, res, next) => {
 };
 
 //getting trip packages
-export const getTripPackages = async (req, res) => {
+export const getTripPackages = async (req, res, next) => {
   try {
-    const result = await tripPackage.find({});
+    let result;
+    if (!req.body.category) {
+      result = await tripPackage.find({});
+    } else {
+      result = await tripPackage.find(req.body.category);
+    }
     if (result.length !== 0)
       res.send(
         Response(result, 200, `All ${req.params.trip} are here...`, true)

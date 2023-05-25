@@ -21,7 +21,7 @@ app.delete("/delete-feature/:feature/:id", utility.deleteFeature);
 //   tripModule.createTripPackage
 // );
 app.post("/create-module/:trip", tripModule.createTripPackage);
-app.get("/get-module/:trip", tripModule.getTripPackages);
+app.post("/get-module/:trip", tripModule.getTripPackages);
 app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post("/update-module/:trip/:id", tripModule.updatePackage);
 app.delete("/delete-module/:trip/:id", tripModule.deletePackage);
