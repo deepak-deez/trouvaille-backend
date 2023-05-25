@@ -47,7 +47,7 @@ export const createTripPackage = async (req, res, next) => {
 export const getTripPackages = async (req, res, next) => {
   try {
     let result;
-    if (!req.body.category) {
+    if (req.type === "GET") {
       result = await tripPackage.find({});
     } else {
       result = await tripPackage.find(req.body.category);
