@@ -4,6 +4,7 @@ import { Response } from "../modules/supportModule.js";
 import cloudinary from "./cloudinary.js";
 // import * as fs from "fs/promises";
 import { readFileSync } from "fs";
+import { request } from "http";
 
 // export const readImageFile = async (image) => {
 //   console.log("Path:", image);
@@ -49,7 +50,7 @@ const getResponseMessage = (result, res, feature) => {
 export const showAll = async (req, res, next) => {
   try {
     console.log(req.params);
-    const result = await featureModel.find({});
+    const result = await featureModel.find({purpose: req.params.feature});
     getResponseMessage(result, res, "features");
   } catch (error) {
     next(error);
