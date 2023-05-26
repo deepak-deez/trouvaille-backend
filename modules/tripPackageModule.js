@@ -63,7 +63,7 @@ export const getTripPackages = async (req, res, next) => {
 };
 
 // getting a particular trip package details
-export const getTripDetails = async (req, res) => {
+export const getTripDetails = async (req, res, next) => {
   try {
     const result = await tripPackage.find({ _id: req.params.id });
     if (result.length !== 0)

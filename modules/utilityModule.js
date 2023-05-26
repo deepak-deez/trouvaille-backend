@@ -39,18 +39,33 @@ export const createFeature = async (req, res, next) => {
   }
 };
 
-//get
+const getResponseMessage = (result, res, feature) => {
+  console.log("result : ", result);
+  if (result.length !== 0)
+    return res.send(Response(result, 200, `All ${feature} are here...`, true));
+  return res.send(Response(null, 500, `${feature} not found!`, true));
+};
+
 export const showAll = async (req, res, next) => {
   try {
-    const result = await featureModel.find({ purpose: req.params.feature });
-    // console.log(result);
-    if (result.length !== 0)
-      return res.send(
-        Response(result, 200, `All ${req.params.feature} are here...`, true)
-      );
-    return res.send(
-      Response(null, 500, `${req.params.feature} not found!`, true)
-    );
+    console.log(req.params);
+    const result = await featureModel.find({});
+    getResponseMessage(result, res, "features");
+  } catch (error) {
+    next(error);
+  }
+};
+//get
+export const showTravelAmenityOccasion = async (req, res, next) => {
+  try {
+    console.log(req.params);
+    const result = await featureModel.find({
+      purpose: {
+        $in: [req.params.feature1, req.params.feature2, req.params.feature3],
+      },
+    });
+    console.log(result);
+    getResponseMessage(result, res, "features");
   } catch (error) {
     next(error);
   }
@@ -59,21 +74,13 @@ export const showAll = async (req, res, next) => {
 //filter
 export const filterTripList = async (req, res, next) => {
   const tripNames = req.body;
-  let filteredArray = [];
+  console.log(tripNames);
   try {
-    for (let index = 0; index < tripNames.length; index++) {
-      const filterCondition = {
-        purpose: req.params.feature,
-        title: tripNames[index],
-      };
-      const result = await featureModel.findOne(filterCondition);
-      if (result !== null) filteredArray.push(result);
-    }
-    if (filteredArray.length)
-      return res.send(
-        Response(filteredArray, 200, `Filtered data of ${tripNames}`, true)
-      );
-    return res.send(Response(null, 500, `Not found!`, true));
+    const result = await featureModel.find({
+      purpose: req.params.feature,
+      title: { $in: tripNames },
+    });
+    getResponseMessage(result, res, req.params.feature);
   } catch (error) {
     next(error);
   }
