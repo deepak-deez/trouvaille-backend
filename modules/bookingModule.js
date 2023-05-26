@@ -40,7 +40,7 @@ export const allBooking = async (req, res, next) => {
 
 export const getAllBookingByUser = async (req, res, next) => {
   try {
-    const result = await BookingModel.findOne({ userId: req.params.userId });
+    const result = await BookingModel.find({ userId: req.params.userId });
     getResultResponse(res, result);
   } catch (error) {
     next(error);

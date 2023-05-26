@@ -5,8 +5,8 @@ const schema = new mongoose.Schema({
   userId: { type: String, require: true },
   title: { type: String, require: true },
   name: { type: String, require: true },
-  phone: { type: String, trim: true, unique: true, require: true },
-  email: { type: String, trim: true, unique: true, require: true },
+  phone: { type: String, trim: true, require: true },
+  email: { type: String, trim: true, require: true },
   otherPassenger: [
     {
       firstName: { type: String, trim: true },
