@@ -120,7 +120,7 @@ export const UserActionOnDelete = async (req, res, next) => {
         id: trip._id,
       };
       const token = jwt.sign(payload, secret, { expiresIn: "7d" });
-      const link = `http://localhost:${process.env.ResetMailPort}/token-verification/${trip._id}/${token}`;
+      const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
       // console.log("link : ", link);
       return res.send(
         Response(
