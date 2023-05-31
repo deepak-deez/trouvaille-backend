@@ -50,7 +50,7 @@ const getResponseMessage = (result, res, feature) => {
 export const showAll = async (req, res, next) => {
   try {
     console.log(req.params);
-    const result = await featureModel.find({purpose: req.params.feature});
+    const result = await featureModel.find({ purpose: req.params.feature });
     getResponseMessage(result, res, "features");
   } catch (error) {
     next(error);
@@ -149,6 +149,25 @@ export const deleteFeature = async (req, res, next) => {
         Response(null, 200, `${feature} deleted successfully.`, true)
       );
     }
+  } catch (error) {
+    next(error);
+  }
+};
+// getting all feature options Together
+export const getAllFeature = async (req, res, next) => {
+  try {
+    console.log(req.params);
+    const result = await featureModel.find({
+      purpose: {
+        $in: [
+          req.params.feature1,
+          req.params.feature2,
+          req.params.feature3,
+          req.params.feature4,
+        ],
+      },
+    });
+    getResponseMessage(result, res, "All features");
   } catch (error) {
     next(error);
   }

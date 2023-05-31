@@ -30,5 +30,7 @@ app.get("/get-module/:trip", tripModule.getTripPackages);
 app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post("/update-module/:trip/:id", tripModule.updatePackage);
 app.delete("/delete-module/:trip/:id", tripModule.deletePackage);
+// options api
+app.get("/get-options/:feature1/:feature2/:feature3/:feature4", utility.getAllFeature);
 
 export default app;
