@@ -38,16 +38,16 @@ export const addNewUser = async (req, res, next) => {
     );
     const backendUser = await newUser.save();
     console.log(backendUser);
-
     if (backendUser) {
-      const secret = process.env.JWT_SECRET + req.body.password;
+      console.log(req.body.password);
+      const secret = process.env.JWT_SECRET;
       const payload = {
         email: req.body.email,
         id: backendUser._id,
       };
 
       const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-      const link = `http://localhost:${process.env.PORT}/reset-password/${req.params.user}/${backendUser._id}/${token}`;
+      const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${backendUser._id}/${token}`;
       console.log(link);
 
       if (await sendMail(req.body.email, link))
