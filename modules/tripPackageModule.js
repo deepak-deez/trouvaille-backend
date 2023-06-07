@@ -6,38 +6,42 @@ import cloudinary from "./cloudinary.js";
 
 //creating trip packages
 
+const makePackageData = async (req) => {
+  const profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
+
+  const result = await tripPackage.create(
+    tripPackageObject(profileimage, req.body)
+  );
+
+  result.tripHighlights.forEach((element, i) => {
+    element.icon = `http://localhost:7000/packageImage/${
+      req.files[i + 1].filename
+    }`;
+  });
+  return result;
+};
+
 export const createTripPackage = async (req, res, next) => {
   try {
-    const { tripHighlights } = req.body;
-    const profileimage = await cloudinary.uploader.upload(req.body.image, {
-      folder: `${req.params.trip}`,
-    });
+    // const profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
 
-    const result = await tripPackage.create(
-      tripPackageObject(profileimage, req.body)
-    );
-    const data = tripHighlights.map(async (element) => {
-      const iconImage = await cloudinary.uploader.upload(element.icon, {
-        folder: `${req.params.trip}`,
-      });
-      element.icon = {
-        public_id: iconImage.public_id,
-        url: iconImage.secure_url,
-      };
-      return element;
-    });
+    // const result = await tripPackage.create(
+    //   tripPackageObject(profileimage, req.body)
+    // );
 
-    Promise.all(data).then(async (results) => {
-      result.tripHighlights = results;
-      const saveData = await result.save();
-      if (saveData?._id)
-        return res.send(
-          Response(result, 200, `New ${req.params.trip} added.`, true)
-        );
+    // result.tripHighlights.forEach((element, i) => {
+    //   element.icon = `http://localhost:7000/packageImage/${req.files[i].filename}`;
+    // });
+    const result = await makePackageData(req);
+    console.log(result);
+    if (result?._id) {
       return res.send(
-        Response(null, 500, `${req.params.trip} not added!`, false)
+        Response(result, 200, `New ${req.params.trip} added.`, true)
       );
-    });
+    }
+    return res.send(
+      Response(null, 500, `${req.params.trip} not added!`, false)
+    );
   } catch (error) {
     next(error);
   }
@@ -80,46 +84,62 @@ export const getTripDetails = async (req, res, next) => {
 export const updatePackage = async (req, res, next) => {
   try {
     const currentData = await tripPackage.findOne({ _id: req.params.id });
-    await cloudinary.uploader.destroy(currentData.image.public_id);
-    const profileimage = await cloudinary.uploader.upload(req.body.image, {
-      folder: `${req.params.trip}`,
-    });
-
-    const data = req.body;
-    data.image = {
-      public_id: profileimage.public_id,
-      url: profileimage.secure_url,
-    };
-
-    let highlights = currentData.tripHighlights.length;
-
-    for (let i = 0; i < highlights; i++) {
-      await cloudinary.uploader.destroy(
-        currentData.tripHighlights[i].icon.public_id
+    if (currentData === null)
+      return res.send(
+        Response(null, 200, `${req.params.trip} not found!`, false)
       );
-
-      const iconImage = await cloudinary.uploader.upload(
-        req.body.tripHighlights[i].icon,
-        {
-          folder: `${req.params.trip}`,
-        }
-      );
-      data.tripHighlights[i].icon = {
-        public_id: iconImage.public_id,
-        url: iconImage.secure_url,
-      };
-    }
-
-    const updatedResult = await tripPackage.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: data,
-      },
+    const result = await makePackageData(req);
+    console.log("result : ", result);
+    const updatedResult = await tripPackage.findOneAndUpdate(
+      { _id: req.params.id },
+      result,
       { new: true }
     );
-    res.send(
-      Response(updatedResult, 200, `${req.params.trip} data is updated`, true)
-    );
+    if (updatedResult?._id)
+      return res.send(
+        Response(updatedResult, 200, `${req.params.trip} data is updated`, true)
+      );
+
+    // await cloudinary.uploader.destroy(currentData.image.public_id);
+    // const profileimage = await cloudinary.uploader.upload(req.body.image, {
+    //   folder: `${req.params.trip}`,
+    // });
+
+    // const data = req.body;
+    // data.image = {
+    //   public_id: profileimage.public_id,
+    //   url: profileimage.secure_url,
+    // };
+
+    // let highlights = currentData.tripHighlights.length;
+
+    // for (let i = 0; i < highlights; i++) {
+    //   await cloudinary.uploader.destroy(
+    //     currentData.tripHighlights[i].icon.public_id
+    //   );
+
+    //   const iconImage = await cloudinary.uploader.upload(
+    //     req.body.tripHighlights[i].icon,
+    //     {
+    //       folder: `${req.params.trip}`,
+    //     }
+    //   );
+    //   data.tripHighlights[i].icon = {
+    //     public_id: iconImage.public_id,
+    //     url: iconImage.secure_url,
+    //   };
+    // }
+
+    // const updatedResult = await tripPackage.findByIdAndUpdate(
+    //   req.params.id,
+    //   {
+    //     $set: data,
+    //   },
+    //   { new: true }
+    // );
+    // res.send(
+    //   Response(updatedResult, 200, `${req.params.trip} data is updated`, true)
+    // );
   } catch (err) {
     next(err);
   }

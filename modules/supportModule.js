@@ -44,10 +44,7 @@ export const Response = (data, statusCode, message, success) => {
 export const tripPackageObject = (profileimage, trip) => {
   return {
     title: trip.title,
-    image: {
-      public_id: profileimage.public_id,
-      url: profileimage.secure_url,
-    },
+    image: profileimage,
     duration: trip.duration,
     activities: trip.activities,
     tripCategory: trip.tripCategory,
