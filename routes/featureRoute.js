@@ -15,7 +15,7 @@ app.get(
   "/get-feature/:feature1/:feature2/:feature3",
   utility.showTravelAmenityOccasion
 );
-app.post("/get-filtered-feature/:feature", utility.filterTripList);
+app.post("/get-filtered-feature/:feature", tripModule.filterTripList);
 app.post("/update-feature/:feature/:id", utility.updateFeature);
 app.delete("/delete-feature/:feature/:id", utility.deleteFeature);
 

@@ -76,6 +76,61 @@ export const getTripDetails = async (req, res, next) => {
   }
 };
 
+//get filtered trip packages
+export const filterTripList = async (req, res, next) => {
+  const tripNames = req.body.title;
+  const occasions = req.body.occasions;
+  const travelType = req.body.travelType;
+  const tripCategory = req.body.tripCategory;
+  const price = req.body.price;
+  // const feature = req.params.feature
+  console.log(req.body);
+
+  const filter = {
+    // purpose: req.params.feature,
+    // title: { $all: tripNames },
+    occasions: { $all: req.body.occasions },
+    travelType: { $all: req.body.travelType },
+    tripCategory: { $all: req.body.tripCategory },
+    //  filter 
+
+  };
+  console.log("filter", filter);
+  try {
+    const result = await tripPackage.aggregate([
+      {
+        $match: {
+          $and: [
+            //   {
+            //   title: {$all: req.body.title}
+            //  },
+            {
+              travelType: { $in: req.body.travelType }
+            },
+            {
+              tripCategory: { $in: req.body.tripCategory }
+            },
+            {
+              occasions: { $in: req.body.occasions }
+            }
+            ,
+            {
+              price: { $lte: Number(req.body.price) }
+            }
+          ]
+        }
+      }
+      // req.body
+    ]);
+
+    // console.log(result);
+    res.send(Response(result, 200, `All ${req.params.feature} are here...`, true))
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 //modifying trip packages
 export const updatePackage = async (req, res, next) => {
   try {
