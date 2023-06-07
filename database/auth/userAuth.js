@@ -104,7 +104,7 @@ export const userLogin = async (req, res, next) => {
     // if (req.params.user !== user[0].userType)
     if (
       req.params.user !== user[0].userType &&
-      req.params.user === "Frontend-user"
+      user[0].userType === "Frontend-user"
     )
       return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
     else {
@@ -206,19 +206,19 @@ export const sendResetMail = async (req, res, next) => {
         Response(null, 500, `${req.params.user} not found!`, false)
       );
 
-      console.log(user[0].userType);
+    console.log(user[0].userType);
 
     if (
-      req.params.user === "Frontend-user" &&
+      user[0].userType === "Frontend-user" &&
       req.params.user !== user[0].userType
     )
       return res.send(Response(null, 500, `Not an ${req.params.user}!`, false));
-     
-      let secret = process.env.JWT_SECRET;
-      if(user[0].userType === "Admin" || user[0].userType === "Frontend-user"){
-        console.log(`sent to ${user[0].userType}`)
+
+    let secret = process.env.JWT_SECRET;
+    if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
+      console.log(`sent to ${user[0].userType}`);
       secret = process.env.JWT_SECRET + user[0].password;
-      }
+    }
     const payload = {
       email: req.body.email,
       id: user[0]._id,
@@ -246,24 +246,20 @@ export const tokenValidation = async (req, res, next) => {
       return res.send(
         Response(null, 500, `${req.params.user} not found!`, false)
       );
-      console.log(req.params);
-console.log(user);
-console.log(req.body);
-
 
     if (
-      req.params.user === "Frontend-user" &&
+      user[0].userType === "Frontend-user" &&
       req.params.user !== user[0].userType
     )
       return res.send(Response(null, 500, `Not a ${req.params.user}!`, false));
-      console.log(user[0].userType);
+    console.log(user[0].userType);
 
-      let secret = process.env.JWT_SECRET;
-      if(user[0].userType === "Admin" || user[0].userType === "Frontend-user"){
-        console.log(`valid for ${user[0].userType}`)
-          secret = process.env.JWT_SECRET + user[0].password;
-      }
-     jwt.verify(token, secret, (err, decode) => {
+    let secret = process.env.JWT_SECRET;
+    if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
+      console.log(`valid for ${user[0].userType}`);
+      secret = process.env.JWT_SECRET + user[0].password;
+    }
+    jwt.verify(token, secret, (err, decode) => {
       if (err) {
         return res.send(Response(null, 500, "Not authenticate!", false));
       } else {
@@ -287,9 +283,9 @@ export const setPassword = async (req, res, next) => {
     const user = await UserModel.find({ _id: req.body.id });
     if (user.length === 0)
       return res.send(Response(null, 500, "User not found!", false));
-  let  secret = process.env.JWT_SECRET;
- if(user[0].userType === "Admin" || user[0].userType === "Frontend-user")
-     secret = process.env.JWT_SECRET + user[0].password;
+    let secret = process.env.JWT_SECRET;
+    if (user[0].userType === "Admin" || user[0].userType === "Frontend-user")
+      secret = process.env.JWT_SECRET + user[0].password;
     try {
       let payload = { id: "" };
       if (!req.body?.logInStatus) {
