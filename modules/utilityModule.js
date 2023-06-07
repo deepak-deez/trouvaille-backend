@@ -17,15 +17,9 @@ import { request } from "http";
 export const createFeature = async (req, res, next) => {
   const { image, title, description } = req.body;
   try {
-    const data = await cloudinary.uploader.upload(image, {
-      folder: `${req.params.feature}`,
-    });
     const result = await featureModel.create({
       purpose: req.params.feature,
-      icon: {
-        public_id: data.public_id,
-        url: data.secure_url,
-      },
+      icon: `http://localhost:7000/featureImage/${req.file.filename}`,
       title: title,
       description: description,
     });
@@ -92,25 +86,13 @@ export const updateFeature = async (req, res, next) => {
   try {
     const { image, title, description } = req.body;
     const currentData = await featureModel.findOne({ _id: req.params.id });
+    if (!currentData?._id)
+      res.send(Response(null, 400, `${req.params.feature} not found!`, false));
     const data = {
+      icon: `http://localhost:7000/featureImage/${req.file.filename}`,
       title: title,
       description: description,
     };
-    if (image !== "") {
-      const ImgId = currentData.icon.public_id;
-      if (ImgId) {
-        await cloudinary.uploader.destroy(ImgId);
-      }
-
-      const newImage = await cloudinary.uploader.upload(image, {
-        folder: `${req.params.feature}`,
-      });
-
-      data.image = {
-        public_id: newImage.public_id,
-        url: newImage.secure_url,
-      };
-    }
     const result = await featureModel.findOneAndUpdate(
       { _id: req.params.id, purpose: req.params.feature },
       data,
@@ -135,11 +117,6 @@ export const deleteFeature = async (req, res, next) => {
     });
     if (data === null)
       return res.send(Response(null, 500, `${req.params.feature} not found!`));
-
-    const imgId = data.icon.public_id;
-    if (imgId) {
-      await cloudinary.uploader.destroy(imgId);
-    }
 
     const result = await featureModel.findOneAndDelete({
       _id: id,

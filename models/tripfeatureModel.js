@@ -3,16 +3,7 @@ const schema = new mongoose.Schema({
   purpose: {
     type: String,
   },
-  icon: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
+  icon: { type: String },
   title: {
     type: String,
     required: true,

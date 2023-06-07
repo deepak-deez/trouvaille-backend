@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import sendMail from "../../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
-import cloudinary from "../../modules/cloudinary.js";
 import {
   Response,
   registerData,

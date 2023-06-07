@@ -16,6 +16,7 @@ app.use(tripRoute);
 app.use(userRouter.app);
 app.use(adminRouter.app);
 app.use(bookingRouter);
+app.use("/featureImage", express.static("database/img"));
 
 app.use((req, res, next) => {
   next(new Error("Page not found"));
