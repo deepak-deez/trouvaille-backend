@@ -2,7 +2,7 @@ import { log } from "console";
 import { featureModel } from "../models/tripfeatureModel.js";
 import { Response } from "../modules/supportModule.js";
 import cloudinary from "./cloudinary.js";
-// import * as fs from "fs/promises";
+import { deleteFile } from "../modules/supportModule.js";
 import { readFileSync } from "fs";
 import { request } from "http";
 
@@ -116,6 +116,10 @@ export const deleteFeature = async (req, res, next) => {
     });
     if (data === null)
       return res.send(Response(null, 500, `${req.params.feature} not found!`));
+
+    const featureImage = data.icon.split("/")[4];
+    console.log("image : ", `./database/images/features/${featureImage}`);
+    deleteFile(`./database/images/features/${featureImage}`);
 
     const result = await featureModel.findOneAndDelete({
       _id: id,

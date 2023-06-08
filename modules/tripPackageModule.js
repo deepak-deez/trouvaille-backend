@@ -2,6 +2,7 @@ import { tripPackage } from "../models/tripPackageModel.js";
 import { readFileSync } from "fs";
 import { Response, tripPackageObject } from "./supportModule.js";
 import { nextTick } from "process";
+import { deleteFile } from "./supportModule.js";
 
 //creating trip packages
 
@@ -103,6 +104,14 @@ export const deletePackage = async (req, res, next) => {
 
     if (data === null)
       return res.send(Response(null, 500, `${req.params.trip} not found!`));
+
+    const tripImage = data.image.split("/")[4];
+
+    deleteFile(`./database/images/packages/${tripImage}`);
+    data.tripHighlights.forEach((element) => {
+      const icon = element.icon.split("/")[4];
+      deleteFile(`./database/images/packages/${icon}`);
+    });
 
     const result = await tripPackage.findOneAndDelete({ _id: id });
     if (result?._id) {

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { UserModel } from "../models/signUpModel.js";
+import * as fs from "fs/promises";
 
 export const passwordhashed = async (text) => {
   return await bcrypt.hash(text, 12);
@@ -96,6 +97,12 @@ export const userDetails = (image, data) => {
     gender: data.gender,
     maritalStatus: data.maritalStatus,
   };
+};
+
+export const deleteFile = async (filePath) => {
+  await fs.unlink(filePath, (err) => {
+    if (err) console.log("Cann't delete this file!!!");
+  });
 };
 
 // export const bookingData = (image, book) => {
