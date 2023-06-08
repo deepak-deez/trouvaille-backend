@@ -5,16 +5,7 @@ const tripPackageSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  image: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
+  image: { type: String },
   duration: {
     type: String,
     required: true,
@@ -49,14 +40,7 @@ const tripPackageSchema = new mongoose.Schema({
         trim: true,
       },
       description: { type: String },
-      icon: {
-        public_id: {
-          type: String,
-        },
-        url: {
-          type: String,
-        },
-      },
+      icon: { type: String },
     },
   ],
 
