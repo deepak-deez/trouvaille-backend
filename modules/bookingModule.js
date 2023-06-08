@@ -1,4 +1,5 @@
 import { BookingModel } from "../models/bookingModel.js";
+import { tripPackage } from "../models/tripPackageModel.js";
 import { Response, bookingData } from "./supportModule.js";
 import cloudinary from "./cloudinary.js";
 import jwt from "jsonwebtoken";
@@ -8,14 +9,20 @@ env.config();
 
 export const createBooking = async (req, res, next) => {
   try {
-    const image = await cloudinary.uploader.upload(req.body.image, {
-      folder: "Booking",
-    });
-    const booking = await BookingModel(bookingData(image, req.body));
-    const result = await booking.save();
-    if (result?._id)
-      res.send(Response(result, 200, "Booking successfull!", true));
-    else res.send(Response(null, 500, "Booking unsuccessfull!", false));
+    // const image = await cloudinary.uploader.upload(req.body.image, {
+    //   folder: "Booking",
+    // });
+    const tripId = req.body.tripId;
+    console.log(req.file);
+    const tripData = await tripPackage.findOne({ _id: tripId });
+    console.log(tripData, "tripdata");
+
+    // const image = `http://localhost:7000/featureImage/${req.file.filename}`;
+    // const booking = await BookingModel(bookingData("", req.body));
+    // const result = await booking.save();
+    // if (result?._id)
+    //   res.send(Response(result, 200, "Booking successfull!", true));
+    // else res.send(Response(null, 500, "Booking unsuccessfull!", false));
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { tripPackageSchema } from "./tripPackageModel.js";
 
 const schema = new mongoose.Schema({
   tripId: { type: String, require: true },
@@ -29,6 +30,7 @@ const schema = new mongoose.Schema({
   cancellationStatus: { type: String, trim: true },
   link: { type: String },
   read: { type: String },
+  tripDetails: tripPackageSchema,
 });
 
 export const BookingModel = mongoose.model("Booking", schema);

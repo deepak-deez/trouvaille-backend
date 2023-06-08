@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const tripPackageSchema = new mongoose.Schema({
+export const tripPackageSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
