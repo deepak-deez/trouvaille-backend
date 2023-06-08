@@ -7,6 +7,8 @@ import {
 } from "../modules/multerStorageEngine.js";
 const app = express();
 
+// Trip feature routes
+
 app.post(
   "/create-feature/:feature",
   featureStorageEngine.single("image"),
@@ -24,6 +26,8 @@ app.post(
   utility.updateFeature
 );
 app.delete("/delete-feature/:feature/:id", utility.deleteFeature);
+
+// Trip package routes
 
 app.post(
   "/create-module/:trip",
