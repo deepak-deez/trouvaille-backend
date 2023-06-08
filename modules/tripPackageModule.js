@@ -19,7 +19,10 @@ const makePackageData = (req) => {
 };
 
 export const createTripPackage = async (req, res, next) => {
+  console.log("FILE : ", req.body);
   try {
+    const { tripHighlights } = req.body;
+
     const result = await tripPackage(makePackageData(req));
     if (result?._id) {
       result.save();

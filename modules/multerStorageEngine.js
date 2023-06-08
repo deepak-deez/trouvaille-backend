@@ -15,6 +15,7 @@ const featureStorage = multer.diskStorage({
 const packageStorage = multer.diskStorage({
   destination: `./database/images/packages`,
   filename: (req, file, cb) => {
+    console.log(file, "file");
     return cb(null, setFileName(file));
   },
 });
