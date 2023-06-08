@@ -84,12 +84,11 @@ export const filterTripList = async (req, res, next) => {
 // update
 export const updateFeature = async (req, res, next) => {
   try {
-    const { image, title, description } = req.body;
+    const { title, description } = req.body;
     const currentData = await featureModel.findOne({ _id: req.params.id });
     if (!currentData?._id)
       res.send(Response(null, 400, `${req.params.feature} not found!`, false));
     const data = {
-      icon: `http://localhost:7000/featureImage/${req.file.filename}`,
       title: title,
       description: description,
     };
