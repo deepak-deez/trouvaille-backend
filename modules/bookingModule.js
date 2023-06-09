@@ -1,22 +1,25 @@
 import { BookingModel } from "../models/bookingModel.js";
 import { tripPackage } from "../models/tripPackageModel.js";
-import { Response, bookingData } from "./supportModule.js";
-import cloudinary from "./cloudinary.js";
+import { Response } from "./supportModule.js";
+
 import jwt from "jsonwebtoken";
 import env from "dotenv";
+import { getTripDetails } from "./tripPackageModule.js";
 
 env.config();
 
 export const createBooking = async (req, res, next) => {
   try {
-    // const image = await cloudinary.uploader.upload(req.body.image, {
-    //   folder: "Booking",
-    // });
     const tripId = req.body.tripId;
-    console.log(req.file);
     const tripData = await tripPackage.findOne({ _id: tripId });
-    console.log(tripData, "tripdata");
-
+    const bookingData = req.body;
+    bookingData.tripDetails = tripData;
+    // console.log(bookingData, "allData");
+    const data = await BookingModel(bookingData);
+    const result = await data.save();
+    if (result?._id)
+      return res.send(Response(result, 200, "Booking successfull!", true));
+    return res.send(Response(null, 500, "Booking unsuccessfull!", false));
     // const image = `http://localhost:7000/featureImage/${req.file.filename}`;
     // const booking = await BookingModel(bookingData("", req.body));
     // const result = await booking.save();
@@ -54,6 +57,19 @@ export const getAllBookingByUser = async (req, res, next) => {
   }
 };
 
+export const getBookingByUser = async (req, res, next) => {
+  try {
+    console.log("Params : ", req.params);
+    const result = await BookingModel.find({
+      userId: req.params.userId,
+      _id: req.params.id,
+    });
+    getResultResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getBookingDetails = async (req, res, next) => {
   try {
     const result = await BookingModel.findOne({ _id: req.params.id });
@@ -73,44 +89,43 @@ export const getCancellationRequest = async (req, res, next) => {
 };
 
 const deleteBooking = async (id, res) => {
-  console.log(id);
   const data = await BookingModel.findOne({ _id: id });
-  console.log(data);
   if (data === null)
     return res.send(Response(null, 200, "No booking found!", false));
-  const imgId = data.image.public_id;
-  if (imgId) {
-    await cloudinary.uploader.destroy(imgId);
-  }
-  const result = await BookingModel.findOneAndDelete({ _id: id });
+
+  const result = await BookingModel.findOneAndUpdate(
+    { _id: id },
+    { deleteStatus: true, bookingStatus: "canceled" },
+    { new: true }
+  );
   if (result) {
     return res.send(Response(null, 200, `Booking deleted successfully.`, true));
   }
 };
 
-export const tokenVarification = async (req, res, next) => {
-  try {
-    console.log("params :", req.params);
-    const { id, token } = req.params;
-    const trip = await BookingModel.findOne({ _id: id });
+// export const tokenVarification = async (req, res, next) => {
+//   try {
+//     console.log("params :", req.params);
+//     const { id, token } = req.params;
+//     const trip = await BookingModel.findOne({ _id: id });
 
-    if (trip === null)
-      return res.send(Response(null, 500, `Booking not found!`, false));
-    const secret = process.env.JWT_SECRET + trip.phone;
-    await jwt.verify(token, secret, (err, decode) => {
-      if (err) {
-        return res.send(Response(null, 500, "Not authenticate!", false));
-      } else {
-        // deleteBooking(trip._id, res);
-        return res.send(
-          Response({ id: trip._id }, 200, `Booking details verified.`, true)
-        );
-      }
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     if (trip === null)
+//       return res.send(Response(null, 500, `Booking not found!`, false));
+//     const secret = process.env.JWT_SECRET + trip.phone;
+//     await jwt.verify(token, secret, (err, decode) => {
+//       if (err) {
+//         return res.send(Response(null, 500, "Not authenticate!", false));
+//       } else {
+//         // deleteBooking(trip._id, res);
+//         return res.send(
+//           Response({ id: trip._id }, 200, `Booking details verified.`, true)
+//         );
+//       }
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 export const UserActionOnDelete = async (req, res, next) => {
   try {
@@ -120,18 +135,18 @@ export const UserActionOnDelete = async (req, res, next) => {
       console.log(trip);
       if (trip === null)
         return res.send(Response(null, 500, `Booking not found!`, false));
-      const secret = process.env.JWT_SECRET + trip.phone;
+      // const secret = process.env.JWT_SECRET + trip.phone;
 
-      const payload = {
-        email: trip.email,
-        id: trip._id,
-      };
-      const token = jwt.sign(payload, secret, { expiresIn: "7d" });
-      const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
-      // console.log("link : ", link);
+      // const payload = {
+      //   email: trip.email,
+      //   id: trip._id,
+      // };
+      // const token = jwt.sign(payload, secret, { expiresIn: "7d" });
+      // const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
+      // // console.log("link : ", link);
       return res.send(
         Response(
-          { link: link, token: token, details: trip },
+          { bookingDetails: trip },
           200,
           "Delete request has been send successfully!",
           true
@@ -158,7 +173,7 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
-          link: req.body.link,
+          bookingStatus: req.body.bookingStatus,
           read: req.body.read,
         },
       },

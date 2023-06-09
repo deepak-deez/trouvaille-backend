@@ -63,27 +63,22 @@ export const tripPackageObject = (profileimage, trip) => {
   };
 };
 
-export const bookingData = (image, book) => {
-  return {
-    tripId: book.tripId,
-    userId: book.userId,
-    title: book.title,
-    name: book.name,
-    phone: book.phone,
-    email: book.email,
-    otherPassenger: book.otherPassenger,
-    address: book.address,
-    image: {
-      public_id: image.public_id,
-      url: image.secure_url,
-    },
-    bookingStatus: "pending",
-    deleteReason: "",
-    cancellationStatus: false,
-    link: "",
-    read: false,
-  };
-};
+// export const bookingData = (book) => {
+//   return {
+//     tripId: book.tripId,
+//     userId: book.userId,
+//     title: book.title,
+//     name: book.name,
+//     phone: book.phone,
+//     email: book.email,
+//     otherPassenger: book.otherPassenger,
+//     address: book.address,
+//     bookingStatus: "pending",
+//     deleteReason: "",
+//     cancellationStatus: false,
+//     read: false,
+//   };
+// };
 
 export const userDetails = (image, data) => {
   return {

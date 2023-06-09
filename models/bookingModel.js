@@ -17,19 +17,12 @@ const schema = new mongoose.Schema({
     },
   ],
   address: { type: String, trim: true },
-  image: {
-    public_id: {
-      type: String,
-    },
-    url: {
-      type: String,
-    },
-  },
   bookingStatus: { type: String, trim: true },
   deleteReason: { type: String, trim: true },
   cancellationStatus: { type: String, trim: true },
   link: { type: String },
   read: { type: String },
+  deleteStatus: { type: String },
   tripDetails: tripPackageSchema,
 });
 
