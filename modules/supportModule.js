@@ -33,11 +33,10 @@ export const findUser = async (email) => {
   return await UserModel.find({ email: email });
 };
 
-export const Response = (data, statusCode, message, success) => {
+export const Response = (data, message, success) => {
   return {
     data: data,
     message: message,
-    status: statusCode,
     success: success,
   };
 };

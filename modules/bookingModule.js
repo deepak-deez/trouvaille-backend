@@ -18,14 +18,18 @@ export const createBooking = async (req, res, next) => {
     const data = await BookingModel(bookingData);
     const result = await data.save();
     if (result?._id)
-      return res.send(Response(result, 200, "Booking successfull!", true));
-    return res.send(Response(null, 500, "Booking unsuccessfull!", false));
+      return res
+        .status(200)
+        .send(Response(result, "Booking successfull!", true));
+    return res
+      .status(500)
+      .send(Response(null, "Booking unsuccessfull!", false));
     // const image = `http://localhost:7000/featureImage/${req.file.filename}`;
     // const booking = await BookingModel(bookingData("", req.body));
     // const result = await booking.save();
     // if (result?._id)
-    //   res.send(Response(result, 200, "Booking successfull!", true));
-    // else res.send(Response(null, 500, "Booking unsuccessfull!", false));
+    //   res.status(200).send(Response(result, "Booking successfull!", true));
+    // else res.status(500).send(Response(null,  "Booking unsuccessfull!", false));
   } catch (error) {
     next(error);
   }
@@ -33,10 +37,12 @@ export const createBooking = async (req, res, next) => {
 
 const getResultResponse = (res, result) => {
   if (result === null || result.length !== 0)
-    return res.send(
-      Response(result, 200, `All booking details are here...`, true)
-    );
-  return res.send(Response(null, 500, `Booking details not found!`, true));
+    return res
+      .status(200)
+      .send(Response(result, `All booking details are here...`, true));
+  return res
+    .status(500)
+    .send(Response(null, `Booking details not found!`, true));
 };
 
 export const allBooking = async (req, res, next) => {
@@ -91,7 +97,7 @@ export const getCancellationRequest = async (req, res, next) => {
 const deleteBooking = async (id, res) => {
   const data = await BookingModel.findOne({ _id: id });
   if (data === null)
-    return res.send(Response(null, 200, "No booking found!", false));
+    return res.status(200).send(Response(null, "No booking found!", false));
 
   const result = await BookingModel.findOneAndUpdate(
     { _id: id },
@@ -99,7 +105,9 @@ const deleteBooking = async (id, res) => {
     { new: true }
   );
   if (result) {
-    return res.send(Response(null, 200, `Booking deleted successfully.`, true));
+    return res
+      .status(200)
+      .send(Response(null, `Booking deleted successfully.`, true));
   }
 };
 
@@ -110,15 +118,15 @@ const deleteBooking = async (id, res) => {
 //     const trip = await BookingModel.findOne({ _id: id });
 
 //     if (trip === null)
-//       return res.send(Response(null, 500, `Booking not found!`, false));
+//       return res.status(500).send(Response(null,  `Booking not found!`, false));
 //     const secret = process.env.JWT_SECRET + trip.phone;
 //     await jwt.verify(token, secret, (err, decode) => {
 //       if (err) {
-//         return res.send(Response(null, 500, "Not authenticate!", false));
+//         return res.status(500).send(Response(null,  "Not authenticate!", false));
 //       } else {
 //         // deleteBooking(trip._id, res);
-//         return res.send(
-//           Response({ id: trip._id }, 200, `Booking details verified.`, true)
+//         return res.status(200).send(
+//           Response({ id: trip._id }, `Booking details verified.`, true)
 //         );
 //       }
 //     });
@@ -134,7 +142,9 @@ export const UserActionOnDelete = async (req, res, next) => {
       const trip = await BookingModel.findOne({ _id: req.params.id });
       console.log(trip);
       if (trip === null)
-        return res.send(Response(null, 500, `Booking not found!`, false));
+        return res
+          .status(500)
+          .send(Response(null, `Booking not found!`, false));
       // const secret = process.env.JWT_SECRET + trip.phone;
 
       // const payload = {
@@ -144,14 +154,15 @@ export const UserActionOnDelete = async (req, res, next) => {
       // const token = jwt.sign(payload, secret, { expiresIn: "7d" });
       // const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
       // // console.log("link : ", link);
-      return res.send(
-        Response(
-          { bookingDetails: trip },
-          200,
-          "Delete request has been send successfully!",
-          true
-        )
-      );
+      return res
+        .status(200)
+        .send(
+          Response(
+            { bookingDetails: trip },
+            "Delete request has been send successfully!",
+            true
+          )
+        );
     } else {
       console.log(req.params.id);
       deleteBooking(req.params.id, res);
@@ -166,7 +177,7 @@ export const restoreBooking = async (req, res, next) => {
     const id = req.params.id;
     const trip = BookingModel.findOne({ _id: id });
     if (trip === null)
-      return res.send(Response(null, 500, `Booking not found!`, false));
+      return res.status(500).send(Response(null, `Booking not found!`, false));
     const newDetails = await BookingModel.findByIdAndUpdate(
       { _id: id },
       {
@@ -180,14 +191,11 @@ export const restoreBooking = async (req, res, next) => {
       { new: true }
     );
     if (newDetails?._id) {
-      return res.send(
-        Response(
-          { data: newDetails },
-          200,
-          `Booking restore successfully.`,
-          true
-        )
-      );
+      return res
+        .status(200)
+        .send(
+          Response({ data: newDetails }, `Booking restore successfully.`, true)
+        );
     }
   } catch (error) {
     next(error);

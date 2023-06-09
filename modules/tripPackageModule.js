@@ -27,13 +27,13 @@ export const createTripPackage = async (req, res, next) => {
     const result = await tripPackage(makePackageData(req));
     if (result?._id) {
       result.save();
-      return res.send(
-        Response(result, 200, `New ${req.params.trip} added.`, true)
-      );
+      return res
+        .status(200)
+        .send(Response(result, `New ${req.params.trip} added.`, true));
     }
-    return res.send(
-      Response(null, 500, `${req.params.trip} not added!`, false)
-    );
+    return res
+      .status(500)
+      .send(Response(null, `${req.params.trip} not added!`, false));
   } catch (error) {
     next(error);
   }
@@ -49,10 +49,13 @@ export const getTripPackages = async (req, res, next) => {
       result = await tripPackage.find(req.body.category);
     }
     if (result.length !== 0)
-      res.send(
-        Response(result, 200, `All ${req.params.trip} are here...`, true)
-      );
-    else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
+      res
+        .status(200)
+        .send(Response(result, `All ${req.params.trip} are here...`, true));
+    else
+      res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`, true));
   } catch (error) {
     next(error);
   }
@@ -63,10 +66,18 @@ export const getTripDetails = async (req, res, next) => {
   try {
     const result = await tripPackage.find({ _id: req.params.id });
     if (result.length !== 0)
-      res.send(
-        Response(result, 200, `Details of ${req.params.trip} are here...`, true)
+      res.status(200).send(
+        Response(
+          result,
+
+          `Details of ${req.params.trip} are here...`,
+          true
+        )
       );
-    else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
+    else
+      res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`, true));
   } catch (error) {
     next(error);
   }
@@ -77,9 +88,9 @@ export const updatePackage = async (req, res, next) => {
   try {
     const currentData = await tripPackage.findOne({ _id: req.params.id });
     if (currentData === null)
-      return res.send(
-        Response(null, 200, `${req.params.trip} not found!`, false)
-      );
+      return res
+        .status(200)
+        .send(Response(null, `${req.params.trip} not found!`, false));
     const result = makePackageData(req);
     console.log("result : ", result);
     const updatedResult = await tripPackage.findOneAndUpdate(
@@ -88,8 +99,13 @@ export const updatePackage = async (req, res, next) => {
       { new: true }
     );
     if (updatedResult?._id)
-      return res.send(
-        Response(updatedResult, 200, `${req.params.trip} data is updated`, true)
+      return res.status(200).send(
+        Response(
+          updatedResult,
+
+          `${req.params.trip} data is updated`,
+          true
+        )
       );
   } catch (err) {
     next(err);
@@ -103,7 +119,9 @@ export const deletePackage = async (req, res, next) => {
     const data = await tripPackage.findOne({ _id: id });
 
     if (data === null)
-      return res.send(Response(null, 500, `${req.params.trip} not found!`));
+      return res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`));
 
     const tripImage = data.image.split("/")[4];
 
@@ -115,9 +133,9 @@ export const deletePackage = async (req, res, next) => {
 
     const result = await tripPackage.findOneAndDelete({ _id: id });
     if (result?._id) {
-      return res.send(
-        Response(null, 200, `${trip} deleted successfully.`, true)
-      );
+      return res
+        .status(200)
+        .send(Response(null, `${trip} deleted successfully.`, true));
     }
   } catch (error) {
     next(error);

@@ -26,9 +26,13 @@ export const createFeature = async (req, res, next) => {
     console.log("result : ", result);
     const saveData = await result.save();
     if (saveData?._id)
-      res.send(Response(result, 200, `New ${req.params.feature} added.`, true));
+      res
+        .status(200)
+        .send(Response(result, `New ${req.params.feature} added.`, true));
     else
-      res.send(Response(null, 500, `${req.params.feature} not added!`, false));
+      res
+        .status(500)
+        .send(Response(null, `${req.params.feature} not added!`, false));
   } catch (error) {
     next(error);
   }
@@ -37,8 +41,10 @@ export const createFeature = async (req, res, next) => {
 const getResponseMessage = (result, res, feature) => {
   console.log("result : ", result);
   if (result.length !== 0)
-    return res.send(Response(result, 200, `All ${feature} are here...`, true));
-  return res.send(Response(null, 500, `${feature} not found!`, true));
+    return res
+      .status(200)
+      .send(Response(result, `All ${feature} are here...`, true));
+  return res.status(500).send(Response(null, `${feature} not found!`, true));
 };
 
 export const showAll = async (req, res, next) => {
@@ -87,7 +93,9 @@ export const updateFeature = async (req, res, next) => {
     const { title, description } = req.body;
     const currentData = await featureModel.findOne({ _id: req.params.id });
     if (!currentData?._id)
-      res.send(Response(null, 400, `${req.params.feature} not found!`, false));
+      res
+        .status(400)
+        .send(Response(null, `${req.params.feature} not found!`, false));
     const data = {
       title: title,
       description: description,
@@ -97,9 +105,9 @@ export const updateFeature = async (req, res, next) => {
       data,
       { new: true }
     );
-    res.send(
-      Response(result, 200, `${req.params.feature} data is updated`, true)
-    );
+    res
+      .status(200)
+      .send(Response(result, `${req.params.feature} data is updated`, true));
   } catch (err) {
     next(err);
   }
@@ -115,7 +123,9 @@ export const deleteFeature = async (req, res, next) => {
       purpose: feature,
     });
     if (data === null)
-      return res.send(Response(null, 500, `${req.params.feature} not found!`));
+      return res
+        .status(500)
+        .send(Response(null, `${req.params.feature} not found!`));
 
     const featureImage = data.icon.split("/")[4];
     console.log("image : ", `./database/images/features/${featureImage}`);
@@ -125,9 +135,9 @@ export const deleteFeature = async (req, res, next) => {
       _id: id,
     });
     if (result) {
-      return res.send(
-        Response(null, 200, `${feature} deleted successfully.`, true)
-      );
+      return res
+        .status(200)
+        .send(Response(null, `${feature} deleted successfully.`, true));
     }
   } catch (error) {
     next(error);
