@@ -89,7 +89,7 @@ export const filterTripList = async (req, res, next) => {
             {
               $and: [
                 {
-                  title: (req.body.title === null) ? { $ne: '' } : { $all: req.body.title }
+                  title: (req.body.title.length === 0) ? { $ne: '' } : { $all: req.body.title }
                 },
                 //  {
                 //   checkIn: (req.body.checkIn=== null)?{$ne: req.body.checkIn}:{$all: req.body.title }
@@ -98,7 +98,7 @@ export const filterTripList = async (req, res, next) => {
                 //   checkOut: (req.body.checkOut=== null)?{$ne: req.body.checkOut}:{$all: req.body.title }
                 //  },
                 {
-                  maximumGuests: (req.body.maximumGuests === null) ? { $ne: '' } : { $gte: Number(req.body.maximumGuests) }
+                  maximumGuests: (req.body.maximumGuests.length === 0) ? { $ne: '' } : { $gte: Number(req.body.maximumGuests) }
                 }
 
               ]
@@ -106,22 +106,22 @@ export const filterTripList = async (req, res, next) => {
             {
               $and: [
                 {
-                  travelType: (req.body.travelType === null) ? { $ne: '' } : { $in: req.body.travelType }
+                  travelType: (req.body.travelType.length === 0) ? { $ne: '' } : { $in: req.body.travelType }
                 },
                 {
-                  tripCategory: (req.body.tripCategory === null) ? { $ne: '' } : { $in: req.body.tripCategory }
+                  tripCategory: (req.body.tripCategory.length === 0) ? { $ne: '' } : { $in: req.body.tripCategory }
                 },
                 {
-                  occasions: (req.body.occasions === null) ? { $ne: '' } : { $in: req.body.occasions }
+                  occasions: (req.body.occasions.length === 0) ? { $ne: '' } : { $in: req.body.occasions }
                 },
                 {
-                  amenities: (req.body.amenities === null) ? { $ne: '' } : { $in: req.body.amenities }
+                  amenities: (req.body.amenities.length === 0) ? { $ne: '' } : { $in: req.body.amenities }
                 }
               ]
             }
             ,
             {
-              discountedPrice: (req.body.price === null) ? { $ne: '' } :{ $lte: Number(req.body.price) }
+              discountedPrice: (req.body.price.length === 0) ? { $ne: '' } :{ $lte: Number(req.body.price) }
             }
           ]
         }
