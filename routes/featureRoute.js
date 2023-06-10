@@ -15,7 +15,6 @@ app.get(
   "/get-feature/:feature1/:feature2/:feature3",
   utility.showTravelAmenityOccasion
 );
-app.post("/get-filtered-feature/:feature", tripModule.filterTripList);
 app.post("/update-feature/:feature/:id", utility.updateFeature);
 app.delete("/delete-feature/:feature/:id", utility.deleteFeature);
 
@@ -31,6 +30,10 @@ app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post("/update-module/:trip/:id", tripModule.updatePackage);
 app.delete("/delete-module/:trip/:id", tripModule.deletePackage);
 // options api
-app.get("/get-options/:feature1/:feature2/:feature3/:feature4", utility.getAllFeature);
+app.get(
+  "/get-options/:feature1/:feature2/:feature3/:feature4",
+  utility.getAllFeature
+);
+app.post("/get-filtered-feature/:trip", tripModule.filterTripList);
 
 export default app;
