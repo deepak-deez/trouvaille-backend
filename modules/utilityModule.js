@@ -128,8 +128,8 @@ export const deleteFeature = async (req, res, next) => {
         .send(Response(null, `${req.params.feature} not found!`));
 
     const featureImage = data.icon.split("/")[4];
-    console.log("image : ", `./database/images/features/${featureImage}`);
-    deleteFile(`./database/images/features/${featureImage}`);
+    // console.log("image : ", `./database/images/features/${featureImage}`);
+    deleteFile("features", featureImage);
 
     const result = await featureModel.findOneAndDelete({
       _id: id,

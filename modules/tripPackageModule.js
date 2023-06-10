@@ -125,10 +125,10 @@ export const deletePackage = async (req, res, next) => {
 
     const tripImage = data.image.split("/")[4];
 
-    deleteFile(`./database/images/packages/${tripImage}`);
+    deleteFile("packages", tripImage);
     data.tripHighlights.forEach((element) => {
       const icon = element.icon.split("/")[4];
-      deleteFile(`./database/images/packages/${icon}`);
+      deleteFile("packages", icon);
     });
 
     const result = await tripPackage.findOneAndDelete({ _id: id });

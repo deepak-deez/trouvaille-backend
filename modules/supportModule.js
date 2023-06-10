@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import { UserModel } from "../models/signUpModel.js";
 import * as fs from "fs/promises";
+import path from "path";
 
 export const passwordhashed = async (text) => {
   return await bcrypt.hash(text, 12);
@@ -79,12 +80,9 @@ export const tripPackageObject = (profileimage, trip) => {
 //   };
 // };
 
-export const userDetails = (image, data) => {
+export const userDetails = (imageUrl, data) => {
   return {
-    image: {
-      public_id: image.public_id,
-      url: image.url,
-    },
+    image: imageUrl,
     name: data.name,
     place: data.place,
     DOB: data.DOB,
@@ -93,7 +91,8 @@ export const userDetails = (image, data) => {
   };
 };
 
-export const deleteFile = async (filePath) => {
+export const deleteFile = async (folderName, fileName) => {
+  const filePath = path.join("database", "images", folderName, fileName);
   await fs.unlink(filePath, (err) => {
     if (err) console.log("Cann't delete this file!!!");
   });

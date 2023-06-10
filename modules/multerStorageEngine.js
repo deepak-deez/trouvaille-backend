@@ -15,10 +15,17 @@ const featureStorage = multer.diskStorage({
 const packageStorage = multer.diskStorage({
   destination: `./database/images/packages`,
   filename: (req, file, cb) => {
-    console.log(file, "file");
+    return cb(null, setFileName(file));
+  },
+});
+
+const userProfileStorage = multer.diskStorage({
+  destination: `./database/images/profileImages`,
+  filename: (req, file, cb) => {
     return cb(null, setFileName(file));
   },
 });
 
 export const featureStorageEngine = multer({ storage: featureStorage });
 export const packageStorageEngine = multer({ storage: packageStorage });
+export const profileStorageEngine = multer({ storage: userProfileStorage });

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import sendMail from "../../controller/sendMail.js";
 import jwt from "jsonwebtoken";
 import env from "dotenv";
+import { deleteFile } from "../../modules/supportModule.js";
 import {
   Response,
   registerData,
@@ -66,12 +67,25 @@ export const userRegister = async (req, res, next) => {
 
 export const updateUserDetails = async (req, res, next) => {
   try {
+    // console.log(req.body);
     const details = req.body;
-    let image = "";
-    if (details.image !== "") {
-      image = await cloudinary.uploader.upload(details.image, {
-        folder: `${req.params.user}`,
-      });
+    const userData = await UserModel.findOne({ _id: req.params.id });
+    if (userData === null)
+      return res.status(404).send(null, "User not found!", false);
+
+    let image = userData.image;
+
+    if (userData.image !== "") {
+      console.log(userData);
+      const profileImage = userData.userDetails.image.split("/")[4];
+      // console.log(
+      //   "image : ",
+      //   `./database/images/profileImages/${profileImage}`
+      // );
+      deleteFile("profileImages", profileImage);
+    }
+    if (req.file !== null) {
+      image = `http://localhost:7000/profileImage/${req.file.filename}`;
     }
     const data = userDetails(image, details);
     const newDetails = await UserModel.findOneAndUpdate(
