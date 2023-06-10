@@ -84,11 +84,6 @@ export const updateDetails = async (req, res, next) => {
 
     const admin = await UserModel.find({ _id: req.body.id });
 
-    // if (admin === null || admin[0].userType !== "Admin")
-    //   return res.status(500).send(
-    //     Response(null,  `${req.params.user} not found!`, false)
-    //   );
-
     const result = await UserModel.findOneAndUpdate(
       {
         _id: admin[0]._id,

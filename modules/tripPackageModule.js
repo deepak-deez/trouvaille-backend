@@ -15,15 +15,12 @@ const makePackageData = (req) => {
       req.files[i + 1].filename
     }`;
   });
-  // console.log("data : ", result);
   return result;
 };
 
 export const createTripPackage = async (req, res, next) => {
   console.log("FILE : ", req.body);
   try {
-    const { tripHighlights } = req.body;
-
     const result = await tripPackage(makePackageData(req));
     if (result?._id) {
       result.save();
@@ -99,14 +96,11 @@ export const updatePackage = async (req, res, next) => {
       { new: true }
     );
     if (updatedResult?._id)
-      return res.status(200).send(
-        Response(
-          updatedResult,
-
-          `${req.params.trip} data is updated`,
-          true
-        )
-      );
+      return res
+        .status(200)
+        .send(
+          Response(updatedResult, `${req.params.trip} data is updated`, true)
+        );
   } catch (err) {
     next(err);
   }

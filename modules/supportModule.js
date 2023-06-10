@@ -63,23 +63,6 @@ export const tripPackageObject = (profileimage, trip) => {
   };
 };
 
-// export const bookingData = (book) => {
-//   return {
-//     tripId: book.tripId,
-//     userId: book.userId,
-//     title: book.title,
-//     name: book.name,
-//     phone: book.phone,
-//     email: book.email,
-//     otherPassenger: book.otherPassenger,
-//     address: book.address,
-//     bookingStatus: "pending",
-//     deleteReason: "",
-//     cancellationStatus: false,
-//     read: false,
-//   };
-// };
-
 export const userDetails = (imageUrl, data) => {
   return {
     image: imageUrl,
@@ -97,20 +80,3 @@ export const deleteFile = async (folderName, fileName) => {
     if (err) console.log("Cann't delete this file!!!");
   });
 };
-
-// export const bookingData = (image, book) => {
-//   return {
-//     title: book.title,
-//     name: book.name,
-//     phone: book.name,
-//     email: book.name,
-//     otherPassenger: book.otherPassenger,
-//     address: book.address,
-//     image: {
-//       data: image,
-//       contentType: "image/png+jpg+jpeg",
-//     },
-//     bookingStatus: book.bookingStatus,
-//     deleteReason: book.deleteReason,
-//   };
-// };

@@ -1,17 +1,9 @@
 import { log } from "console";
 import { featureModel } from "../models/tripfeatureModel.js";
 import { Response } from "../modules/supportModule.js";
-import cloudinary from "./cloudinary.js";
 import { deleteFile } from "../modules/supportModule.js";
 import { readFileSync } from "fs";
 import { request } from "http";
-
-// export const readImageFile = async (image) => {
-//   console.log("Path:", image);
-//   const data = await fs.readFile(image, "utf-8");
-//   console.log("data : ", data);
-//   return data;
-// };
 
 //create
 export const createFeature = async (req, res, next) => {
@@ -128,7 +120,6 @@ export const deleteFeature = async (req, res, next) => {
         .send(Response(null, `${req.params.feature} not found!`));
 
     const featureImage = data.icon.split("/")[4];
-    // console.log("image : ", `./database/images/features/${featureImage}`);
     deleteFile("features", featureImage);
 
     const result = await featureModel.findOneAndDelete({
@@ -143,20 +134,12 @@ export const deleteFeature = async (req, res, next) => {
     next(error);
   }
 };
+
 // getting all feature options Together
 export const getAllFeature = async (req, res, next) => {
   try {
     console.log(req.params);
-    const result = await featureModel.find({
-      purpose: {
-        $in: [
-          req.params.feature1,
-          req.params.feature2,
-          req.params.feature3,
-          req.params.feature4,
-        ],
-      },
-    });
+    const result = await featureModel.find({});
     getResponseMessage(result, res, "All features");
   } catch (error) {
     next(error);

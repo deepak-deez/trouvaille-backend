@@ -14,7 +14,6 @@ export const createBooking = async (req, res, next) => {
     const tripData = await tripPackage.findOne({ _id: tripId });
     const bookingData = req.body;
     bookingData.tripDetails = tripData;
-    // console.log(bookingData, "allData");
     const data = await BookingModel(bookingData);
     const result = await data.save();
     if (result?._id)
@@ -24,12 +23,6 @@ export const createBooking = async (req, res, next) => {
     return res
       .status(500)
       .send(Response(null, "Booking unsuccessfull!", false));
-    // const image = `http://localhost:7000/featureImage/${req.file.filename}`;
-    // const booking = await BookingModel(bookingData("", req.body));
-    // const result = await booking.save();
-    // if (result?._id)
-    //   res.status(200).send(Response(result, "Booking successfull!", true));
-    // else res.status(500).send(Response(null,  "Booking unsuccessfull!", false));
   } catch (error) {
     next(error);
   }
