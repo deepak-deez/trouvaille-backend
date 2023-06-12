@@ -1,6 +1,6 @@
 import { tripPackage } from "../models/tripPackageModel.js";
 import { readFileSync } from "fs";
-import { Response, tripPackageObject } from "./supportModule.js";
+import { Response, tripPackageObject, updateTripPackageObject } from "./supportModule.js";
 import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
 
@@ -15,6 +15,43 @@ const makePackageData = (req) => {
       req.files[i + 1].filename
     }`;
   });
+  return result;
+};
+
+const updatePackageData = (req) => {
+  // console.log(req.files[0]);
+  console.log("req.body",req.body)
+  console.log("req.body.images",req.body.images)
+  let parsedIndexes = JSON.parse(req.body.indexes)
+  let profileimage=req.body.images[0];
+  if(parsedIndexes.includes(0))
+   profileimage=  `http://localhost:7000/packageImage/${req.files[0].filename}`;
+   else
+   profileimage = req.body.images[0];
+  console.log(profileimage,"gdfhjk");
+  const result = updateTripPackageObject(profileimage, req.body);
+  console.log("update req :",result);
+
+  let indexArray= parsedIndexes;
+  
+  if(indexArray.includes(0)){
+    indexArray.shift();
+    
+    indexArray.forEach((element, i) => {
+
+      result.tripHighlights[element-1].icon = `http://localhost:7000/packageImage/${
+        req.files[i + 1].filename
+      }`;
+    });
+  }
+  else{
+    indexArray.forEach((element, i) => {
+      result.tripHighlights[element-1].icon = `http://localhost:7000/packageImage/${
+        req.files[i].filename
+      }`;
+    });
+  }
+
   return result;
 };
 
@@ -83,13 +120,15 @@ export const getTripDetails = async (req, res, next) => {
 //modifying trip packages
 export const updatePackage = async (req, res, next) => {
   try {
+    console.log("UPDATE Files: ",req.files);
+    console.log("UPDATE: ",req.body);
     const currentData = await tripPackage.findOne({ _id: req.params.id });
     if (currentData === null)
       return res
         .status(200)
         .send(Response(null, `${req.params.trip} not found!`, false));
-    const result = makePackageData(req);
-    console.log("result : ", result);
+    const result = updatePackageData(req);
+    // console.log("result : ", result);
     const updatedResult = await tripPackage.findOneAndUpdate(
       { _id: req.params.id },
       result,

@@ -31,7 +31,7 @@ export const createFeature = async (req, res, next) => {
 };
 
 const getResponseMessage = (result, res, feature) => {
-  console.log("result : ", result);
+  // console.log("result : ", result);
   if (result.length !== 0)
     return res
       .status(200)
