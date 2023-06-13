@@ -20,17 +20,17 @@ const makePackageData = (req) => {
 
 const updatePackageData = (req) => {
   // console.log(req.files[0]);
-  console.log("req.body",req.body)
-  console.log("req.body.images",req.body.images)
+  // console.log("req.body",req.body)
+  // console.log("req.body.images",req.body.images)
   let parsedIndexes = JSON.parse(req.body.indexes)
   let profileimage=req.body.images[0];
   if(parsedIndexes.includes(0))
    profileimage=  `http://localhost:7000/packageImage/${req.files[0].filename}`;
    else
    profileimage = req.body.images[0];
-  console.log(profileimage,"gdfhjk");
+  // console.log(profileimage,"gdfhjk");
   const result = updateTripPackageObject(profileimage, req.body);
-  console.log("update req :",result);
+  // console.log("update req :",result);
 
   let indexArray= parsedIndexes;
   
@@ -134,15 +134,15 @@ export const filterTripList = async (req, res, next) => {
                       ? { $ne: "" }
                       : { $all: req.body.title },
                 },
-                //  {
-                //   checkIn: (req.body.checkIn=== null)?{$ne: req.body.checkIn}:{$all: req.body.title }
-                //  },
-                //  {
-                //   checkOut: (req.body.checkOut=== null)?{$ne: req.body.checkOut}:{$all: req.body.title }
-                //  },
+                 {
+                  startDate: (req.body.checkIn === "")?{$ne: req.body.checkIn}:{$gte: req.body.checkIn}
+                 },
+                 {
+                  endDate: (req.body.checkOut === "")?{$ne: req.body.checkOut}:{$lte: req.body.checkOut}
+                 },
                 {
                   maximumGuests:
-                    req.body.maximumGuests.length === 0
+                    req.body.maximumGuests === ""
                       ? { $ne: "" }
                       : { $gte: Number(req.body.maximumGuests) },
                 },
