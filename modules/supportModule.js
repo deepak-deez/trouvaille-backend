@@ -47,6 +47,8 @@ export const tripPackageObject = (profileimage, trip) => {
     title: trip.title,
     image: profileimage,
     duration: trip.duration,
+    startDate: trip.startDate,
+    endDate: trip.endDate,
     activities: JSON.parse(trip.activities),
     tripCategory: JSON.parse(trip.tripCategory),
     placeNumber: trip.placeNumber,
@@ -69,6 +71,8 @@ export const updateTripPackageObject = (profileimage, trip) => {
     image: profileimage,
     indexes: JSON.parse(trip.indexes),
     duration: trip.duration,
+    startDate: trip.startDate,
+    endDate: trip.endDate,
     activities: JSON.parse(trip.activities),
     tripCategory: JSON.parse(trip.tripCategory),
     placeNumber: trip.placeNumber,
@@ -84,7 +88,6 @@ export const updateTripPackageObject = (profileimage, trip) => {
     status: trip.status,
   };
 };
-
 
 export const userDetails = (imageUrl, data) => {
   return {

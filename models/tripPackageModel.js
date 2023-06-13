@@ -10,6 +10,8 @@ export const tripPackageSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  startDate: { type: String, trim: true },
+  endDate: { type: String, trim: true },
   activities: [
     {
       date: {
