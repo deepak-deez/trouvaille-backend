@@ -178,7 +178,7 @@ export const filterTripList = async (req, res, next) => {
             },
             {
               discountedPrice:
-                req.body.price.length === 0
+                req.body.price === ""
                   ? { $ne: "" }
                   : { $lte: Number(req.body.price) },
             },
