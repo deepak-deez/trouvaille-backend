@@ -303,7 +303,6 @@ export const tokenValidation = async (req, res, next) => {
           .send(
             Response(
               { email: user[0].email },
-              200,
               `${req.params.user} verified.`,
               true
             )
