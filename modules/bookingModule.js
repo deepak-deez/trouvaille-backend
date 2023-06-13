@@ -87,6 +87,17 @@ export const getCancellationRequest = async (req, res, next) => {
   }
 };
 
+export const getBookingByStatus = async (req, res, next) => {
+  try {
+    const result = await BookingModel.find({
+      bookingStatus: req.params.status,
+    });
+    getResultResponse(res, result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteBooking = async (id, res) => {
   const data = await BookingModel.findOne({ _id: id });
   if (data === null)
@@ -94,7 +105,7 @@ const deleteBooking = async (id, res) => {
 
   const result = await BookingModel.findOneAndUpdate(
     { _id: id },
-    { deleteStatus: true, bookingStatus: "canceled" },
+    { deleteStatus: true, bookingStatus: "cancelled" },
     { new: true }
   );
   if (result) {
