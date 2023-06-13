@@ -64,21 +64,6 @@ export const showTravelAmenityOccasion = async (req, res, next) => {
   }
 };
 
-//filter
-export const filterTripList = async (req, res, next) => {
-  const tripNames = req.body;
-  console.log(tripNames);
-  try {
-    const result = await featureModel.find({
-      purpose: req.params.feature,
-      title: { $in: tripNames },
-    });
-    getResponseMessage(result, res, req.params.feature);
-  } catch (error) {
-    next(error);
-  }
-};
-
 // update
 export const updateFeature = async (req, res, next) => {
   try {

@@ -48,5 +48,6 @@ app.get(
   "/get-options/:feature1/:feature2/:feature3/:feature4",
   utility.getAllFeature
 );
+app.post("/get-filtered-feature/:trip", tripModule.filterTripList);
 
 export default app;

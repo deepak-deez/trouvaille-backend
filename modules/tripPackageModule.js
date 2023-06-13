@@ -117,6 +117,82 @@ export const getTripDetails = async (req, res, next) => {
   }
 };
 
+//get filtered trip packages
+export const filterTripList = async (req, res, next) => {
+  console.log(req.body.title);
+
+  try {
+    const result = await tripPackage.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $and: [
+                {
+                  title:
+                    req.body.title.length === 0
+                      ? { $ne: "" }
+                      : { $all: req.body.title },
+                },
+                //  {
+                //   checkIn: (req.body.checkIn=== null)?{$ne: req.body.checkIn}:{$all: req.body.title }
+                //  },
+                //  {
+                //   checkOut: (req.body.checkOut=== null)?{$ne: req.body.checkOut}:{$all: req.body.title }
+                //  },
+                {
+                  maximumGuests:
+                    req.body.maximumGuests.length === 0
+                      ? { $ne: "" }
+                      : { $gte: Number(req.body.maximumGuests) },
+                },
+              ],
+            },
+            {
+              $and: [
+                {
+                  travelType:
+                    req.body.travelType.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.travelType },
+                },
+                {
+                  tripCategory:
+                    req.body.tripCategory.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.tripCategory },
+                },
+                {
+                  occasions:
+                    req.body.occasions.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.occasions },
+                },
+                {
+                  amenities:
+                    req.body.amenities.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.amenities },
+                },
+              ],
+            },
+            {
+              discountedPrice:
+                req.body.price.length === 0
+                  ? { $ne: "" }
+                  : { $lte: Number(req.body.price) },
+            },
+          ],
+        },
+      },
+    ]);
+
+    res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
+  } catch (error) {
+    next(error);
+  }
+};
+
 //modifying trip packages
 export const updatePackage = async (req, res, next) => {
   try {
