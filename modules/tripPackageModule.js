@@ -9,8 +9,6 @@ import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
 import { featureModel } from "../models/tripfeatureModel.js";
 
-//creating trip packages
-
 const getFeatures = async (data) => {
   const features = [
     ...data.occasions,
@@ -96,6 +94,7 @@ export const getTripPackages = async (req, res, next) => {
     } else {
       result = await tripPackage.find(req.body.category);
     }
+    // completetStatusUpdate(result);
     if (result.length !== 0)
       res
         .status(200)
@@ -103,7 +102,7 @@ export const getTripPackages = async (req, res, next) => {
     else
       res
         .status(500)
-        .send(Response(null, `${req.params.trip} not found!`, true));
+        .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
     next(error);
   }
@@ -125,7 +124,7 @@ export const getTripDetails = async (req, res, next) => {
     else
       res
         .status(500)
-        .send(Response(null, `${req.params.trip} not found!`, true));
+        .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
     next(error);
   }

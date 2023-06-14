@@ -1,12 +1,30 @@
 import { BookingModel } from "../models/bookingModel.js";
 import { tripPackage } from "../models/tripPackageModel.js";
 import { Response } from "./supportModule.js";
+import { format } from "date-fns";
 
 import jwt from "jsonwebtoken";
 import env from "dotenv";
 import { getTripDetails } from "./tripPackageModule.js";
 
 env.config();
+
+//creating trip packages
+
+const completetStatusUpdate = (data) => {
+  const today = format(new Date(), "dd-MM-yyyy");
+  if (data.length !== 0) {
+    data.forEach(async (booking) => {
+      if (booking.tripDetails.endDate < today) {
+        await BookingModel.findByIdAndUpdate(
+          { _id: booking.id },
+          { $set: { bookingStatus: "Completed" } },
+          { new: true }
+        );
+      }
+    });
+  }
+};
 
 export const createBooking = async (req, res, next) => {
   try {
@@ -41,6 +59,7 @@ const getResultResponse = (res, result) => {
 export const allBooking = async (req, res, next) => {
   try {
     const result = await BookingModel.find({});
+    completetStatusUpdate(result);
     getResultResponse(res, result);
   } catch (error) {
     next(error);
@@ -58,7 +77,6 @@ export const getAllBookingByUser = async (req, res, next) => {
 
 export const getBookingByUser = async (req, res, next) => {
   try {
-    console.log("Params : ", req.params);
     const result = await BookingModel.find({
       userId: req.params.userId,
       _id: req.params.id,
@@ -141,10 +159,8 @@ const deleteBooking = async (id, res) => {
 
 export const UserActionOnDelete = async (req, res, next) => {
   try {
-    console.log(req.params);
     if (req.params.user !== "Admin") {
       const trip = await BookingModel.findOne({ _id: req.params.id });
-      console.log(trip);
       if (trip === null)
         return res
           .status(500)
@@ -188,7 +204,7 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
-          bookingStatus: req.body.bookingStatus,
+          // bookingStatus: req.body.bookingStatus,
           read: req.body.read,
         },
       },
@@ -200,6 +216,29 @@ export const restoreBooking = async (req, res, next) => {
         .send(
           Response({ data: newDetails }, `Booking restore successfully.`, true)
         );
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateBookingStatus = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const trip = BookingModel.findOne({ _id: id });
+    if (trip === null)
+      return res.status(500).send(Response(null, `Booking not found!`, false));
+    const newDetails = await BookingModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: { bookingStatus: req.body.bookingStatus },
+      },
+      { new: true }
+    );
+    if (newDetails?._id) {
+      return res
+        .status(200)
+        .send(Response(null, `Booking status update successfully.`, true));
     }
   } catch (error) {
     next(error);

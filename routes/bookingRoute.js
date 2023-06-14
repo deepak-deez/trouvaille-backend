@@ -13,5 +13,6 @@ app.get("/get-cancel-booking-request", book.getCancellationRequest);
 app.delete("/delete-booking/:user/:id", book.UserActionOnDelete);
 app.post("/update-booking/:id", book.restoreBooking);
 app.get("/get-booking/:status", book.getBookingByStatus);
+app.post("update-booking-status", book.updateBookingStatus);
 
 export default app;
