@@ -62,31 +62,14 @@ export const tripPackageObject = (profileimage, trip) => {
     briefDescription: trip.briefDescription,
     faq: JSON.parse(trip.faq),
     status: trip.status,
+    features: [],
   };
 };
 
 export const updateTripPackageObject = (profileimage, trip) => {
-  return {
-    title: trip.title,
-    image: profileimage,
-    indexes: JSON.parse(trip.indexes),
-    duration: trip.duration,
-    startDate: trip.startDate,
-    endDate: trip.endDate,
-    activities: JSON.parse(trip.activities),
-    tripCategory: JSON.parse(trip.tripCategory),
-    placeNumber: trip.placeNumber,
-    maximumGuests: trip.maximumGuests,
-    tripHighlights: JSON.parse(trip.tripHighlights),
-    price: trip.price,
-    discountedPrice: trip.discountedPrice,
-    occasions: JSON.parse(trip.occasions),
-    travelType: JSON.parse(trip.travelType),
-    amenities: JSON.parse(trip.amenities),
-    briefDescription: trip.briefDescription,
-    faq: JSON.parse(trip.faq),
-    status: trip.status,
-  };
+  const data = tripPackageObject(profileimage, trip);
+  data.indexex = JSON.parse(trip.indexes);
+  return data;
 };
 
 export const userDetails = (imageUrl, data) => {

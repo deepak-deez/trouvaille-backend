@@ -77,6 +77,7 @@ export const tripPackageSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  features: [],
 });
 
 export const tripPackage = mongoose.model("tripPackage", tripPackageSchema);
