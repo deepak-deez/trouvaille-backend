@@ -147,15 +147,15 @@ export const filterTripList = async (req, res, next) => {
                       ? { $ne: "" }
                       : { $all: req.body.title },
                 },
-                //  {
-                //   checkIn: (req.body.checkIn=== null)?{$ne: req.body.checkIn}:{$all: req.body.title }
-                //  },
-                //  {
-                //   checkOut: (req.body.checkOut=== null)?{$ne: req.body.checkOut}:{$all: req.body.title }
-                //  },
+                 {
+                  startDate: (req.body.checkIn === "")?{$ne: req.body.checkIn}:{$gte: req.body.checkIn}
+                 },
+                 {
+                  endDate: (req.body.checkOut === "")?{$ne: req.body.checkOut}:{$lte: req.body.checkOut}
+                 },
                 {
                   maximumGuests:
-                    req.body.maximumGuests.length === 0
+                    req.body.maximumGuests === ""
                       ? { $ne: "" }
                       : { $gte: Number(req.body.maximumGuests) },
                 },
@@ -191,7 +191,7 @@ export const filterTripList = async (req, res, next) => {
             },
             {
               discountedPrice:
-                req.body.price.length === 0
+                req.body.price === ""
                   ? { $ne: "" }
                   : { $lte: Number(req.body.price) },
             },

@@ -77,6 +77,7 @@ export const getAllBookingByUser = async (req, res, next) => {
 
 export const getBookingByUser = async (req, res, next) => {
   try {
+    console.log("Params : ", req.params);
     const result = await BookingModel.find({
       userId: req.params.userId,
       _id: req.params.id,
@@ -159,8 +160,10 @@ const deleteBooking = async (id, res) => {
 
 export const UserActionOnDelete = async (req, res, next) => {
   try {
+    console.log(req.params);
     if (req.params.user !== "Admin") {
       const trip = await BookingModel.findOne({ _id: req.params.id });
+      console.log(trip);
       if (trip === null)
         return res
           .status(500)
