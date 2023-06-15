@@ -7,5 +7,6 @@ const app = express();
 app.post("/add-booking-note", note.addBookingNote);
 app.post("/update-booking-note/:id", note.updateBookingNote);
 app.get("/get-booking-note", note.getBookingNote);
+app.delete("/delete-booking-note/:id", note.deleteBookingNote);
 
 export default app;

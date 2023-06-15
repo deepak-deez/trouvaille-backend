@@ -59,3 +59,21 @@ export const updateBookingNote = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteBookingNote = async (req, res, next) => {
+  try {
+    const note = await BookingNote.findOne({ _id: req.params.id });
+    if (note === null)
+      return res
+        .status(500)
+        .send(Response(null, `Booking note not found!`, false));
+    const result = await BookingNote.findOneAndDelete({ _id: req.params.id });
+    if (result) {
+      return res
+        .status(200)
+        .send(Response(null, `Booking note deleted successfully.`, true));
+    }
+  } catch (error) {
+    next(error);
+  }
+};
