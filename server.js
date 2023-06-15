@@ -6,6 +6,7 @@ import tripRoute from "./routes/featureRoute.js";
 import * as userRouter from "./routes/userRoute.js";
 import * as adminRouter from "./routes/backendUserRoute.js";
 import bookingRouter from "./routes/bookingRoute.js";
+import bookingNote from "./routes/bookingNote.js";
 
 env.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(tripRoute);
 app.use(userRouter.app);
 app.use(adminRouter.app);
 app.use(bookingRouter);
+app.use(bookingNote);
 app.use("/featureImage", express.static("database/images/features"));
 app.use("/packageImage", express.static("database/images/packages"));
 app.use("/profileImage", express.static("database/images/profileImages"));

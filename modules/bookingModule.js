@@ -15,7 +15,10 @@ const completetStatusUpdate = (data) => {
   const today = format(new Date(), "dd-MM-yyyy");
   if (data.length !== 0) {
     data.forEach(async (booking) => {
-      if (booking.tripDetails.endDate < today) {
+      if (
+        booking.tripDetails.endDate < today &&
+        booking.bookingStatus !== "Completed"
+      ) {
         await BookingModel.findByIdAndUpdate(
           { _id: booking.id },
           { $set: { bookingStatus: "Completed" } },
@@ -53,7 +56,7 @@ const getResultResponse = (res, result) => {
       .send(Response(result, `All booking details are here...`, true));
   return res
     .status(500)
-    .send(Response(null, `Booking details not found!`, true));
+    .send(Response(null, `Booking details not found!`, false));
 };
 
 export const allBooking = async (req, res, next) => {
