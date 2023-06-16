@@ -1,24 +1,17 @@
 import mongoose from "mongoose";
-const tripPackageSchema = new mongoose.Schema({
+export const tripPackageSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
     required: true,
   },
-  image: {
-    public_id: {
-      type: String,
-      required: true,
-    },
-    url: {
-      type: String,
-      required: true,
-    },
-  },
+  image: { type: String },
   duration: {
     type: String,
     required: true,
   },
+  startDate: { type: String, trim: true },
+  endDate: { type: String, trim: true },
   activities: [
     {
       date: {
@@ -49,14 +42,7 @@ const tripPackageSchema = new mongoose.Schema({
         trim: true,
       },
       description: { type: String },
-      icon: {
-        public_id: {
-          type: String,
-        },
-        url: {
-          type: String,
-        },
-      },
+      icon: { type: String },
     },
   ],
 
@@ -91,6 +77,7 @@ const tripPackageSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  features: [],
 });
 
 export const tripPackage = mongoose.model("tripPackage", tripPackageSchema);

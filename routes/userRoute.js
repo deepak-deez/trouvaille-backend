@@ -1,10 +1,15 @@
 import express from "express";
+import { profileStorageEngine } from "../modules/multerStorageEngine.js";
 
 export const app = express();
 import * as auth from "../database/auth/userAuth.js";
 
 app.post("/register/:user", auth.userRegister);
-app.post("/update/:user/:id", auth.updateUserDetails);
+app.post(
+  "/update/:user/:id",
+  profileStorageEngine.single("image"),
+  auth.updateUserDetails
+);
 app.post("/login/:user", auth.userLogin);
 app.post("/user-logout", auth.userLogout);
 app.get("/database/:user", auth.userData);

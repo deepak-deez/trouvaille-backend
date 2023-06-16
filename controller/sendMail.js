@@ -12,13 +12,13 @@ const sendMail = async (emailId, link) => {
       host: "smtp.gmail.com",
       port: 465,
       auth: {
-        user: process.env.SenderMail2,
-        pass: process.env.MailPassword2,
+        user: process.env.SENDER_MAIL2,
+        pass: process.env.MAIL_PASSWORD2,
       },
     })
     .sendMail(
       {
-        from: `"Trouvaille" <${process.env.SenderMail2}>`,
+        from: `"Trouvaille" <${process.env.SENDER_MAIL2}>`,
         to: `${emailId}`,
         subject: "Reset password",
         text: `Click reset password link below!`,
