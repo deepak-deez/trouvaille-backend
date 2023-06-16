@@ -35,14 +35,7 @@ const schema = new mongoose.Schema({
     require: true,
   },
   userDetails: {
-    image: {
-      public_id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
-    },
+    image: { type: String },
     name: { type: String, trim: true },
     place: { type: String, trim: true },
     DOB: { type: String, trim: true },

@@ -18,12 +18,16 @@ const phoneNoFormat = /^\d{10}$/;
 export const addNewUser = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat)) {
-      return res.send(Response(null, 530, "Invalid email address!", false));
+      return res
+        .status(530)
+        .send(Response(null, "Invalid email address!", false));
     }
     const existingUser = await findUser(req.body.email);
 
     if (existingUser.length !== 0) {
-      return res.send(Response(null, 500, "User already registered!", false));
+      return res
+        .status(500)
+        .send(Response(null, "User already registered!", false));
     }
 
     const newUser = new UserModel(
@@ -38,24 +42,26 @@ export const addNewUser = async (req, res, next) => {
     );
     const backendUser = await newUser.save();
     console.log(backendUser);
-
     if (backendUser) {
-      const secret = process.env.JWT_SECRET + req.body.password;
+      console.log(req.body.password);
+      const secret = process.env.JWT_SECRET;
       const payload = {
         email: req.body.email,
         id: backendUser._id,
       };
 
       const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-      const link = `http://localhost:${process.env.PORT}/reset-password/${req.params.user}/${backendUser._id}/${token}`;
+      const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${backendUser._id}/${token}`;
       console.log(link);
 
       if (await sendMail(req.body.email, link))
-        return res.send(Response(null, 500, "Failed to send mail!", false));
+        return res
+          .status(500)
+          .send(Response(null, "Failed to send mail!", false));
       else
-        return res.send(
-          Response(null, 200, `Email send to ${req.body.email}`, true)
-        );
+        return res
+          .status(200)
+          .send(Response(null, `Email send to ${req.body.email}`, true));
     } else {
       next(new Error("Failed to add user!"));
     }
@@ -67,17 +73,16 @@ export const addNewUser = async (req, res, next) => {
 export const updateDetails = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat)) {
-      return res.send(Response(null, 530, "Invalid email address!", false));
+      return res
+        .status(530)
+        .send(Response(null, "Invalid email address!", false));
     }
     if (!req.body.phone.match(phoneNoFormat))
-      return res.send(Response(null, 500, "Not a valid phone number!", false));
+      return res
+        .status(500)
+        .send(Response(null, "Not a valid phone number!", false));
 
     const admin = await UserModel.find({ _id: req.body.id });
-
-    // if (admin === null || admin[0].userType !== "Admin")
-    //   return res.send(
-    //     Response(null, 500, `${req.params.user} not found!`, false)
-    //   );
 
     const result = await UserModel.findOneAndUpdate(
       {
@@ -98,16 +103,18 @@ export const updateDetails = async (req, res, next) => {
       expiresIn: "7d",
     });
     if (result) {
-      return res.send(
+      return res.status(200).send(
         Response(
           { adminDetails: result, token: token },
-          200,
+
           `${req.params.user} details updated successfully.`,
           true
         )
       );
     }
-    return res.send(Response(null, 500, "Failed to update details!", false));
+    return res
+      .status(500)
+      .send(Response(null, "Failed to update details!", false));
   } catch (error) {
     next(error);
   }
@@ -137,12 +144,12 @@ export const changePassword = async (req, res, next) => {
       { new: true }
     );
     if (result) {
-      return res.send(
-        Response(Response(result, 200, "Password reset succesfully.", true))
-      );
+      return res
+        .status(200)
+        .send(Response(Response(result, "Password reset succesfully.", true)));
     }
     // } else {
-    //   return res.send(Response(null, 500, "Password doesn't match!", false));
+    //   return res.status(500).send(Response(null,  "Password doesn't match!", false));
     // }
   } catch (error) {
     next(error);
@@ -157,7 +164,7 @@ export const changePassword = async (req, res, next) => {
 //       admin[0].password
 //     );
 //     if (isMatched) {
-//       return res.send(Response(null, 200, "Valid admin.", true));
+//       return res.status(200).send(Response(null,  "Valid admin.", true));
 //     }
 //   } catch (error) {
 //     next(error);
@@ -169,17 +176,21 @@ export const deleteUser = async (req, res, next) => {
     const { user, id } = req.params;
     const admin = await UserModel.findOne({ _id: id });
     if (admin === null)
-      return res.send(Response(null, 500, `${req.params.user} not found!`));
+      return res
+        .status(500)
+        .send(Response(null, `${req.params.user} not found!`));
     if (admin.userType === "Admin") {
-      return res.send(Response(null, 500, "Cannot delete an admin.", false));
+      return res
+        .status(500)
+        .send(Response(null, "Cannot delete an admin.", false));
     }
     const result = await UserModel.findOneAndDelete({
       _id: id,
     });
     if (result) {
-      return res.send(
-        Response(null, 200, `${user} deleted successfully.`, true)
-      );
+      return res
+        .status(200)
+        .send(Response(null, `${user} deleted successfully.`, true));
     }
   } catch (error) {
     next(error);

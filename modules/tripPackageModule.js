@@ -1,71 +1,206 @@
 import { tripPackage } from "../models/tripPackageModel.js";
 import { readFileSync } from "fs";
-import { Response, tripPackageObject } from "./supportModule.js";
+import {
+  Response,
+  tripPackageObject,
+  updateTripPackageObject,
+} from "./supportModule.js";
 import { nextTick } from "process";
-import cloudinary from "./cloudinary.js";
+import { deleteFile } from "./supportModule.js";
+import { featureModel } from "../models/tripfeatureModel.js";
 
-//creating trip packages
+const getFeatures = async (data) => {
+  const features = [
+    ...data.occasions,
+    ...data.tripCategory,
+    ...data.amenities,
+    data.travelType,
+  ];
+
+  const result = await featureModel.find({ title: { $in: features } });
+  return result;
+};
+
+const makePackageData = async (req) => {
+  const profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
+  const result = tripPackageObject(profileimage, req.body);
+
+  result.tripHighlights.forEach((element, i) => {
+    element.icon = `http://localhost:7000/packageImage/${
+      req.files[i + 1].filename
+    }`;
+  });
+  const featureData = await getFeatures(result);
+  result.features = [...featureData];
+  return result;
+};
+
+const updatePackageData = async (req) => {
+  let parsedIndexes = JSON.parse(req.body.indexes);
+  let profileimage = req.body.images[0];
+  if (parsedIndexes.includes(0))
+    profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
+  else profileimage = req.body.images[0];
+
+  const result = updateTripPackageObject(profileimage, req.body);
+  let indexArray = parsedIndexes;
+
+  if (indexArray.includes(0)) {
+    indexArray.shift();
+    indexArray.forEach((element, i) => {
+      result.tripHighlights[
+        element - 1
+      ].icon = `http://localhost:7000/packageImage/${
+        req.files[i + 1].filename
+      }`;
+    });
+  } else {
+    indexArray.forEach((element, i) => {
+      result.tripHighlights[
+        element - 1
+      ].icon = `http://localhost:7000/packageImage/${req.files[i].filename}`;
+    });
+  }
+
+  const featureData = await getFeatures(result);
+  result.features = [...featureData];
+  console.log(result);
+  return result;
+};
 
 export const createTripPackage = async (req, res, next) => {
   try {
-    const { tripHighlights } = req.body;
-    const profileimage = await cloudinary.uploader.upload(req.body.image, {
-      folder: `${req.params.trip}`,
-    });
-
-    const result = await tripPackage.create(
-      tripPackageObject(profileimage, req.body)
-    );
-    const data = tripHighlights.map(async (element) => {
-      const iconImage = await cloudinary.uploader.upload(element.icon, {
-        folder: `${req.params.trip}`,
-      });
-      element.icon = {
-        public_id: iconImage.public_id,
-        url: iconImage.secure_url,
-      };
-      return element;
-    });
-
-    Promise.all(data).then(async (results) => {
-      result.tripHighlights = results;
-      const saveData = await result.save();
-      if (saveData?._id)
-        return res.send(
-          Response(result, 200, `New ${req.params.trip} added.`, true)
-        );
-      return res.send(
-        Response(null, 500, `${req.params.trip} not added!`, false)
-      );
-    });
+    const result = await tripPackage(await makePackageData(req));
+    if (result?._id) {
+      result.save();
+      return res
+        .status(200)
+        .send(Response(result, `New ${req.params.trip} added.`, true));
+    }
+    return res
+      .status(500)
+      .send(Response(null, `${req.params.trip} not added!`, false));
   } catch (error) {
     next(error);
   }
 };
 
 //getting trip packages
-export const getTripPackages = async (req, res) => {
+export const getTripPackages = async (req, res, next) => {
   try {
-    const result = await tripPackage.find({});
+    let result;
+    if (req.type === "GET") {
+      result = await tripPackage.find({});
+    } else {
+      result = await tripPackage.find(req.body.category);
+    }
+    // completetStatusUpdate(result);
     if (result.length !== 0)
-      res.send(
-        Response(result, 200, `All ${req.params.trip} are here...`, true)
-      );
-    else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
+      res
+        .status(200)
+        .send(Response(result, `All ${req.params.trip} are here...`, true));
+    else
+      res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
     next(error);
   }
 };
 
 // getting a particular trip package details
-export const getTripDetails = async (req, res) => {
+export const getTripDetails = async (req, res, next) => {
   try {
     const result = await tripPackage.find({ _id: req.params.id });
     if (result.length !== 0)
-      res.send(
-        Response(result, 200, `Details of ${req.params.trip} are here...`, true)
+      res.status(200).send(
+        Response(
+          result,
+
+          `Details of ${req.params.trip} are here...`,
+          true
+        )
       );
-    else res.send(Response(null, 500, `${req.params.trip} not found!`, true));
+    else
+      res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`, false));
+  } catch (error) {
+    next(error);
+  }
+};
+
+//get filtered trip packages
+export const filterTripList = async (req, res, next) => {
+  // console.log(req.body.title);
+
+  try {
+    const result = await tripPackage.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $and: [
+                {
+                  title:
+                    req.body.title.length === 0
+                      ? { $ne: "" }
+                      : { $all: req.body.title },
+                },
+                 {
+                  startDate: (req.body.checkIn === "")?{$ne: req.body.checkIn}:{$gte: req.body.checkIn}
+                 },
+                 {
+                  endDate: (req.body.checkOut === "")?{$ne: req.body.checkOut}:{$lte: req.body.checkOut}
+                 },
+                {
+                  maximumGuests:
+                    req.body.maximumGuests === ""
+                      ? { $ne: "" }
+                      : { $gte: Number(req.body.maximumGuests) },
+                },
+              ],
+            },
+            {
+              $and: [
+                {
+                  travelType:
+                    req.body.travelType.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.travelType },
+                },
+                {
+                  tripCategory:
+                    req.body.tripCategory.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.tripCategory },
+                },
+                {
+                  occasions:
+                    req.body.occasions.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.occasions },
+                },
+                {
+                  amenities:
+                    req.body.amenities.length === 0
+                      ? { $ne: "" }
+                      : { $in: req.body.amenities },
+                },
+              ],
+            },
+            {
+              discountedPrice:
+                req.body.price === ""
+                  ? { $ne: "" }
+                  : { $lte: Number(req.body.price) },
+            },
+          ],
+        },
+      },
+    ]);
+
+    res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
   } catch (error) {
     next(error);
   }
@@ -75,46 +210,22 @@ export const getTripDetails = async (req, res) => {
 export const updatePackage = async (req, res, next) => {
   try {
     const currentData = await tripPackage.findOne({ _id: req.params.id });
-    await cloudinary.uploader.destroy(currentData.image.public_id);
-    const profileimage = await cloudinary.uploader.upload(req.body.image, {
-      folder: `${req.params.trip}`,
-    });
-
-    const data = req.body;
-    data.image = {
-      public_id: profileimage.public_id,
-      url: profileimage.secure_url,
-    };
-
-    let highlights = currentData.tripHighlights.length;
-
-    for (let i = 0; i < highlights; i++) {
-      await cloudinary.uploader.destroy(
-        currentData.tripHighlights[i].icon.public_id
-      );
-
-      const iconImage = await cloudinary.uploader.upload(
-        req.body.tripHighlights[i].icon,
-        {
-          folder: `${req.params.trip}`,
-        }
-      );
-      data.tripHighlights[i].icon = {
-        public_id: iconImage.public_id,
-        url: iconImage.secure_url,
-      };
-    }
-
-    const updatedResult = await tripPackage.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: data,
-      },
+    if (currentData === null)
+      return res
+        .status(200)
+        .send(Response(null, `${req.params.trip} not found!`, false));
+    const result = await updatePackageData(req);
+    const updatedResult = await tripPackage.findOneAndUpdate(
+      { _id: req.params.id },
+      result,
       { new: true }
     );
-    res.send(
-      Response(updatedResult, 200, `${req.params.trip} data is updated`, true)
-    );
+    if (updatedResult?._id)
+      return res
+        .status(200)
+        .send(
+          Response(updatedResult, `${req.params.trip} data is updated`, true)
+        );
   } catch (err) {
     next(err);
   }
@@ -127,22 +238,23 @@ export const deletePackage = async (req, res, next) => {
     const data = await tripPackage.findOne({ _id: id });
 
     if (data === null)
-      return res.send(Response(null, 500, `${req.params.trip} not found!`));
+      return res
+        .status(500)
+        .send(Response(null, `${req.params.trip} not found!`));
 
-    let imgId = data.image.public_id;
-    if (imgId) {
-      await cloudinary.uploader.destroy(imgId);
-    }
+    const tripImage = data.image.split("/")[4];
 
-    data.tripHighlights.map(async (element) => {
-      await cloudinary.uploader.destroy(element.icon.public_id);
+    deleteFile("packages", tripImage);
+    data.tripHighlights.forEach((element) => {
+      const icon = element.icon.split("/")[4];
+      deleteFile("packages", icon);
     });
 
     const result = await tripPackage.findOneAndDelete({ _id: id });
-    if (result) {
-      return res.send(
-        Response(null, 200, `${trip} deleted successfully.`, true)
-      );
+    if (result?._id) {
+      return res
+        .status(200)
+        .send(Response(null, `${trip} deleted successfully.`, true));
     }
   } catch (error) {
     next(error);

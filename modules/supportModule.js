@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt";
 import { UserModel } from "../models/signUpModel.js";
+import * as fs from "fs/promises";
+import path from "path";
 
 export const passwordhashed = async (text) => {
   return await bcrypt.hash(text, 12);
@@ -32,11 +34,10 @@ export const findUser = async (email) => {
   return await UserModel.find({ email: email });
 };
 
-export const Response = (data, statusCode, message, success) => {
+export const Response = (data, message, success) => {
   return {
     data: data,
     message: message,
-    status: statusCode,
     success: success,
   };
 };
@@ -44,54 +45,36 @@ export const Response = (data, statusCode, message, success) => {
 export const tripPackageObject = (profileimage, trip) => {
   return {
     title: trip.title,
-    image: {
-      public_id: profileimage.public_id,
-      url: profileimage.secure_url,
-    },
+    image: profileimage,
     duration: trip.duration,
-    activities: trip.activities,
-    tripCategory: trip.tripCategory,
+    startDate: trip.startDate,
+    endDate: trip.endDate,
+    activities: JSON.parse(trip.activities),
+    tripCategory: JSON.parse(trip.tripCategory),
     placeNumber: trip.placeNumber,
     maximumGuests: trip.maximumGuests,
-    tripHighlights: trip.tripHighlights,
+    tripHighlights: JSON.parse(trip.tripHighlights),
     price: trip.price,
     discountedPrice: trip.discountedPrice,
-    occasions: trip.occasions,
-    travelType: trip.travelType,
-    amenities: trip.amenities,
+    occasions: JSON.parse(trip.occasions),
+    travelType: JSON.parse(trip.travelType),
+    amenities: JSON.parse(trip.amenities),
     briefDescription: trip.briefDescription,
-    faq: trip.faq,
+    faq: JSON.parse(trip.faq),
     status: trip.status,
+    features: [],
   };
 };
 
-export const bookingData = (image, book) => {
-  return {
-    tripId: book.tripId,
-    userId: book.userId,
-    title: book.title,
-    name: book.name,
-    phone: book.phone,
-    email: book.email,
-    otherPassenger: book.otherPassenger,
-    address: book.address,
-    image: {
-      public_id: image.public_id,
-      url: image.secure_url,
-    },
-    bookingStatus: "pending",
-    deleteReason: "",
-    cancellationStatus: false,
-    link: "",
-  };
+export const updateTripPackageObject = (profileimage, trip) => {
+  const data = tripPackageObject(profileimage, trip);
+  data.indexex = JSON.parse(trip.indexes);
+  return data;
 };
 
-export const userDetails = (image, data) => {
+export const userDetails = (imageUrl, data) => {
   return {
-    image: {
-      public_id: image.public_id,
-      url: image.url,
-    },
+    image: imageUrl,
     name: data.name,
     place: data.place,
     DOB: data.DOB,
@@ -100,19 +83,9 @@ export const userDetails = (image, data) => {
   };
 };
 
-// export const bookingData = (image, book) => {
-//   return {
-//     title: book.title,
-//     name: book.name,
-//     phone: book.name,
-//     email: book.name,
-//     otherPassenger: book.otherPassenger,
-//     address: book.address,
-//     image: {
-//       data: image,
-//       contentType: "image/png+jpg+jpeg",
-//     },
-//     bookingStatus: book.bookingStatus,
-//     deleteReason: book.deleteReason,
-//   };
-// };
+export const deleteFile = async (folderName, fileName) => {
+  const filePath = path.join("database", "images", folderName, fileName);
+  await fs.unlink(filePath, (err) => {
+    if (err) console.log("Cann't delete this file!!!");
+  });
+};
