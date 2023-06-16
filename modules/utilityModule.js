@@ -9,6 +9,8 @@ import { request } from "http";
 export const createFeature = async (req, res, next) => {
   const { image, title, description } = req.body;
   try {
+    if (req.file === undefined)
+      return res.status(500).send(Response(null, "Image not found!", false));
     const result = await featureModel.create({
       purpose: req.params.feature,
       icon: `http://localhost:7000/featureImage/${req.file.filename}`,

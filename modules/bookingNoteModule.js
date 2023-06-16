@@ -1,11 +1,12 @@
 import { BookingNote } from "../models/bookingNoteModel.js";
 import { Response } from "./supportModule.js";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 
 export const addBookingNote = async (req, res, next) => {
+  console.log(req.body);
   try {
-    const today = format(new Date(), "dd-MM-yyyy");
-    const data = await BookingNote({ note: req.body.note, addDate: today });
+    // const today = format(new Date(), "dd-MM-yyyy");
+    const data = await BookingNote({ note: req.body.note });
     data.save();
     console.log("Data : ", data);
     if (data?._id)
@@ -36,9 +37,10 @@ export const getBookingNote = async (req, res, next) => {
 };
 
 export const updateBookingNote = async (req, res, next) => {
+  console.log(req.body);
   try {
     const result = await BookingNote.findOne({ _id: req.params.id });
-    const today = format(new Date(), "dd-MM-yyyy");
+    // const today = format(new Date(), "dd-MM-yyyy");
     if (result === null)
       return res
         .status(500)
@@ -46,7 +48,7 @@ export const updateBookingNote = async (req, res, next) => {
     const newNote = await BookingNote.findByIdAndUpdate(
       { _id: req.params.id },
       {
-        $set: { note: req.body.note, addDate: today },
+        $set: { note: req.body.note },
       },
       { new: true }
     );
