@@ -76,7 +76,7 @@ export const updateUserDetails = async (req, res, next) => {
     let image = userData.userDetails.image;
     console.log(userData.userDetails.image);
 
-    if (userData.userDetails.image !== undefined) {
+    if (req.file !== undefined) {
       console.log(userData);
       const profileImage = userData.userDetails.image.split("/")[4];
       // console.log(
