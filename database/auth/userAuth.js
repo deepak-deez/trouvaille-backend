@@ -252,6 +252,9 @@ export const sendResetMail = async (req, res, next) => {
       console.log(`sent to ${user[0].userType}`);
       secret = process.env.JWT_SECRET + user[0].password;
     }
+    console.log(user[0].userDetails.name);
+    const userName =
+      user[0].userDetails.name === undefined ? "" : user[0].userDetails.name;
     const payload = {
       email: req.body.email,
       id: user[0]._id,
@@ -260,7 +263,7 @@ export const sendResetMail = async (req, res, next) => {
     console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
-    if (await sendMail(req.body.email, link))
+    if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)
         .send(Response(null, "Failed to send mail!", false));
