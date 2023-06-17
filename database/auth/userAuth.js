@@ -67,15 +67,16 @@ export const userRegister = async (req, res, next) => {
 
 export const updateUserDetails = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    console.log("Body:", req.body, "File", req.file);
     const details = req.body;
     const userData = await UserModel.findOne({ _id: req.params.id });
     if (userData === null)
       return res.status(404).send(null, "User not found!", false);
 
-    let image = userData.image;
+    let image = userData.userDetails.image;
+    console.log(userData.userDetails.image);
 
-    if (userData.image !== "") {
+    if (userData.userDetails.image !== undefined) {
       console.log(userData);
       const profileImage = userData.userDetails.image.split("/")[4];
       // console.log(
@@ -84,7 +85,7 @@ export const updateUserDetails = async (req, res, next) => {
       // );
       deleteFile("profileImages", profileImage);
     }
-    if (req.file !== null) {
+    if (req.file !== undefined) {
       image = `http://localhost:7000/profileImage/${req.file.filename}`;
     }
     const data = userDetails(image, details);
@@ -94,6 +95,7 @@ export const updateUserDetails = async (req, res, next) => {
       { new: true }
     );
     if (newDetails?._id) {
+      console.log("newDetails:", newDetails);
       return res
         .status(200)
         .send(
