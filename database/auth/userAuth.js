@@ -76,7 +76,7 @@ export const updateUserDetails = async (req, res, next) => {
     let image = userData.userDetails.image;
     console.log(userData.userDetails.image);
 
-    if (req.file !== undefined) {
+    if (req.file !== undefined && image !== undefined) {
       console.log(userData);
       const profileImage = userData.userDetails.image.split("/")[4];
       // console.log(
@@ -210,17 +210,18 @@ export const userData = async (req, res, next) => {
 };
 
 export const userDataById = async (req, res, next) => {
-  console.log(req.params.user);
+  console.log("User by id:", req.params);
+  const { id, user } = req.params;
   try {
-    const user = await UserModel.find({
-      _id: req.params.id,
-      userType: req.params.user,
+    const userData = await UserModel.findOne({
+      _id: id,
+      userType: user,
     });
+    if (userData === null)
+      return res.status(404).send(Response(null, `${user}  not found!`, false));
     return res
       .status(200)
-      .send(
-        Response(user, `${req.params.user}s all details are here...`, true)
-      );
+      .send(Response(userData, `${user}s all details are here...`, true));
   } catch (err) {
     next(err);
   }
