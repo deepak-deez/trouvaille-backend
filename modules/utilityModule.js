@@ -7,10 +7,18 @@ import { request } from "http";
 
 //create
 export const createFeature = async (req, res, next) => {
-  const { image, title, description } = req.body;
+  const { title, description } = req.body;
   try {
     if (req.file === undefined)
       return res.status(500).send(Response(null, "Image not found!", false));
+
+    if ((await featureModel.findOne({ title: title })) !== null) {
+      deleteFile("features", req.file.filename);
+      return res
+        .status(500)
+        .send(Response(null, "Title already exist!", false));
+    }
+
     const result = await featureModel.create({
       purpose: req.params.feature,
       icon: `http://localhost:7000/featureImage/${req.file.filename}`,
