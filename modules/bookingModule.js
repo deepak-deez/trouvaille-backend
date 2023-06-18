@@ -1,11 +1,11 @@
 import { BookingModel } from "../models/bookingModel.js";
-import { tripPackage } from "../models/tripPackageModel.js";
+import { TripPackage } from "../models/TripPackageModel.js";
 import { Response } from "./supportModule.js";
 import { format } from "date-fns";
 
 import jwt from "jsonwebtoken";
 import env from "dotenv";
-import { getTripDetails } from "./tripPackageModule.js";
+import { getTripDetails } from "./TripPackageModule.js";
 
 env.config();
 
@@ -32,7 +32,7 @@ const completetStatusUpdate = (data) => {
 export const createBooking = async (req, res, next) => {
   try {
     const tripId = req.body.tripId;
-    const tripData = await tripPackage.findOne({ _id: tripId });
+    const tripData = await TripPackage.findOne({ _id: tripId });
     const bookingData = req.body;
     bookingData.tripDetails = tripData;
     const data = await BookingModel(bookingData);

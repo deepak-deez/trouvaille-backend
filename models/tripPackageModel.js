@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-export const tripPackageSchema = new mongoose.Schema({
+export const TripPackageSchema = new mongoose.Schema({
   title: {
     type: String,
     trim: true,
@@ -80,4 +80,4 @@ export const tripPackageSchema = new mongoose.Schema({
   features: [],
 });
 
-export const tripPackage = mongoose.model("tripPackage", tripPackageSchema);
+export const TripPackage = mongoose.model("TripPackage", TripPackageSchema);
