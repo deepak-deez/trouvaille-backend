@@ -31,7 +31,7 @@ app.use((error, req, res, next) => {
     console.log("error", error);
     res.status(404).send({
       data: null,
-      message: error.message(),
+      message: error.message,
       success: false,
     });
   }

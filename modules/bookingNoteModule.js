@@ -8,11 +8,13 @@ export const addBookingNote = async (req, res, next) => {
     // const today = format(new Date(), "dd-MM-yyyy");
     const data = await BookingNote({ note: req.body.note });
     data.save();
-    console.log("Data : ", data);
-    if (data?._id)
+
+    if (data?._id) {
+      await BookingNote.find({});
       return res
         .status(200)
         .send(Response(data, "Booking note added successfull!", true));
+    }
     return res
       .status(500)
       .send(Response(null, "Failed to create booking note!", false));
@@ -24,10 +26,12 @@ export const addBookingNote = async (req, res, next) => {
 export const getBookingNote = async (req, res, next) => {
   try {
     const result = await BookingNote.find({});
-    if (result.length !== 0)
+    console.log("result55", result);
+    if (result) {
       return res
         .status(200)
         .send(Response(result, `Successfully find Booking note`, true));
+    }
     return res
       .status(500)
       .send(Response(null, `Booking note not found!`, false));
