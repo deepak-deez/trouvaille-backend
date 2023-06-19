@@ -1,6 +1,6 @@
 import express from "express";
 import * as utility from "../modules/utilityModule.js";
-import * as tripModule from "../modules/tripPackageModule.js";
+import * as tripModule from "../modules/TripPackageModule.js";
 import {
   featureStorageEngine,
   packageStorageEngine,

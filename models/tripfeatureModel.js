@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    unique: true,
   },
   description: {
     type: String,
@@ -16,4 +17,4 @@ const schema = new mongoose.Schema({
   },
 });
 
-export const featureModel = mongoose.model("tripDetails", schema);
+export const FeatureModel = mongoose.model("tripDetails", schema);

@@ -67,15 +67,16 @@ export const userRegister = async (req, res, next) => {
 
 export const updateUserDetails = async (req, res, next) => {
   try {
-    // console.log(req.body);
+    console.log("Body:", req.body, "File", req.file);
     const details = req.body;
     const userData = await UserModel.findOne({ _id: req.params.id });
     if (userData === null)
       return res.status(404).send(null, "User not found!", false);
 
-    let image = userData.image;
+    let image = userData.userDetails.image;
+    console.log(userData.userDetails.image);
 
-    if (userData.image !== "") {
+    if (req.file !== undefined && image !== undefined) {
       console.log(userData);
       const profileImage = userData.userDetails.image.split("/")[4];
       // console.log(
@@ -84,7 +85,7 @@ export const updateUserDetails = async (req, res, next) => {
       // );
       deleteFile("profileImages", profileImage);
     }
-    if (req.file !== null) {
+    if (req.file !== undefined) {
       image = `http://localhost:7000/profileImage/${req.file.filename}`;
     }
     const data = userDetails(image, details);
@@ -94,6 +95,7 @@ export const updateUserDetails = async (req, res, next) => {
       { new: true }
     );
     if (newDetails?._id) {
+      console.log("newDetails:", newDetails);
       return res
         .status(200)
         .send(
@@ -208,17 +210,18 @@ export const userData = async (req, res, next) => {
 };
 
 export const userDataById = async (req, res, next) => {
-  console.log(req.params.user);
+  console.log("User by id:", req.params);
+  const { id, user } = req.params;
   try {
-    const user = await UserModel.find({
-      _id: req.params.id,
-      userType: req.params.user,
+    const userData = await UserModel.findOne({
+      _id: id,
+      userType: user,
     });
+    if (userData === null)
+      return res.status(404).send(Response(null, `${user}  not found!`, false));
     return res
       .status(200)
-      .send(
-        Response(user, `${req.params.user}s all details are here...`, true)
-      );
+      .send(Response(userData, `${user}s all details are here...`, true));
   } catch (err) {
     next(err);
   }
@@ -250,6 +253,9 @@ export const sendResetMail = async (req, res, next) => {
       console.log(`sent to ${user[0].userType}`);
       secret = process.env.JWT_SECRET + user[0].password;
     }
+    console.log(user[0].userDetails.name);
+    const userName =
+      user[0].userDetails.name === undefined ? "" : user[0].userDetails.name;
     const payload = {
       email: req.body.email,
       id: user[0]._id,
@@ -258,7 +264,7 @@ export const sendResetMail = async (req, res, next) => {
     console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
-    if (await sendMail(req.body.email, link))
+    if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)
         .send(Response(null, "Failed to send mail!", false));

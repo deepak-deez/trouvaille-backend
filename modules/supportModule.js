@@ -42,7 +42,7 @@ export const Response = (data, message, success) => {
   };
 };
 
-export const tripPackageObject = (profileimage, trip) => {
+export const TripPackageObject = (profileimage, trip) => {
   return {
     title: trip.title,
     image: profileimage,
@@ -67,7 +67,7 @@ export const tripPackageObject = (profileimage, trip) => {
 };
 
 export const updateTripPackageObject = (profileimage, trip) => {
-  const data = tripPackageObject(profileimage, trip);
+  const data = TripPackageObject(profileimage, trip);
   data.indexex = JSON.parse(trip.indexes);
   return data;
 };
