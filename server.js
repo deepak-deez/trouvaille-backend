@@ -8,6 +8,7 @@ import * as adminRouter from "./routes/backendUserRoute.js";
 import bookingRouter from "./routes/bookingRoute.js";
 import bookingNote from "./routes/bookingNote.js";
 import notificationController from "./controller/notificationController.js";
+import notification from "./routes/notificationRoute.js";
 
 env.config();
 
@@ -23,6 +24,7 @@ app.use(bookingNote);
 app.use("/featureImage", express.static("database/images/features"));
 app.use("/packageImage", express.static("database/images/packages"));
 app.use("/profileImage", express.static("database/images/profileImages"));
+app.use(notification);
 
 app.use((req, res, next) => {
   next(new Error("Page not found"));
