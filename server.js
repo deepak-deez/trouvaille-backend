@@ -7,9 +7,7 @@ import * as userRouter from "./routes/userRoute.js";
 import * as adminRouter from "./routes/backendUserRoute.js";
 import bookingRouter from "./routes/bookingRoute.js";
 import bookingNote from "./routes/bookingNote.js";
-import { Server } from "socket.io";
-import http from "http";
-import { log } from "console";
+import notificationController from "./controller/notificationController.js";
 
 env.config();
 
@@ -43,38 +41,11 @@ app.use((error, req, res, next) => {
 
 console.log(process.env.PORT);
 
-// const io = new Server(app, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
-
-const socketServer = app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT || 7000, () => {
   console.log("Server created");
 });
 
-const io = new Server(socketServer, { cors: { origin: "*" } });
+export default server;
 
-io.on("connection", (socket) => {
-  console.log("Connection Established!", socket.id);
-  const response = "response you need";
-  const getApiAndEmit = (socket) => {
-    // console.log("Socket : ", socket);
-    const response = "response you need";
-    socket.emit("FromAPI", response);
-  };
-  // io.on("hello-bye", () => {
-  socket.emit("hello-bye", response);
-  // });
-  getApiAndEmit(socket);
-  socket.on("disconnect", () => {
-    console.log("Disconnected");
-  });
-  socket.on("hello", (data) => {
-    console.log(data);
-  });
-});
-
-// app.listen(process.env.PORT, () => {
-//   console.log("Server created");
-// });
+//Notification Controller
+notificationController();
