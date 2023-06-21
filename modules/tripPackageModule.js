@@ -87,13 +87,11 @@ export const createTripPackage = async (req, res, next) => {
 
 //getting trip packages
 export const getTripPackages = async (req, res, next) => {
+  // console.log("PACKAGE", req.body);
   try {
-    let result;
-    if (req.type === "GET") {
-      result = await TripPackage.find({});
-    } else {
-      result = await TripPackage.find(req.body.category);
-    }
+    const result = await TripPackage.find({});
+    console.log(result.length);
+
     // completetStatusUpdate(result);
     if (result.length !== 0)
       res
@@ -132,7 +130,8 @@ export const getTripDetails = async (req, res, next) => {
 
 //get filtered trip packages
 export const filterTripList = async (req, res, next) => {
-  // console.log(req.body.title);
+  console.log(req.params, "filterR");
+  console.log("LOG", req.body);
 
   try {
     const result = await TripPackage.aggregate([
@@ -201,11 +200,15 @@ export const filterTripList = async (req, res, next) => {
                   ? { $ne: "" }
                   : { $lte: Number(req.body.price) },
             },
+            {
+              status: { $all: ["Active "] },
+            },
           ],
         },
       },
     ]);
 
+    console.log(result, "result");
     res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
   } catch (error) {
     next(error);
