@@ -1,31 +1,47 @@
 import server from "../server.js";
 import { Server } from "socket.io";
+import {
+  addNotification,
+  getAllNotification,
+  getNotificationByUser,
+} from "../modules/notificationModule.js";
 
 const notificationController = () => {
   const io = new Server(server, { cors: { origin: "*" } });
 
-  io.on("connection", (socket) => {
-    console.log("Connection Established!", socket.id);
-    const response = "response you need";
+  io.on("connection", async (socket) => {
+    socket.on("sendStatusUpdate", async (data) => {
+      console.log("Fetched Update : ", data);
+      try {
+        await addNotification(data);
+      } catch (err) {
+        console.error(err);
+      }
+      await getNotificationByUser(data.userId).then((datas) => {
+        console.log(data.userId, "id");
+        io.emit(data.userId, {
+          data: datas,
+          status: 200,
+          success: true,
+        });
+      });
 
-    // socket.emit("hello-bye", response);
+      console.log("User ID : ", data.userId);
+    });
+
+    socket.emit("getAllNotis", {
+      data: await getAllNotification(),
+      status: 200,
+      success: true,
+    });
+
+    socket.emit("hello-joy", {
+      here: "is something",
+      and: "here is something more",
+    });
 
     socket.on("disconnect", () => {
       console.log("Disconnected");
-    });
-
-    // socket.on("hello", (data) => {
-    //   console.log("Hello on : ", data);
-    // });
-
-    // socket.on("getId", (data) => {
-    //   socket.emit("response", `I'am a response with your id ${data}`);
-    //   console.log("User ID : ", data);
-    // });
-
-    socket.on("sendNotis", (data) => {
-      socket.broadcast.emit("getNotis", `I have the notification : ${data}`);
-      console.log("Admin's Notis : ", data);
     });
   });
 };
