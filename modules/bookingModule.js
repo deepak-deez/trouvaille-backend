@@ -33,6 +33,11 @@ export const createBooking = async (req, res, next) => {
   try {
     const tripId = req.body.tripId;
     const tripData = await TripPackage.findOne({ _id: tripId });
+    if (tripData === null)
+      return res
+        .status(500)
+        .send(Response(null, "Trip package not found!", false));
+
     const bookingData = req.body;
     bookingData.tripDetails = tripData;
     const data = await BookingModel(bookingData);

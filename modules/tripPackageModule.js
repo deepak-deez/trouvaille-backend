@@ -111,11 +111,11 @@ export const getTripPackages = async (req, res, next) => {
     activeStatusUpdate(result);
     // completetStatusUpdate(result);
     if (result.length !== 0)
-      res
+      return res
         .status(200)
         .send(Response(result, `All ${req.params.trip} are here...`, true));
     else
-      res
+      return res
         .status(500)
         .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
@@ -128,7 +128,7 @@ export const getTripDetails = async (req, res, next) => {
   try {
     const result = await TripPackage.find({ _id: req.params.id });
     if (result.length !== 0)
-      res.status(200).send(
+      return res.status(200).send(
         Response(
           result,
 
@@ -137,7 +137,7 @@ export const getTripDetails = async (req, res, next) => {
         )
       );
     else
-      res
+      return res
         .status(500)
         .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
@@ -222,7 +222,10 @@ export const filterTripList = async (req, res, next) => {
       },
     ]);
 
-    res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
+    if (result)
+      return res.send(
+        Response(result, 200, `All ${req.params.trip} are here...`, true)
+      );
   } catch (error) {
     next(error);
   }

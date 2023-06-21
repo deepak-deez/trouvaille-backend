@@ -27,11 +27,11 @@ export const createFeature = async (req, res, next) => {
     });
     const saveData = await result.save();
     if (saveData?._id)
-      res
+      return res
         .status(200)
         .send(Response(result, `New ${req.params.feature} added.`, true));
     else
-      res
+      return res
         .status(500)
         .send(Response(null, `${req.params.feature} not added!`, false));
   } catch (error) {
@@ -75,7 +75,7 @@ export const updateFeature = async (req, res, next) => {
     const { title, description } = req.body;
     const currentData = await FeatureModel.findOne({ _id: req.params.id });
     if (!currentData?._id)
-      res
+      return res
         .status(400)
         .send(Response(null, `${req.params.feature} not found!`, false));
     const data = {
@@ -87,7 +87,7 @@ export const updateFeature = async (req, res, next) => {
       data,
       { new: true }
     );
-    res
+    return res
       .status(200)
       .send(Response(result, `${req.params.feature} data is updated`, true));
   } catch (err) {
