@@ -8,6 +8,25 @@ import {
 import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
 import { FeatureModel } from "../models/tripFeatureModel.js";
+import { format } from "date-fns";
+
+const completetStatusUpdate = (data) => {
+  const today = format(new Date(), "dd-MM-yyyy");
+
+  if (data.length !== 0) {
+    data.forEach(async (trip) => {
+      let endDate = trip.duration.split("-")[1].trim();
+      endDate = endDate.replace(/([/])/g, "-");
+      if (endDate < today && trip.status !== "In-Active") {
+        await TripPackage.findByIdAndUpdate(
+          { _id: trip.id },
+          { $set: { status: "In-Active" } },
+          { new: true }
+        );
+      }
+    });
+  }
+};
 
 const getFeatures = async (data) => {
   const features = [
@@ -87,11 +106,10 @@ export const createTripPackage = async (req, res, next) => {
 
 //getting trip packages
 export const getTripPackages = async (req, res, next) => {
-  // console.log("PACKAGE", req.body);
   try {
     const result = await TripPackage.find({});
-    console.log(result.length);
-
+    console.log(result, " : Result");
+    completetStatusUpdate(result);
     // completetStatusUpdate(result);
     if (result.length !== 0)
       res
@@ -130,8 +148,7 @@ export const getTripDetails = async (req, res, next) => {
 
 //get filtered trip packages
 export const filterTripList = async (req, res, next) => {
-  console.log(req.params, "filterR");
-  console.log("LOG", req.body);
+  // console.log(req.body.title);
 
   try {
     const result = await TripPackage.aggregate([
@@ -208,7 +225,6 @@ export const filterTripList = async (req, res, next) => {
       },
     ]);
 
-    console.log(result, "result");
     res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
   } catch (error) {
     next(error);
