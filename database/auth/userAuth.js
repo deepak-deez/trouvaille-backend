@@ -246,7 +246,9 @@ export const sendResetMail = async (req, res, next) => {
       id: user[0]._id,
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
+    console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
+    console.log("Link : ", link);
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)

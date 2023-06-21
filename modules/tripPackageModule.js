@@ -10,13 +10,14 @@ import { deleteFile } from "./supportModule.js";
 import { FeatureModel } from "../models/tripFeatureModel.js";
 import { format } from "date-fns";
 
-const completetStatusUpdate = (data) => {
-  const today = format(new Date(), "dd-MM-yyyy");
+const activeStatusUpdate = (data) => {
+  const today = format(new Date(), "yyyy-MM-dd");
 
   if (data.length !== 0) {
     data.forEach(async (trip) => {
-      let endDate = trip.duration.split("-")[1].trim();
-      endDate = endDate.replace(/([/])/g, "-");
+      const endDate = trip.endDate;
+      // let endDate = trip.duration.split("-")[1].trim();
+      // endDate = endDate.replace(/([/])/g, "-");
       if (endDate < today && trip.status !== "In-Active") {
         await TripPackage.findByIdAndUpdate(
           { _id: trip.id },
@@ -107,7 +108,7 @@ export const createTripPackage = async (req, res, next) => {
 export const getTripPackages = async (req, res, next) => {
   try {
     const result = await TripPackage.find({});
-    completetStatusUpdate(result);
+    activeStatusUpdate(result);
     // completetStatusUpdate(result);
     if (result.length !== 0)
       res
