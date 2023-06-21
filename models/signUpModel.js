@@ -45,12 +45,4 @@ const schema = new mongoose.Schema({
   joiningYear: { type: Number, trim: true, require: true },
 });
 
-// schema.pre("save", async (next) => {
-//   console.log("hello from pre", password);
-//   //   if (this.isModified("password")) {
-//   this.password = bcrypt.hash(this.password, 12);
-//   //   }
-//   next();
-// });
-
 export const UserModel = mongoose.model("User", schema);

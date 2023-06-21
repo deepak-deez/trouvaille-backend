@@ -8,6 +8,26 @@ import {
 import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
 import { FeatureModel } from "../models/tripFeatureModel.js";
+import { format } from "date-fns";
+
+const activeStatusUpdate = (data) => {
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  if (data.length !== 0) {
+    data.forEach(async (trip) => {
+      const endDate = trip.endDate;
+      // let endDate = trip.duration.split("-")[1].trim();
+      // endDate = endDate.replace(/([/])/g, "-");
+      if (endDate < today && trip.status !== "In-Active") {
+        await TripPackage.findByIdAndUpdate(
+          { _id: trip.id },
+          { $set: { status: "In-Active" } },
+          { new: true }
+        );
+      }
+    });
+  }
+};
 
 const getFeatures = async (data) => {
   const features = [
@@ -64,7 +84,6 @@ const updatePackageData = async (req) => {
 
   const featureData = await getFeatures(result);
   result.features = [...featureData];
-  console.log(result);
   return result;
 };
 
@@ -88,12 +107,8 @@ export const createTripPackage = async (req, res, next) => {
 //getting trip packages
 export const getTripPackages = async (req, res, next) => {
   try {
-    let result;
-    if (req.type === "GET") {
-      result = await TripPackage.find({});
-    } else {
-      result = await TripPackage.find(req.body.category);
-    }
+    const result = await TripPackage.find({});
+    activeStatusUpdate(result);
     // completetStatusUpdate(result);
     if (result.length !== 0)
       res
@@ -132,8 +147,6 @@ export const getTripDetails = async (req, res, next) => {
 
 //get filtered trip packages
 export const filterTripList = async (req, res, next) => {
-  // console.log(req.body.title);
-
   try {
     const result = await TripPackage.aggregate([
       {
@@ -200,6 +213,9 @@ export const filterTripList = async (req, res, next) => {
                 req.body.price === ""
                   ? { $ne: "" }
                   : { $lte: Number(req.body.price) },
+            },
+            {
+              status: { $all: ["Active "] },
             },
           ],
         },

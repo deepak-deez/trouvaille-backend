@@ -2,7 +2,6 @@ import { log } from "console";
 import multer from "multer";
 import path from "path";
 
-
 const setFileName = (file) => {
   return `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`;
 };
@@ -17,7 +16,6 @@ const featureStorage = multer.diskStorage({
 const packageStorage = multer.diskStorage({
   destination: `./database/images/packages`,
   filename: (req, file, cb) => {
-    console.log("STORE FILES :",file);
     return cb(null, setFileName(file));
   },
 });

@@ -17,7 +17,6 @@ export const registerData = async (
   userDetails,
   joiningYear
 ) => {
-  console.log(userType, name, email, phone, password, status);
   return {
     userType: userType,
     userName: name,
@@ -85,6 +84,8 @@ export const userDetails = (imageUrl, data) => {
 
 export const deleteFile = async (folderName, fileName) => {
   const filePath = path.join("database", "images", folderName, fileName);
+  // await fs.rm(filePath, { recursive: true }, (err) => {
+  // });
   await fs.unlink(filePath, (err) => {
     if (err) console.log("Cann't delete this file!!!");
   });

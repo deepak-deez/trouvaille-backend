@@ -1,6 +1,7 @@
 import express from "express";
 import * as utility from "../modules/utilityModule.js";
-import * as tripModule from "../modules/TripPackageModule.js";
+// import * as tripModule from "../modules/TripPackageModule.js";
+import * as tripModule from "../modules/tripPackageModule.js";
 import {
   featureStorageEngine,
   packageStorageEngine,
@@ -34,7 +35,7 @@ app.post(
   packageStorageEngine.array("images", 100),
   tripModule.createTripPackage
 );
-app.post("/get-module/:trip", tripModule.getTripPackages);
+// app.post("/get-module/:trip", tripModule.getTripPackages);
 app.get("/get-module/:trip", tripModule.getTripPackages);
 app.get("/get-trip-details/:trip/:id", tripModule.getTripDetails);
 app.post(
