@@ -83,7 +83,6 @@ const updatePackageData = async (req) => {
 
   const featureData = await getFeatures(result);
   result.features = [...featureData];
-  console.log(result);
   return result;
 };
 
@@ -108,7 +107,6 @@ export const createTripPackage = async (req, res, next) => {
 export const getTripPackages = async (req, res, next) => {
   try {
     const result = await TripPackage.find({});
-    console.log(result, " : Result");
     completetStatusUpdate(result);
     // completetStatusUpdate(result);
     if (result.length !== 0)
@@ -148,8 +146,6 @@ export const getTripDetails = async (req, res, next) => {
 
 //get filtered trip packages
 export const filterTripList = async (req, res, next) => {
-  // console.log(req.body.title);
-
   try {
     const result = await TripPackage.aggregate([
       {

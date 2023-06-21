@@ -41,9 +41,7 @@ export const addNewUser = async (req, res, next) => {
       )
     );
     const backendUser = await newUser.save();
-    console.log(backendUser);
     if (backendUser) {
-      console.log(req.body.password);
       const secret = process.env.JWT_SECRET;
       const payload = {
         email: req.body.email,
@@ -123,14 +121,11 @@ export const updateDetails = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const admin = await findUser(req.body.email);
-    // console.log(admin);
-    // console.log(req.body.oldPassword, admin[0].password);
     // const isMatched = await bcrypt.compare(
     //   req.body.oldPassword,
     //   admin[0].password
     // );
 
-    // console.log(isMatched);
     // if (isMatched) {
     const result = await UserModel.findOneAndUpdate(
       {

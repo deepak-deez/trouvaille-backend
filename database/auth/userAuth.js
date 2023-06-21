@@ -52,7 +52,6 @@ export const userRegister = async (req, res, next) => {
         new Date().getFullYear()
       )
     );
-    console.log(newUser);
     const result = await newUser.save();
     if (result?._id)
       res
@@ -67,22 +66,16 @@ export const userRegister = async (req, res, next) => {
 
 export const updateUserDetails = async (req, res, next) => {
   try {
-    console.log("Body:", req.body, "File", req.file);
     const details = req.body;
     const userData = await UserModel.findOne({ _id: req.params.id });
     if (userData === null)
       return res.status(404).send(null, "User not found!", false);
 
     let image = userData.userDetails.image;
-    console.log(userData.userDetails.image);
 
     if (req.file !== undefined && image !== undefined) {
-      console.log(userData);
       const profileImage = userData.userDetails.image.split("/")[4];
-      // console.log(
-      //   "image : ",
-      //   `./database/images/profileImages/${profileImage}`
-      // );
+
       deleteFile("profileImages", profileImage);
     }
     if (req.file !== undefined) {
@@ -95,7 +88,6 @@ export const updateUserDetails = async (req, res, next) => {
       { new: true }
     );
     if (newDetails?._id) {
-      console.log("newDetails:", newDetails);
       return res
         .status(200)
         .send(
@@ -153,7 +145,7 @@ export const userLogin = async (req, res, next) => {
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
           expiresIn: "7d",
         });
-        console.log(result, "result");
+
         return res
           .status(200)
           .send(
@@ -198,7 +190,6 @@ export const userLogout = async (req, res, next) => {
 };
 
 export const userData = async (req, res, next) => {
-  console.log(req.params.user);
   try {
     const user = await UserModel.find({ userType: req.params.user });
     return res
@@ -210,7 +201,6 @@ export const userData = async (req, res, next) => {
 };
 
 export const userDataById = async (req, res, next) => {
-  console.log("User by id:", req.params);
   const { id, user } = req.params;
   try {
     const userData = await UserModel.findOne({
@@ -237,9 +227,6 @@ export const sendResetMail = async (req, res, next) => {
       return res
         .status(500)
         .send(Response(null, `${req.params.user} not found!`, false));
-
-    console.log(user[0].userType);
-
     if (
       user[0].userType === "Frontend-user" &&
       req.params.user !== user[0].userType
@@ -250,10 +237,8 @@ export const sendResetMail = async (req, res, next) => {
 
     let secret = process.env.JWT_SECRET;
     if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
-      console.log(`sent to ${user[0].userType}`);
       secret = process.env.JWT_SECRET + user[0].password;
     }
-    console.log(user[0].userDetails.name);
     const userName =
       user[0].userDetails.name === undefined ? "" : user[0].userDetails.name;
     const payload = {
@@ -261,9 +246,7 @@ export const sendResetMail = async (req, res, next) => {
       id: user[0]._id,
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-    console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
-    console.log("Link : ", link);
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)
@@ -293,11 +276,9 @@ export const tokenValidation = async (req, res, next) => {
       return res
         .status(500)
         .send(Response(null, `Not a ${req.params.user}!`, false));
-    console.log(user[0].userType);
 
     let secret = process.env.JWT_SECRET;
     if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
-      console.log(`valid for ${user[0].userType}`);
       secret = process.env.JWT_SECRET + user[0].password;
     }
     jwt.verify(token, secret, (err, decode) => {
@@ -335,7 +316,6 @@ export const setPassword = async (req, res, next) => {
       } else {
         payload.id = req.body.id;
       }
-      console.log("Payload: ", payload);
 
       const result = await UserModel.findOneAndUpdate(
         { _id: payload.id },

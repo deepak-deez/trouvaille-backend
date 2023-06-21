@@ -11,7 +11,7 @@ mongoose.connect(process.env.USER_CONNECTION_URL, {
 const db = mongoose.connection;
 
 db.on("error", (err) => {
-  console.log(err);
+  console.log("Connection Error : ", err);
 });
 db.on("connected", () => {
   console.log("Database connected...");

@@ -25,7 +25,6 @@ export const createFeature = async (req, res, next) => {
       title: title,
       description: description,
     });
-    console.log("result : ", result);
     const saveData = await result.save();
     if (saveData?._id)
       res
@@ -41,7 +40,6 @@ export const createFeature = async (req, res, next) => {
 };
 
 const getResponseMessage = (result, res, feature) => {
-  // console.log("result : ", result);
   if (result.length !== 0)
     return res
       .status(200)
@@ -51,7 +49,6 @@ const getResponseMessage = (result, res, feature) => {
 
 export const showAll = async (req, res, next) => {
   try {
-    console.log(req.params);
     const result = await FeatureModel.find({ purpose: req.params.feature });
     getResponseMessage(result, res, "features");
   } catch (error) {
@@ -61,13 +58,11 @@ export const showAll = async (req, res, next) => {
 //get
 export const showTravelAmenityOccasion = async (req, res, next) => {
   try {
-    console.log(req.params);
     const result = await FeatureModel.find({
       purpose: {
         $in: [req.params.feature1, req.params.feature2, req.params.feature3],
       },
     });
-    console.log(result);
     getResponseMessage(result, res, "features");
   } catch (error) {
     next(error);
@@ -102,7 +97,6 @@ export const updateFeature = async (req, res, next) => {
 
 // delete
 export const deleteFeature = async (req, res, next) => {
-  console.log("deleteFeature called");
   try {
     const { feature, id } = req.params;
     const data = await FeatureModel.findOne({
@@ -133,7 +127,6 @@ export const deleteFeature = async (req, res, next) => {
 // getting all feature options Together
 export const getAllFeature = async (req, res, next) => {
   try {
-    console.log(req.params);
     const result = await FeatureModel.find({});
     getResponseMessage(result, res, "All features");
   } catch (error) {

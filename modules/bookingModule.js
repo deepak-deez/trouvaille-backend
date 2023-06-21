@@ -80,7 +80,6 @@ export const getAllBookingByUser = async (req, res, next) => {
 
 export const getBookingByUser = async (req, res, next) => {
   try {
-    console.log("Params : ", req.params);
     const result = await BookingModel.find({
       userId: req.params.userId,
       _id: req.params.id,
@@ -139,7 +138,6 @@ const deleteBooking = async (id, res) => {
 
 // export const tokenVarification = async (req, res, next) => {
 //   try {
-//     console.log("params :", req.params);
 //     const { id, token } = req.params;
 //     const trip = await BookingModel.findOne({ _id: id });
 
@@ -163,10 +161,8 @@ const deleteBooking = async (id, res) => {
 
 export const UserActionOnDelete = async (req, res, next) => {
   try {
-    console.log(req.params);
     if (req.params.user !== "Admin") {
       const trip = await BookingModel.findOne({ _id: req.params.id });
-      console.log(trip);
       if (trip === null)
         return res
           .status(500)
@@ -179,7 +175,6 @@ export const UserActionOnDelete = async (req, res, next) => {
       // };
       // const token = jwt.sign(payload, secret, { expiresIn: "7d" });
       // const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
-      // // console.log("link : ", link);
       return res
         .status(200)
         .send(
@@ -190,7 +185,6 @@ export const UserActionOnDelete = async (req, res, next) => {
           )
         );
     } else {
-      console.log(req.params.id);
       deleteBooking(req.params.id, res);
     }
   } catch (error) {
