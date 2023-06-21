@@ -223,6 +223,7 @@ export const sendResetMail = async (req, res, next) => {
       return res.status(500).send(Response(null, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
+    console.log(user);
     if (user.length === 0)
       return res
         .status(500)
@@ -239,8 +240,7 @@ export const sendResetMail = async (req, res, next) => {
     if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
       secret = process.env.JWT_SECRET + user[0].password;
     }
-    const userName =
-      user[0].userDetails.name === undefined ? "" : user[0].userDetails.name;
+    const userName = user[0].userName === undefined ? "" : user[0].userName;
     const payload = {
       email: req.body.email,
       id: user[0]._id,
@@ -249,6 +249,7 @@ export const sendResetMail = async (req, res, next) => {
     console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
+    console.log(userName, ":name");
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)

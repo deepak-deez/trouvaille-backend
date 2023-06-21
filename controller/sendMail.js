@@ -5,6 +5,7 @@ env.config();
 
 const sendMail = async (userName, emailId, link) => {
   // let testAccount = await nodemailer.createTestAccount();
+  console.log("UserName:", userName);
 
   nodemailer
     .createTransport({
@@ -32,16 +33,18 @@ const sendMail = async (userName, emailId, link) => {
             <!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
             <title>Password Reset</title>
             <style>
-            html body .reset-mail {
-              display: flex;
-              flex-direction: column !important;
-              margin-left: auto;
-              margin-right: auto;
-              padding: 2rem;
-              text-align: center;
-              max-width: 50rem;
-              align-items: center;
-            }
+              html body .reset-mail {
+                display: flex;
+                flex-direction: column !important;
+                margin-left: auto;
+                margin-right: auto;
+                padding: 2rem;
+                text-align: center;
+                max-width: 50rem;
+                align-items: center;
+                font-size: 1.3rem;
+                font-weight: 500;
+              }
               .mail {
                 margin-bottom: 1.5rem;
                 display: flex;
@@ -62,8 +65,8 @@ const sendMail = async (userName, emailId, link) => {
               .reset-button {
                 max-width: 30rem;
                 border-radius: 2rem;
-                background: rgb(150, 4, 4);
-                padding: 1rem 5rem;
+                background: #cd5047;
+                padding: 1rem 3rem;
                 text-align: center;
               }
               .reset-button a {
@@ -78,40 +81,41 @@ const sendMail = async (userName, emailId, link) => {
               .mail-bottom {
                 font-size: large;
                 font-weight: bold;
+                line-height: 0;
+              }
+              h6 {
+                margin: 0;
+                line-height: 10px;
+                font-weight: 200;
               }
             </style>
           </head>
           <body>
-            <section
-              class="reset-mail"
-            >
+            <section class="reset-mail">
               <div class="mail">
-                <div class="mail-title">
-                  Reset your Trouvaille Password
-                </div>
-                <img src="https://github.com/itobuz-steps/trouvaille-backend/blob/TROUV-72-fixing-all-bugs/database/images/trouvailleLogo/logo.svg" alt="Trouvaille image" />
+                <div class="mail-title">Reset your Trouvaille Password</div>
+                <img
+                  src="https://i.ibb.co/JmMBM8t/Group-3.png"
+                  alt="Trouvaille image"
+                />
               </div>
               <p class="receiver-name">Hi ${userName},</p>
               <p class="mail-para1">
                 We're sending you this email because you requested a password reset.
                 Click on this link to create a new password:
               </p>
-              <div
-                class="reset-button "
-              >
-                <a href="${link}"
-                  >Set a new password</a
-                >
+              <div class="reset-button">
+                <a href="${link}">Set a new password</a>
               </div>
-              <p class="mail-para2 ">
+              <p class="mail-para2">
                 If you didn't request a password reset, you can ignore this email. Your
                 password will not be changed.
               </p>
-              <h2 class="mail-bottom ">Trouvaille</h2>
+              <h2 class="mail-bottom">Trouvaille</h2>
+              <h6>Front-facing Website</h6>
             </section>
           </body>
         </html>
-        
         `,
       },
       (error) => {
