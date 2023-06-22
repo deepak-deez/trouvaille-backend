@@ -17,8 +17,9 @@ const phoneNoFormat = /^\d{10}$/;
 
 export const addNewUser = async (req, res, next) => {
   try {
-    const { userName, email } = req.body;
+    const { name, email } = req.body;
 
+    console.log(userName, email);
     if (!email.match(emailFormat)) {
       return res
         .status(530)
@@ -34,7 +35,7 @@ export const addNewUser = async (req, res, next) => {
 
     const newUser = new UserModel({
       userType: "Backend-user",
-      userName: userName,
+      userName: name,
       phone: null,
       email: email,
       status: "false",

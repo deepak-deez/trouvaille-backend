@@ -23,7 +23,6 @@ const schema = new mongoose.Schema({
   phone: {
     type: String,
     trim: true,
-    unique: true,
   },
   password: {
     type: String,
