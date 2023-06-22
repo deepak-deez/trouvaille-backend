@@ -19,7 +19,6 @@ export const addNewUser = async (req, res, next) => {
   try {
     const { name, email } = req.body;
 
-    console.log(userName, email);
     if (!email.match(emailFormat)) {
       return res
         .status(530)
@@ -36,7 +35,6 @@ export const addNewUser = async (req, res, next) => {
     const newUser = new UserModel({
       userType: "Backend-user",
       userName: name,
-      phone: null,
       email: email,
       status: "false",
     });
