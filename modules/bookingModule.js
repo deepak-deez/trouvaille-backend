@@ -12,7 +12,7 @@ env.config();
 //creating trip packages
 
 const completetStatusUpdate = (data) => {
-  const today = format(new Date(), "dd-MM-yyyy");
+  const today = format(new Date(), "yyyy-MM-dd");
   if (data.length !== 0) {
     data.forEach(async (booking) => {
       if (

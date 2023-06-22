@@ -17,12 +17,14 @@ const phoneNoFormat = /^\d{10}$/;
 
 export const addNewUser = async (req, res, next) => {
   try {
-    if (!req.body.email.match(emailFormat)) {
+    const { userName, email } = req.body;
+
+    if (!email.match(emailFormat)) {
       return res
         .status(530)
         .send(Response(null, "Invalid email address!", false));
     }
-    const existingUser = await findUser(req.body.email);
+    const existingUser = await findUser(email);
 
     if (existingUser.length !== 0) {
       return res
@@ -30,16 +32,14 @@ export const addNewUser = async (req, res, next) => {
         .send(Response(null, "User already registered!", false));
     }
 
-    const newUser = new UserModel(
-      await registerData(
-        req.params.user,
-        req.body.name,
-        req.body.email,
-        "",
-        "",
-        false
-      )
-    );
+    const newUser = new UserModel({
+      userType: "Backend-user",
+      userName: userName,
+      phone: null,
+      email: email,
+      status: "false",
+    });
+    console.log("New user  :", newUser);
     const backendUser = await newUser.save();
     if (backendUser) {
       const secret = process.env.JWT_SECRET;

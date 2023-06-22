@@ -223,7 +223,6 @@ export const sendResetMail = async (req, res, next) => {
       return res.status(500).send(Response(null, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    console.log(user);
     if (user.length === 0)
       return res
         .status(500)
@@ -249,7 +248,6 @@ export const sendResetMail = async (req, res, next) => {
     console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
-    console.log(userName, ":name");
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)
