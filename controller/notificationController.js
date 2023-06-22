@@ -17,6 +17,7 @@ const notificationController = () => {
       } catch (err) {
         console.error(err);
       }
+
       await getNotificationByUser(data.userId).then((datas) => {
         console.log(data.userId, "id");
         io.emit(data.userId, {
@@ -25,23 +26,28 @@ const notificationController = () => {
           success: true,
         });
       });
-
-      console.log("User ID : ", data.userId);
     });
 
-    socket.emit("getAllNotis", {
-      data: await getAllNotification(),
-      status: 200,
-      success: true,
-    });
+    socket.on("sendCurrentBooking", async (data) => {
+      console.log("Fetched Update : ", data);
+      try {
+        await addNotification(data);
+      } catch (error) {
+        console.log(error);
+      }
 
-    socket.emit("hello-joy", {
-      here: "is something",
-      and: "here is something more",
+      await getNotificationByUser(data.userType).then((datas) => {
+        console.log(data.userType, "User Type");
+        io.emit("getCurrentBooking", {
+          data: datas,
+          status: 200,
+          success: true,
+        });
+      });
     });
 
     socket.on("disconnect", () => {
-      console.log("Disconnected");
+      console.log(socket.id, " Disconnected");
     });
   });
 };
