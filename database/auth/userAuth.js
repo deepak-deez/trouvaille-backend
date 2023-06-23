@@ -92,7 +92,7 @@ export const updateUserDetails = async (req, res, next) => {
         .status(200)
         .send(
           Response(
-            { data: newDetails },
+            { userDetails: newDetails },
             200,
             `${req.params.user} details updated successfully.`,
             true

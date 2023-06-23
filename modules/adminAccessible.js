@@ -38,7 +38,6 @@ export const addNewUser = async (req, res, next) => {
       email: email,
       status: "false",
     });
-    console.log("New user  :", newUser);
     const backendUser = await newUser.save();
     if (backendUser) {
       const secret = process.env.JWT_SECRET;
