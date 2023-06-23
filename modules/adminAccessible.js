@@ -51,7 +51,7 @@ export const addNewUser = async (req, res, next) => {
       const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${backendUser._id}/${token}`;
       console.log(link);
 
-      if (await sendMail(req.body.email, link))
+      if (await sendMail(req.body.name, req.body.email, link))
         return res
           .status(500)
           .send(Response(null, "Failed to send mail!", false));
