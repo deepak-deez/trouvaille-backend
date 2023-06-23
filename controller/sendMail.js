@@ -5,8 +5,6 @@ env.config();
 
 const sendMail = async (userName, emailId, link) => {
   // let testAccount = await nodemailer.createTestAccount();
-  console.log("UserName:", userName);
-
   nodemailer
     .createTransport({
       service: "gmail",
