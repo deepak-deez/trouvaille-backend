@@ -96,6 +96,29 @@ export const setMarkAsRead = async (req, res, next) => {
   }
 };
 
+export const setMarkAllAsRead = async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const result = await Notification.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: { readStatus: true },
+      },
+      { new: true }
+    );
+    console.log(result);
+    if (result)
+      return res
+        .status(200)
+        .send(Response(result, `notification details are here...`, true));
+    return res
+      .status(500)
+      .send(Response(null, `notification not found!`, false));
+  } catch (err) {
+    next(err);
+  }
+};
+
 // export const getNotificationByUser = async (userId) => {
 //   try {
 //     return await Notification.find({ userId });
