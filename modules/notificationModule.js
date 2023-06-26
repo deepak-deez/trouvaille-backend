@@ -56,7 +56,7 @@ export const getUserNotification = async (req, res, next) => {
   }
 };
 
-export const getBookingNotification = async (req, res, next) => {
+export const getBookingAndCancelNotification = async (req, res, next) => {
   try {
     console.log(req.params);
     const result = await Notification.find({ userType: req.params.user });
@@ -129,8 +129,7 @@ export const setMarkAllAsRead = async (req, res, next) => {
 
 export const getNotificationByUser = async (userType) => {
   try {
-    if (userType === "Frontend-user") {
-      console.log("To Admin");
+    if (userType === "Frontend-user" || userType === "Backend-user") {
       return await Notification.find({ userType });
     } else {
       console.log("To User");

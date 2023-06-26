@@ -46,6 +46,23 @@ const notificationController = () => {
       });
     });
 
+    socket.on("sendCancellationRequest", async (data) => {
+      console.log("Fetched update : ", data);
+      try {
+        await addNotification(data);
+      } catch (err) {
+        console.log(err);
+      }
+
+      await getNotificationByUser(data.userType).then((datas) => {
+        io.emit("getCancellationRequest", {
+          data: datas,
+          status: 200,
+          success: true,
+        });
+      });
+    });
+
     socket.on("disconnect", () => {
       console.log(socket.id, " Disconnected");
     });
