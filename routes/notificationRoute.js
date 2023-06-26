@@ -13,5 +13,6 @@ app.get(
 );
 app.get("/set-notification-mark-read/:id", popup.setMarkAsRead);
 app.get("/set-notification-mark-all-read/:id", popup.setMarkAllAsRead);
+app.get("/read-notification/:id", popup.updateDeleteRequest);
 
 export default app;

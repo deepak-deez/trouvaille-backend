@@ -10,6 +10,7 @@ const schema = new mongoose.Schema({
   createdAt: { type: String, trim: true, require: true },
   userEmail: { type: String, trim: true },
   userName: { type: String, trim: true },
+  deleteStatus: { type: String, trip: true },
 });
 
 export const Notification = mongoose.model("Notifications", schema);
