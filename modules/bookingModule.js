@@ -141,29 +141,6 @@ const deleteBooking = async (id, res) => {
   }
 };
 
-// export const tokenVarification = async (req, res, next) => {
-//   try {
-//     const { id, token } = req.params;
-//     const trip = await BookingModel.findOne({ _id: id });
-
-//     if (trip === null)
-//       return res.status(500).send(Response(null,  `Booking not found!`, false));
-//     const secret = process.env.JWT_SECRET + trip.phone;
-//     await jwt.verify(token, secret, (err, decode) => {
-//       if (err) {
-//         return res.status(500).send(Response(null,  "Not authenticate!", false));
-//       } else {
-//         // deleteBooking(trip._id, res);
-//         return res.status(200).send(
-//           Response({ id: trip._id }, `Booking details verified.`, true)
-//         );
-//       }
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 export const UserActionOnDelete = async (req, res, next) => {
   try {
     if (req.params.user !== "Admin") {
@@ -172,14 +149,6 @@ export const UserActionOnDelete = async (req, res, next) => {
         return res
           .status(500)
           .send(Response(null, `Booking not found!`, false));
-      // const secret = process.env.JWT_SECRET + trip.phone;
-
-      // const payload = {
-      //   email: trip.email,
-      //   id: trip._id,
-      // };
-      // const token = jwt.sign(payload, secret, { expiresIn: "7d" });
-      // const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
       return res
         .status(200)
         .send(
@@ -209,7 +178,6 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
-          // bookingStatus: req.body.bookingStatus,
           read: req.body.read,
         },
       },

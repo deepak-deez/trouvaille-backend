@@ -16,8 +16,6 @@ const activeStatusUpdate = (data) => {
   if (data.length !== 0) {
     data.forEach(async (trip) => {
       const endDate = trip.endDate;
-      // let endDate = trip.duration.split("-")[1].trim();
-      // endDate = endDate.replace(/([/])/g, "-");
       if (endDate < today && trip.status !== "In-Active") {
         await TripPackage.findByIdAndUpdate(
           { _id: trip.id },
@@ -109,7 +107,6 @@ export const getTripPackages = async (req, res, next) => {
   try {
     const result = await TripPackage.find({});
     activeStatusUpdate(result);
-    // completetStatusUpdate(result);
     if (result.length !== 0)
       return res
         .status(200)

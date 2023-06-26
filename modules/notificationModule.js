@@ -7,17 +7,12 @@ export const addNotification = async (req) => {
     const result = await newNotification.save();
   } catch (err) {
     console.log(err);
-    // next(err);
   }
 };
 
 export const getAllNotification = async (req, res, next) => {
   try {
     return await Notification.find({});
-
-    // return res
-    //   .status(200)
-    //   .send(Response(notifications, `All notifications are here...`, true));
   } catch (err) {
     next(err);
   }

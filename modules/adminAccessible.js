@@ -89,7 +89,6 @@ export const updateDetails = async (req, res, next) => {
           userName: req.body.name,
           email: req.body.email,
           phone: req.body.phone,
-          //   address: req.body.address,
         },
       },
       { new: true }
@@ -119,12 +118,6 @@ export const updateDetails = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
   try {
     const admin = await findUser(req.body.email);
-    // const isMatched = await bcrypt.compare(
-    //   req.body.oldPassword,
-    //   admin[0].password
-    // );
-
-    // if (isMatched) {
     const result = await UserModel.findOneAndUpdate(
       {
         _id: admin[0]._id,
@@ -141,28 +134,10 @@ export const changePassword = async (req, res, next) => {
         .status(200)
         .send(Response(Response(result, "Password reset succesfully.", true)));
     }
-    // } else {
-    //   return res.status(500).send(Response(null,  "Password doesn't match!", false));
-    // }
   } catch (error) {
     next(error);
   }
 };
-
-// export const validatePassword = async (req, res, next) => {
-//   try {
-//     const admin = await findUser(req.body.email);
-//     const isMatched = await bcrypt.compare(
-//       req.body.password,
-//       admin[0].password
-//     );
-//     if (isMatched) {
-//       return res.status(200).send(Response(null,  "Valid admin.", true));
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 export const deleteUser = async (req, res, next) => {
   try {

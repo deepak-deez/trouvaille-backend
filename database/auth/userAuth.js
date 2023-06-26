@@ -93,7 +93,6 @@ export const updateUserDetails = async (req, res, next) => {
         .send(
           Response(
             { userDetails: newDetails },
-            200,
             `${req.params.user} details updated successfully.`,
             true
           )
@@ -115,8 +114,6 @@ export const userLogin = async (req, res, next) => {
       return res
         .status(500)
         .send(Response(null, `${req.params.user} not found!`, false));
-
-    // if (req.params.user !== user[0].userType)
     if (
       req.params.user !== user[0].userType &&
       user[0].userType === "Frontend-user"
