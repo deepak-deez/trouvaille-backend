@@ -119,25 +119,6 @@ export const setMarkAllAsRead = async (req, res, next) => {
   }
 };
 
-export const updateDeleteRequest = async (req, res, next) => {
-  try {
-    const result = await Notification.findByIdAndUpdate(
-      { _id: req.params.id },
-      {
-        $set: { deleteStatus: true },
-      },
-      { new: true }
-    );
-    if (result)
-      return res
-        .status(200)
-        .send(Response(result, `Notification has been read by admin.`, true));
-    return res.status(500).send(Response(null, `Notification unread!`, false));
-  } catch (err) {
-    next(err);
-  }
-};
-
 // export const getNotificationByUser = async (userId) => {
 //   try {
 //     return await Notification.find({ userId });
