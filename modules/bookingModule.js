@@ -131,7 +131,7 @@ const deleteBooking = async (id, res) => {
 
   const result = await BookingModel.findOneAndUpdate(
     { _id: id },
-    { deleteStatus: true, bookingStatus: "cancelled" },
+    { cancellationStatus: false, bookingStatus: "cancelled" },
     { new: true }
   );
   if (result) {
@@ -142,6 +142,7 @@ const deleteBooking = async (id, res) => {
 };
 
 export const UserActionOnDelete = async (req, res, next) => {
+  console.log(req.body);
   try {
     if (req.params.user !== "Admin") {
       const trip = await BookingModel.findOne({ _id: req.params.id });

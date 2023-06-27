@@ -215,6 +215,7 @@ export const userDataById = async (req, res, next) => {
 };
 
 export const sendResetMail = async (req, res, next) => {
+  console.log("body : ",req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.status(500).send(Response(null, "Not a valid email!", false));
