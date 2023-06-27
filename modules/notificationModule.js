@@ -5,20 +5,14 @@ export const addNotification = async (req) => {
   try {
     const newNotification = await Notification(req);
     const result = await newNotification.save();
-    console.log("Result ; ", result);
   } catch (err) {
     console.log(err);
-    // next(err);
   }
 };
 
 export const getAllNotification = async (req, res, next) => {
   try {
     return await Notification.find({});
-
-    // return res
-    //   .status(200)
-    //   .send(Response(notifications, `All notifications are here...`, true));
   } catch (err) {
     next(err);
   }
@@ -41,9 +35,7 @@ export const getNotificationById = async (req, res, next) => {
 
 export const getUserNotification = async (req, res, next) => {
   try {
-    console.log(req.params);
     const result = await Notification.find({ userId: req.params.id });
-    console.log(result);
     if (result)
       return res
         .status(200)

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-// import bcrypt from "bcrypt";
 
 const schema = new mongoose.Schema({
   userType: {
@@ -23,7 +22,6 @@ const schema = new mongoose.Schema({
   phone: {
     type: String,
     trim: true,
-    unique: true,
   },
   password: {
     type: String,

@@ -92,8 +92,7 @@ export const updateUserDetails = async (req, res, next) => {
         .status(200)
         .send(
           Response(
-            { data: newDetails },
-            200,
+            { userDetails: newDetails },
             `${req.params.user} details updated successfully.`,
             true
           )
@@ -115,8 +114,6 @@ export const userLogin = async (req, res, next) => {
       return res
         .status(500)
         .send(Response(null, `${req.params.user} not found!`, false));
-
-    // if (req.params.user !== user[0].userType)
     if (
       req.params.user !== user[0].userType &&
       user[0].userType === "Frontend-user"
@@ -218,12 +215,12 @@ export const userDataById = async (req, res, next) => {
 };
 
 export const sendResetMail = async (req, res, next) => {
+  console.log("body : ",req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.status(500).send(Response(null, "Not a valid email!", false));
 
     const user = await findUser(req.body.email);
-    console.log(user);
     if (user.length === 0)
       return res
         .status(500)
@@ -249,7 +246,6 @@ export const sendResetMail = async (req, res, next) => {
     console.log("token : ", token);
     const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
-    console.log(userName, ":name");
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)

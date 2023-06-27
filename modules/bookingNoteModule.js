@@ -1,6 +1,5 @@
 import { BookingNote } from "../models/bookingNoteModel.js";
 import { Response } from "./supportModule.js";
-// import { format } from "date-fns";
 
 export const addBookingNote = async (req, res, next) => {
   try {
@@ -41,7 +40,6 @@ export const getBookingNote = async (req, res, next) => {
 export const updateBookingNote = async (req, res, next) => {
   try {
     const result = await BookingNote.findOne({ _id: req.params.id });
-    // const today = format(new Date(), "dd-MM-yyyy");
     if (result === null)
       return res
         .status(500)
