@@ -131,7 +131,11 @@ const deleteBooking = async (id, res) => {
 
   const result = await BookingModel.findOneAndUpdate(
     { _id: id },
-    { cancellationStatus: false, bookingStatus: "cancelled" },
+    {
+      deleteStatus: true,
+      cancellationStatus: false,
+      bookingStatus: "Cancelled",
+    },
     { new: true }
   );
   if (result) {
