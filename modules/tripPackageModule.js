@@ -212,7 +212,7 @@ export const filterTripList = async (req, res, next) => {
                   : { $lte: Number(req.body.price) },
             },
             {
-              status: { $all: ["Active "] },
+              status: { $all: ["Active"] },
             },
           ],
         },
