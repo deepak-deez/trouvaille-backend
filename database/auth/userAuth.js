@@ -215,7 +215,7 @@ export const userDataById = async (req, res, next) => {
 };
 
 export const sendResetMail = async (req, res, next) => {
-  console.log("body : ",req.body);
+  console.log("body : ", req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.status(500).send(Response(null, "Not a valid email!", false));
@@ -244,7 +244,7 @@ export const sendResetMail = async (req, res, next) => {
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
     console.log("token : ", token);
-    const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
+    const link = `http://localhost:${req.body.port}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
     console.log("Link : ", link);
     if (await sendMail(userName, req.body.email, link))
       return res

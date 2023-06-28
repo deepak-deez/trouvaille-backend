@@ -17,7 +17,7 @@ const phoneNoFormat = /^\d{10}$/;
 
 export const addNewUser = async (req, res, next) => {
   try {
-    const { name, email } = req.body;
+    const { port, name, email } = req.body;
 
     if (!email.match(emailFormat)) {
       return res
@@ -42,22 +42,22 @@ export const addNewUser = async (req, res, next) => {
     if (backendUser) {
       const secret = process.env.JWT_SECRET;
       const payload = {
-        email: req.body.email,
+        email: email,
         id: backendUser._id,
       };
 
       const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-      const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-validation/${req.params.user}/${backendUser._id}/${token}`;
+      const link = `http://localhost:${port}/token-validation/${req.params.user}/${backendUser._id}/${token}`;
       console.log(link);
 
-      if (await sendMail(req.body.name, req.body.email, link))
+      if (await sendMail(name, email, link))
         return res
           .status(500)
           .send(Response(null, "Failed to send mail!", false));
       else
         return res
           .status(200)
-          .send(Response(null, `Email send to ${req.body.email}`, true));
+          .send(Response(null, `Email send to ${email}`, true));
     } else {
       next(new Error("Failed to add user!"));
     }
