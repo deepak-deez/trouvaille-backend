@@ -3,7 +3,6 @@ import { Response } from "./supportModule.js";
 
 export const addBookingNote = async (req, res, next) => {
   try {
-    // const today = format(new Date(), "dd-MM-yyyy");
     const data = await BookingNote({ note: req.body.note });
     data.save();
 
