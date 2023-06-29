@@ -11,7 +11,7 @@ const schema = new mongoose.Schema(
     createdAt: { type: String, trim: true, require: true },
     userEmail: { type: String, trim: true },
     userName: { type: String, trim: true },
-    deleteStatus: { type: String, trip: true },
+    deleteStatus: { type: String, trim: true },
   },
   { timestamps: true }
 );
