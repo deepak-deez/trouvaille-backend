@@ -215,7 +215,6 @@ export const userDataById = async (req, res, next) => {
 };
 
 export const sendResetMail = async (req, res, next) => {
-  console.log("body : ", req.body);
   try {
     if (!req.body.email.match(emailFormat))
       return res.status(500).send(Response(null, "Not a valid email!", false));
@@ -237,7 +236,8 @@ export const sendResetMail = async (req, res, next) => {
     if (user[0].userType === "Admin" || user[0].userType === "Frontend-user") {
       secret = process.env.JWT_SECRET + user[0].password;
     }
-    const userName = user[0].userName === undefined ? "" : user[0].userName;
+    const userName =
+      user[0].userDetails.name === undefined ? "" : user[0].userDetails.name;
     const payload = {
       email: req.body.email,
       id: user[0]._id,

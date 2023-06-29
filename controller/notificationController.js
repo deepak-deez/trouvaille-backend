@@ -2,7 +2,6 @@ import server from "../server.js";
 import { Server } from "socket.io";
 import {
   addNotification,
-  getAllNotification,
   getNotificationByUser,
 } from "../modules/notificationModule.js";
 
@@ -11,7 +10,6 @@ const notificationController = () => {
 
   io.on("connection", async (socket) => {
     socket.on("sendStatusUpdate", async (data) => {
-      console.log("Fetched Update : ", data);
       try {
         await addNotification(data);
       } catch (err) {
@@ -19,7 +17,6 @@ const notificationController = () => {
       }
 
       await getNotificationByUser(data.userId).then((datas) => {
-        console.log(data.userId, "id");
         io.emit(data.userId, {
           data: datas,
           status: 200,
@@ -29,7 +26,6 @@ const notificationController = () => {
     });
 
     socket.on("sendCurrentBooking", async (data) => {
-      console.log("Fetched Update : ", data);
       try {
         await addNotification(data);
       } catch (error) {
@@ -37,7 +33,6 @@ const notificationController = () => {
       }
 
       await getNotificationByUser(data.userType).then((datas) => {
-        console.log(data.userType, "User Type");
         io.emit("getCurrentBooking", {
           data: datas,
           status: 200,
@@ -47,7 +42,6 @@ const notificationController = () => {
     });
 
     socket.on("sendCancellationRequest", async (data) => {
-      console.log("Fetched update : ", data);
       try {
         await addNotification(data);
       } catch (err) {
