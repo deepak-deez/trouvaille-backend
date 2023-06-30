@@ -1,18 +1,16 @@
 import { TripPackage } from "../models/TripPackageModel.js";
-import { readFileSync } from "fs";
 import {
   Response,
   TripPackageObject,
   updateTripPackageObject,
 } from "./supportModule.js";
-import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
 import { FeatureModel } from "../models/tripFeatureModel.js";
 import { format } from "date-fns";
 
+// Auto In-Active trip package
 const activeStatusUpdate = (data) => {
   const today = format(new Date(), "yyyy-MM-dd");
-
   if (data.length !== 0) {
     data.forEach(async (trip) => {
       const endDate = trip.endDate;
@@ -39,6 +37,7 @@ const getFeatures = async (data) => {
   return result;
 };
 
+// Set trip package image
 const makePackageData = async (req) => {
   const profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
   const result = TripPackageObject(profileimage, req.body);
@@ -53,6 +52,25 @@ const makePackageData = async (req) => {
   return result;
 };
 
+// Create trip package
+export const createTripPackage = async (req, res, next) => {
+  try {
+    const result = await TripPackage(await makePackageData(req));
+    if (result?._id) {
+      result.save();
+      return res
+        .status(200)
+        .send(Response(result, `New ${req.params.trip} added.`, true));
+    }
+    return res
+      .status(500)
+      .send(Response(null, `${req.params.trip} not added!`, false));
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update trip package data
 const updatePackageData = async (req) => {
   let parsedIndexes = JSON.parse(req.body.indexes);
   let profileimage = req.body.images[0];
@@ -85,24 +103,7 @@ const updatePackageData = async (req) => {
   return result;
 };
 
-export const createTripPackage = async (req, res, next) => {
-  try {
-    const result = await TripPackage(await makePackageData(req));
-    if (result?._id) {
-      result.save();
-      return res
-        .status(200)
-        .send(Response(result, `New ${req.params.trip} added.`, true));
-    }
-    return res
-      .status(500)
-      .send(Response(null, `${req.params.trip} not added!`, false));
-  } catch (error) {
-    next(error);
-  }
-};
-
-//getting trip packages
+// Getting all trip packages
 export const getTripPackages = async (req, res, next) => {
   try {
     const result = await TripPackage.find({});
@@ -120,7 +121,7 @@ export const getTripPackages = async (req, res, next) => {
   }
 };
 
-// getting a particular trip package details
+// Getting a particular trip package details
 export const getTripDetails = async (req, res, next) => {
   try {
     const result = await TripPackage.find({ _id: req.params.id });
@@ -142,7 +143,7 @@ export const getTripDetails = async (req, res, next) => {
   }
 };
 
-//get filtered trip packages
+// Get filtered trip packages
 export const filterTripList = async (req, res, next) => {
   try {
     const result = await TripPackage.aggregate([
@@ -228,7 +229,7 @@ export const filterTripList = async (req, res, next) => {
   }
 };
 
-//modifying trip packages
+// Modifying trip packages
 export const updatePackage = async (req, res, next) => {
   try {
     const currentData = await TripPackage.findOne({ _id: req.params.id });
@@ -253,7 +254,7 @@ export const updatePackage = async (req, res, next) => {
   }
 };
 
-//deleting trip package
+// Deleting trip package
 export const deletePackage = async (req, res, next) => {
   try {
     const { trip, id } = req.params;

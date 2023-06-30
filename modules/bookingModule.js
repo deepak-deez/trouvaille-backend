@@ -9,8 +9,7 @@ import { getTripDetails } from "./TripPackageModule.js";
 
 env.config();
 
-//creating trip packages
-
+// Complete booking by comparing the end date and the current date
 const completetStatusUpdate = (data) => {
   const today = format(new Date(), "yyyy-MM-dd");
   if (data.length !== 0) {
@@ -29,6 +28,17 @@ const completetStatusUpdate = (data) => {
   }
 };
 
+const getResultResponse = (res, result) => {
+  if (result === null || result.length !== 0)
+    return res
+      .status(200)
+      .send(Response(result, `All booking details are here...`, true));
+  return res
+    .status(500)
+    .send(Response(null, `Booking details not found!`, false));
+};
+
+// Create booking
 export const createBooking = async (req, res, next) => {
   try {
     const tripId = req.body.tripId;
@@ -54,16 +64,7 @@ export const createBooking = async (req, res, next) => {
   }
 };
 
-const getResultResponse = (res, result) => {
-  if (result === null || result.length !== 0)
-    return res
-      .status(200)
-      .send(Response(result, `All booking details are here...`, true));
-  return res
-    .status(500)
-    .send(Response(null, `Booking details not found!`, false));
-};
-
+// Get all bookings
 export const allBooking = async (req, res, next) => {
   try {
     const result = await BookingModel.find({});
@@ -74,6 +75,7 @@ export const allBooking = async (req, res, next) => {
   }
 };
 
+// Get all booking by an particular user
 export const getAllBookingByUser = async (req, res, next) => {
   try {
     const result = await BookingModel.find({ userId: req.params.userId });
@@ -83,6 +85,7 @@ export const getAllBookingByUser = async (req, res, next) => {
   }
 };
 
+// View a booking by created by a user
 export const getBookingByUser = async (req, res, next) => {
   try {
     const result = await BookingModel.find({
@@ -95,6 +98,7 @@ export const getBookingByUser = async (req, res, next) => {
   }
 };
 
+// View a booking
 export const getBookingDetails = async (req, res, next) => {
   try {
     const result = await BookingModel.findOne({ _id: req.params.id });
@@ -104,6 +108,7 @@ export const getBookingDetails = async (req, res, next) => {
   }
 };
 
+// Get Booking those are requested for cancellation
 export const getCancellationRequest = async (req, res, next) => {
   try {
     const result = await BookingModel.find({ cancellationStatus: true });
@@ -113,6 +118,7 @@ export const getCancellationRequest = async (req, res, next) => {
   }
 };
 
+// Get booking by its status
 export const getBookingByStatus = async (req, res, next) => {
   try {
     const result = await BookingModel.find({
@@ -124,6 +130,7 @@ export const getBookingByStatus = async (req, res, next) => {
   }
 };
 
+// Soft delete
 const deleteBooking = async (id, res) => {
   const data = await BookingModel.findOne({ _id: id });
   if (data === null)
@@ -145,6 +152,7 @@ const deleteBooking = async (id, res) => {
   }
 };
 
+// Delete or sending request depending on user type (Admin / Backend user)
 export const UserActionOnDelete = async (req, res, next) => {
   try {
     if (req.params.user !== "Admin") {
@@ -170,6 +178,7 @@ export const UserActionOnDelete = async (req, res, next) => {
   }
 };
 
+// Restore booking
 export const restoreBooking = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -199,6 +208,7 @@ export const restoreBooking = async (req, res, next) => {
   }
 };
 
+// Update booking status
 export const updateBookingStatus = async (req, res, next) => {
   try {
     const id = req.params.id;

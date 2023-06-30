@@ -1,6 +1,7 @@
 import { BookingNote } from "../models/bookingNoteModel.js";
 import { Response } from "./supportModule.js";
 
+// Create booking notes
 export const addBookingNote = async (req, res, next) => {
   try {
     const data = await BookingNote({ note: req.body.note });
@@ -20,6 +21,7 @@ export const addBookingNote = async (req, res, next) => {
   }
 };
 
+// Get booking notes
 export const getBookingNote = async (req, res, next) => {
   try {
     const result = await BookingNote.find({});
@@ -36,6 +38,7 @@ export const getBookingNote = async (req, res, next) => {
   }
 };
 
+// Update booking notes
 export const updateBookingNote = async (req, res, next) => {
   try {
     const result = await BookingNote.findOne({ _id: req.params.id });
@@ -60,6 +63,7 @@ export const updateBookingNote = async (req, res, next) => {
   }
 };
 
+// Delete booking notes
 export const deleteBookingNote = async (req, res, next) => {
   try {
     const note = await BookingNote.findOne({ _id: req.params.id });

@@ -1,12 +1,9 @@
 import { UserModel } from "../models/signUpModel.js";
-import bcrypt from "bcrypt";
 import sendMail from "../controller/sendMail.js";
 import jwt from "jsonwebtoken";
-import { request } from "express";
 import env from "dotenv";
 import {
   Response,
-  registerData,
   findUser,
   passwordhashed,
 } from "../modules/supportModule.js";
@@ -15,6 +12,7 @@ env.config();
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
+// Add new backend user
 export const addNewUser = async (req, res, next) => {
   try {
     const { port, name, email } = req.body;
@@ -66,6 +64,7 @@ export const addNewUser = async (req, res, next) => {
   }
 };
 
+// Update backend user data
 export const updateDetails = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat)) {
@@ -115,6 +114,7 @@ export const updateDetails = async (req, res, next) => {
   }
 };
 
+// Update password
 export const changePassword = async (req, res, next) => {
   try {
     const admin = await findUser(req.body.email);
@@ -139,6 +139,7 @@ export const changePassword = async (req, res, next) => {
   }
 };
 
+// Delete Backend user
 export const deleteUser = async (req, res, next) => {
   try {
     const { user, id } = req.params;

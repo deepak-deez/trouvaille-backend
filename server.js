@@ -32,7 +32,6 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
   if (error) {
-    console.log("error", error);
     res.status(404).send({
       data: null,
       message: error.message,

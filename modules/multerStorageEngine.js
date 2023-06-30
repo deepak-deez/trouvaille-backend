@@ -1,11 +1,12 @@
-import { log } from "console";
 import multer from "multer";
 import path from "path";
 
+//Set the file name which will received by multer storage engine
 const setFileName = (file) => {
   return `${file.fieldname}_${Date.now()}${path.extname(file.originalname)}`;
 };
 
+// Features Storage engine
 const featureStorage = multer.diskStorage({
   destination: `./database/images/features`,
   filename: (req, file, cb) => {
@@ -13,6 +14,7 @@ const featureStorage = multer.diskStorage({
   },
 });
 
+// Trip package storage engine
 const packageStorage = multer.diskStorage({
   destination: `./database/images/packages`,
   filename: (req, file, cb) => {
@@ -20,6 +22,7 @@ const packageStorage = multer.diskStorage({
   },
 });
 
+// User profile storage engine
 const userProfileStorage = multer.diskStorage({
   destination: `./database/images/profileImages`,
   filename: (req, file, cb) => {
