@@ -1,6 +1,7 @@
 import { Notification } from "../models/notificationModel.js";
 import { Response } from "./supportModule.js";
 
+// Save notification in DB
 export const addNotification = async (req) => {
   try {
     const newNotification = await Notification(req);
@@ -10,6 +11,7 @@ export const addNotification = async (req) => {
   }
 };
 
+// Get all notification
 export const getAllNotification = async (req, res, next) => {
   try {
     return await Notification.find({});
@@ -18,6 +20,7 @@ export const getAllNotification = async (req, res, next) => {
   }
 };
 
+// View a notification
 export const getNotificationById = async (req, res, next) => {
   try {
     const result = await Notification.findOne({ _id: req.params.id });
@@ -33,6 +36,7 @@ export const getNotificationById = async (req, res, next) => {
   }
 };
 
+// Get all notifications by user
 export const getUserNotification = async (req, res, next) => {
   try {
     const result = await Notification.find({ userId: req.params.id });
@@ -48,6 +52,7 @@ export const getUserNotification = async (req, res, next) => {
   }
 };
 
+// Get cancel booking notifications
 export const getBookingAndCancelNotification = async (req, res, next) => {
   try {
     const result = await Notification.find({ userType: req.params.user });
@@ -63,6 +68,7 @@ export const getBookingAndCancelNotification = async (req, res, next) => {
   }
 };
 
+// Mark as read notification
 export const setMarkAsRead = async (req, res, next) => {
   try {
     const result = await Notification.findByIdAndUpdate(
@@ -84,6 +90,7 @@ export const setMarkAsRead = async (req, res, next) => {
   }
 };
 
+// Set mark all read
 export const setMarkAllAsRead = async (req, res, next) => {
   try {
     const result = await Notification.findByIdAndUpdate(
@@ -105,6 +112,7 @@ export const setMarkAllAsRead = async (req, res, next) => {
   }
 };
 
+// Get all notifications by userType
 export const getNotificationByUser = async (userType) => {
   try {
     if (userType === "Frontend-user" || userType === "Backend-user") {
@@ -117,6 +125,7 @@ export const getNotificationByUser = async (userType) => {
   }
 };
 
+// Get all notifications
 export const allNotification = async (req, res, next) => {
   try {
     const notifications = await Notification.find({});

@@ -14,10 +14,11 @@ import {
 
 env.config();
 
-// mail and phone number formate
+// Mail and Phone number formate
 const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const phoneNoFormat = /^\d{10}$/;
 
+// Create user account
 export const userRegister = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
@@ -64,6 +65,7 @@ export const userRegister = async (req, res, next) => {
   }
 };
 
+// Update user details
 export const updateUserDetails = async (req, res, next) => {
   try {
     const details = req.body;
@@ -103,6 +105,7 @@ export const updateUserDetails = async (req, res, next) => {
   }
 };
 
+// Login user
 export const userLogin = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
@@ -161,6 +164,7 @@ export const userLogin = async (req, res, next) => {
   }
 };
 
+// Logout user
 export const userLogout = async (req, res, next) => {
   try {
     const user = await findUser(req.body.email);
@@ -186,6 +190,7 @@ export const userLogout = async (req, res, next) => {
   }
 };
 
+// Get all users by user type
 export const userData = async (req, res, next) => {
   try {
     const user = await UserModel.find({ userType: req.params.user });
@@ -197,6 +202,7 @@ export const userData = async (req, res, next) => {
   }
 };
 
+// Get a particular user
 export const userDataById = async (req, res, next) => {
   const { id, user } = req.params;
   try {
@@ -214,6 +220,7 @@ export const userDataById = async (req, res, next) => {
   }
 };
 
+// Send reset password email
 export const sendResetMail = async (req, res, next) => {
   try {
     if (!req.body.email.match(emailFormat))
@@ -243,9 +250,7 @@ export const sendResetMail = async (req, res, next) => {
       id: user[0]._id,
     };
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-    console.log("token : ", token);
     const link = `http://localhost:${req.body.port}/token-validation/${req.params.user}/${user[0]._id}/${token}`;
-    console.log("Link : ", link);
     if (await sendMail(userName, req.body.email, link))
       return res
         .status(500)
@@ -259,6 +264,7 @@ export const sendResetMail = async (req, res, next) => {
   }
 };
 
+// One time token validation
 export const tokenValidation = async (req, res, next) => {
   const { id, token } = req.params;
   try {
@@ -300,6 +306,7 @@ export const tokenValidation = async (req, res, next) => {
   }
 };
 
+// Set password
 export const setPassword = async (req, res, next) => {
   try {
     const user = await UserModel.find({ _id: req.body.id });

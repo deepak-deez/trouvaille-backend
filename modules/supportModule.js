@@ -7,6 +7,7 @@ export const passwordhashed = async (text) => {
   return await bcrypt.hash(text, 12);
 };
 
+// Arranged user data
 export const registerData = async (
   userType,
   name,
@@ -33,6 +34,7 @@ export const findUser = async (email) => {
   return await UserModel.find({ email: email });
 };
 
+// Set api response message
 export const Response = (data, message, success) => {
   return {
     data: data,
@@ -41,6 +43,7 @@ export const Response = (data, message, success) => {
   };
 };
 
+// Arrange trip package data
 export const TripPackageObject = (profileimage, trip) => {
   return {
     title: trip.title,
@@ -65,12 +68,14 @@ export const TripPackageObject = (profileimage, trip) => {
   };
 };
 
+// Arrange trip package object or update
 export const updateTripPackageObject = (profileimage, trip) => {
   const data = TripPackageObject(profileimage, trip);
   data.indexex = JSON.parse(trip.indexes);
   return data;
 };
 
+// Arrange user details for update
 export const userDetails = (imageUrl, data) => {
   return {
     image: imageUrl,
@@ -82,10 +87,9 @@ export const userDetails = (imageUrl, data) => {
   };
 };
 
+// Delete file
 export const deleteFile = async (folderName, fileName) => {
   const filePath = path.join("database", "images", folderName, fileName);
-  // await fs.rm(filePath, { recursive: true }, (err) => {
-  // });
   await fs.unlink(filePath, (err) => {
     if (err) console.log("Cann't delete this file!!!");
   });

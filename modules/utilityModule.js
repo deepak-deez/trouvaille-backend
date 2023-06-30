@@ -5,7 +5,7 @@ import { deleteFile } from "../modules/supportModule.js";
 import { readFileSync } from "fs";
 import { request } from "http";
 
-//create
+// Create feature module
 export const createFeature = async (req, res, next) => {
   const { title, description } = req.body;
   try {
@@ -47,6 +47,7 @@ const getResponseMessage = (result, res, feature) => {
   return res.status(500).send(Response(null, `${feature} not found!`, true));
 };
 
+// Show all feature by its type
 export const showAll = async (req, res, next) => {
   try {
     const result = await FeatureModel.find({ purpose: req.params.feature });
@@ -55,7 +56,8 @@ export const showAll = async (req, res, next) => {
     next(error);
   }
 };
-//get
+
+// Get Three feature together
 export const showTravelAmenityOccasion = async (req, res, next) => {
   try {
     const result = await FeatureModel.find({
@@ -69,7 +71,7 @@ export const showTravelAmenityOccasion = async (req, res, next) => {
   }
 };
 
-// update
+// Update feature details
 export const updateFeature = async (req, res, next) => {
   try {
     const { title, description } = req.body;
@@ -95,7 +97,7 @@ export const updateFeature = async (req, res, next) => {
   }
 };
 
-// delete
+// Delete feature
 export const deleteFeature = async (req, res, next) => {
   try {
     const { feature, id } = req.params;
@@ -124,7 +126,7 @@ export const deleteFeature = async (req, res, next) => {
   }
 };
 
-// getting all feature options Together
+// Getting all feature options Together
 export const getAllFeature = async (req, res, next) => {
   try {
     const result = await FeatureModel.find({});
