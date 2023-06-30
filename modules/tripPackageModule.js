@@ -1,13 +1,31 @@
-import { tripPackage } from "../models/tripPackageModel.js";
+import { TripPackage } from "../models/TripPackageModel.js";
 import { readFileSync } from "fs";
 import {
   Response,
-  tripPackageObject,
+  TripPackageObject,
   updateTripPackageObject,
 } from "./supportModule.js";
 import { nextTick } from "process";
 import { deleteFile } from "./supportModule.js";
-import { featureModel } from "../models/tripfeatureModel.js";
+import { FeatureModel } from "../models/tripFeatureModel.js";
+import { format } from "date-fns";
+
+const activeStatusUpdate = (data) => {
+  const today = format(new Date(), "yyyy-MM-dd");
+
+  if (data.length !== 0) {
+    data.forEach(async (trip) => {
+      const endDate = trip.endDate;
+      if (endDate < today && trip.status !== "In-Active") {
+        await TripPackage.findByIdAndUpdate(
+          { _id: trip.id },
+          { $set: { status: "In-Active" } },
+          { new: true }
+        );
+      }
+    });
+  }
+};
 
 const getFeatures = async (data) => {
   const features = [
@@ -17,13 +35,13 @@ const getFeatures = async (data) => {
     data.travelType,
   ];
 
-  const result = await featureModel.find({ title: { $in: features } });
+  const result = await FeatureModel.find({ title: { $in: features } });
   return result;
 };
 
 const makePackageData = async (req) => {
   const profileimage = `http://localhost:7000/packageImage/${req.files[0].filename}`;
-  const result = tripPackageObject(profileimage, req.body);
+  const result = TripPackageObject(profileimage, req.body);
 
   result.tripHighlights.forEach((element, i) => {
     element.icon = `http://localhost:7000/packageImage/${
@@ -64,13 +82,12 @@ const updatePackageData = async (req) => {
 
   const featureData = await getFeatures(result);
   result.features = [...featureData];
-  console.log(result);
   return result;
 };
 
 export const createTripPackage = async (req, res, next) => {
   try {
-    const result = await tripPackage(await makePackageData(req));
+    const result = await TripPackage(await makePackageData(req));
     if (result?._id) {
       result.save();
       return res
@@ -88,19 +105,14 @@ export const createTripPackage = async (req, res, next) => {
 //getting trip packages
 export const getTripPackages = async (req, res, next) => {
   try {
-    let result;
-    if (req.type === "GET") {
-      result = await tripPackage.find({});
-    } else {
-      result = await tripPackage.find(req.body.category);
-    }
-    // completetStatusUpdate(result);
+    const result = await TripPackage.find({});
+    activeStatusUpdate(result);
     if (result.length !== 0)
-      res
+      return res
         .status(200)
         .send(Response(result, `All ${req.params.trip} are here...`, true));
     else
-      res
+      return res
         .status(500)
         .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
@@ -111,9 +123,9 @@ export const getTripPackages = async (req, res, next) => {
 // getting a particular trip package details
 export const getTripDetails = async (req, res, next) => {
   try {
-    const result = await tripPackage.find({ _id: req.params.id });
+    const result = await TripPackage.find({ _id: req.params.id });
     if (result.length !== 0)
-      res.status(200).send(
+      return res.status(200).send(
         Response(
           result,
 
@@ -122,7 +134,7 @@ export const getTripDetails = async (req, res, next) => {
         )
       );
     else
-      res
+      return res
         .status(500)
         .send(Response(null, `${req.params.trip} not found!`, false));
   } catch (error) {
@@ -132,10 +144,8 @@ export const getTripDetails = async (req, res, next) => {
 
 //get filtered trip packages
 export const filterTripList = async (req, res, next) => {
-  // console.log(req.body.title);
-
   try {
-    const result = await tripPackage.aggregate([
+    const result = await TripPackage.aggregate([
       {
         $match: {
           $and: [
@@ -147,12 +157,18 @@ export const filterTripList = async (req, res, next) => {
                       ? { $ne: "" }
                       : { $all: req.body.title },
                 },
-                 {
-                  startDate: (req.body.checkIn === "")?{$ne: req.body.checkIn}:{$gte: req.body.checkIn}
-                 },
-                 {
-                  endDate: (req.body.checkOut === "")?{$ne: req.body.checkOut}:{$lte: req.body.checkOut}
-                 },
+                {
+                  startDate:
+                    req.body.checkIn === ""
+                      ? { $ne: req.body.checkIn }
+                      : { $gte: req.body.checkIn },
+                },
+                {
+                  endDate:
+                    req.body.checkOut === ""
+                      ? { $ne: req.body.checkOut }
+                      : { $lte: req.body.checkOut },
+                },
                 {
                   maximumGuests:
                     req.body.maximumGuests === ""
@@ -195,12 +211,18 @@ export const filterTripList = async (req, res, next) => {
                   ? { $ne: "" }
                   : { $lte: Number(req.body.price) },
             },
+            {
+              status: { $all: ["Active"] },
+            },
           ],
         },
       },
     ]);
 
-    res.send(Response(result, 200, `All ${req.params.trip} are here...`, true));
+    if (result)
+      return res.send(
+        Response(result, 200, `All ${req.params.trip} are here...`, true)
+      );
   } catch (error) {
     next(error);
   }
@@ -209,13 +231,13 @@ export const filterTripList = async (req, res, next) => {
 //modifying trip packages
 export const updatePackage = async (req, res, next) => {
   try {
-    const currentData = await tripPackage.findOne({ _id: req.params.id });
+    const currentData = await TripPackage.findOne({ _id: req.params.id });
     if (currentData === null)
       return res
         .status(200)
         .send(Response(null, `${req.params.trip} not found!`, false));
     const result = await updatePackageData(req);
-    const updatedResult = await tripPackage.findOneAndUpdate(
+    const updatedResult = await TripPackage.findOneAndUpdate(
       { _id: req.params.id },
       result,
       { new: true }
@@ -235,7 +257,7 @@ export const updatePackage = async (req, res, next) => {
 export const deletePackage = async (req, res, next) => {
   try {
     const { trip, id } = req.params;
-    const data = await tripPackage.findOne({ _id: id });
+    const data = await TripPackage.findOne({ _id: id });
 
     if (data === null)
       return res
@@ -250,7 +272,7 @@ export const deletePackage = async (req, res, next) => {
       deleteFile("packages", icon);
     });
 
-    const result = await tripPackage.findOneAndDelete({ _id: id });
+    const result = await TripPackage.findOneAndDelete({ _id: id });
     if (result?._id) {
       return res
         .status(200)

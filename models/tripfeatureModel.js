@@ -1,19 +1,23 @@
 import mongoose from "mongoose";
-const schema = new mongoose.Schema({
-  purpose: {
-    type: String,
+const schema = new mongoose.Schema(
+  {
+    purpose: {
+      type: String,
+    },
+    icon: { type: String },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
   },
-  icon: { type: String },
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-});
+  { timestamps: true }
+);
 
-export const featureModel = mongoose.model("tripDetails", schema);
+export const FeatureModel = mongoose.model("tripDetails", schema);

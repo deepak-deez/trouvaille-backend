@@ -1,18 +1,18 @@
 import { BookingModel } from "../models/bookingModel.js";
-import { tripPackage } from "../models/tripPackageModel.js";
+import { TripPackage } from "../models/TripPackageModel.js";
 import { Response } from "./supportModule.js";
 import { format } from "date-fns";
 
 import jwt from "jsonwebtoken";
 import env from "dotenv";
-import { getTripDetails } from "./tripPackageModule.js";
+import { getTripDetails } from "./TripPackageModule.js";
 
 env.config();
 
 //creating trip packages
 
 const completetStatusUpdate = (data) => {
-  const today = format(new Date(), "dd-MM-yyyy");
+  const today = format(new Date(), "yyyy-MM-dd");
   if (data.length !== 0) {
     data.forEach(async (booking) => {
       if (
@@ -32,7 +32,12 @@ const completetStatusUpdate = (data) => {
 export const createBooking = async (req, res, next) => {
   try {
     const tripId = req.body.tripId;
-    const tripData = await tripPackage.findOne({ _id: tripId });
+    const tripData = await TripPackage.findOne({ _id: tripId });
+    if (tripData === null)
+      return res
+        .status(500)
+        .send(Response(null, "Trip package not found!", false));
+
     const bookingData = req.body;
     bookingData.tripDetails = tripData;
     const data = await BookingModel(bookingData);
@@ -80,7 +85,6 @@ export const getAllBookingByUser = async (req, res, next) => {
 
 export const getBookingByUser = async (req, res, next) => {
   try {
-    console.log("Params : ", req.params);
     const result = await BookingModel.find({
       userId: req.params.userId,
       _id: req.params.id,
@@ -127,7 +131,11 @@ const deleteBooking = async (id, res) => {
 
   const result = await BookingModel.findOneAndUpdate(
     { _id: id },
-    { deleteStatus: true, bookingStatus: "cancelled" },
+    {
+      deleteStatus: true,
+      cancellationStatus: false,
+      bookingStatus: "Cancelled",
+    },
     { new: true }
   );
   if (result) {
@@ -137,49 +145,14 @@ const deleteBooking = async (id, res) => {
   }
 };
 
-// export const tokenVarification = async (req, res, next) => {
-//   try {
-//     console.log("params :", req.params);
-//     const { id, token } = req.params;
-//     const trip = await BookingModel.findOne({ _id: id });
-
-//     if (trip === null)
-//       return res.status(500).send(Response(null,  `Booking not found!`, false));
-//     const secret = process.env.JWT_SECRET + trip.phone;
-//     await jwt.verify(token, secret, (err, decode) => {
-//       if (err) {
-//         return res.status(500).send(Response(null,  "Not authenticate!", false));
-//       } else {
-//         // deleteBooking(trip._id, res);
-//         return res.status(200).send(
-//           Response({ id: trip._id }, `Booking details verified.`, true)
-//         );
-//       }
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
 export const UserActionOnDelete = async (req, res, next) => {
   try {
-    console.log(req.params);
     if (req.params.user !== "Admin") {
       const trip = await BookingModel.findOne({ _id: req.params.id });
-      console.log(trip);
       if (trip === null)
         return res
           .status(500)
           .send(Response(null, `Booking not found!`, false));
-      // const secret = process.env.JWT_SECRET + trip.phone;
-
-      // const payload = {
-      //   email: trip.email,
-      //   id: trip._id,
-      // };
-      // const token = jwt.sign(payload, secret, { expiresIn: "7d" });
-      // const link = `http://localhost:${process.env.RESET_MAIL_PORT}/token-verification/${trip._id}/${token}`;
-      // // console.log("link : ", link);
       return res
         .status(200)
         .send(
@@ -190,7 +163,6 @@ export const UserActionOnDelete = async (req, res, next) => {
           )
         );
     } else {
-      console.log(req.params.id);
       deleteBooking(req.params.id, res);
     }
   } catch (error) {
@@ -210,7 +182,6 @@ export const restoreBooking = async (req, res, next) => {
         $set: {
           cancellationStatus: req.body.cancellationStatus,
           deleteReason: req.body.deleteReason,
-          // bookingStatus: req.body.bookingStatus,
           read: req.body.read,
         },
       },
